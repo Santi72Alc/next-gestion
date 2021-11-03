@@ -7,18 +7,13 @@ body {
 }
 
 a {
-  color: cyan;
+  font-size: 20px;
   text-decoration: none;
 }
 
 a:hover {
-  color: lightcyan;
   font-style: italic;
-}
-
-a:hover.h4 {
-  color: inherit;
-  font-style: inherit;
+  transform: translate(15px);
 }
 
 * {
