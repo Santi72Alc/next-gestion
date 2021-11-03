@@ -46,7 +46,7 @@ const Navbar = ({ children }) => {
             {/* Main navbar */}
             <div className="container-fluid mx-0">
                 <div className="row">
-                    <div id="sidebarCol" className="d-none col-2 px-0">
+                    <div id="sidebarCol" className="d-none col-3 px-0">
                         <SideNavbar></SideNavbar>
                     </div>
                     <div className="col mx-0 px-0">
@@ -69,7 +69,7 @@ const Navbar = ({ children }) => {
                                 ? <button className="btn btn-success"
                                     onClick={() => logout()}>
                                     <span className="badge rounded-pill bg-primary px-3">{user.nick}</span>
-                                    {'  - Logout'}
+                                    {'  - Logout '}
                                 </button>
                                 : <button className="btn btn-info"
                                     onClick={() => login()}>

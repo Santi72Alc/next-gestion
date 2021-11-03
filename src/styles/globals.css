@@ -6,15 +6,25 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
+a, summary {
+  font-size: 1.4rem;
+}
+
 a {
-  font-size: 20px;
   text-decoration: none;
 }
 
 a:hover {
   font-style: italic;
-  transform: translate(15px);
+  transform: scale(1.1) translate(1.5rem);
 }
+
+a i.bi,
+summary i.bi {
+  margin-right: 10px;
+}
+
+
 
 * {
   box-sizing: border-box;
