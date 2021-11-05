@@ -1,7 +1,7 @@
 import { Schema, model, models } from 'mongoose'
 
 
-const userSchema = new Schema({
+const customerSchema = new Schema({
     name: {
         type: String,
         required: [true, 'The name is required']
@@ -11,12 +11,16 @@ const userSchema = new Schema({
         unique: [true, 'This client identification is already used']
     },
     sendingAddress: {
-        type: Schema.Types.ObjectId,
-        ref: 'Addresses'
+        street: String,
+        city: String,
+        state: String,
+        country: String
     },
     billingAddress: {
-        type: Schema.Types.ObjectId,
-        ref: 'Addresses'
+        street: String,
+        city: String,
+        state: String,
+        country: String
     },
     webUrl: String,
     contact: {
@@ -30,4 +34,4 @@ const userSchema = new Schema({
     versionKey: false
 })
 
-export default models.Users || model('Users', userSchema)
+export default models.Customers || model('Customers', customerSchema)

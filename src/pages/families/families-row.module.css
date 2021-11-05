@@ -1,0 +1,15 @@
+.listContainer {
+    margin-left: 1rem;
+    margin-right: 1rem;
+    height: 500px;
+    overflow: auto;
+}
+
+.actionsCol {
+    display: flex;
+    justify-content: space-evenly
+}
+
+.idCol {
+    text-align: center;
+}

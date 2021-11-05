@@ -6,7 +6,7 @@ import Navbar from '../components/navbar'
  *  CSS imports
  */ 
 // bootstrap CSS theme
-import '../libs/themes/darkly/bootstrap.min.css'
+import '../libs/themes/default/bootstrap.min.css'
 
 // global CSS
 import '../styles/globals.css'

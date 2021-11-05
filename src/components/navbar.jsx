@@ -4,12 +4,11 @@ import SideNavbar from './sideNavbar'
 const Navbar = ({ children }) => {
     // const strInOut = 'Login'   
     const [isMenuOpened, setIsMenuOpened] = useState(false)
-    const [isLogged, setIsLogged] = useState(false)
-
-    const user = {
-        nick: 'UserName',
-        name: "Nombre de Usuario"
-    }
+    const [user, setUser] = useState(null)
+    // const user = {
+    //     nick: 'UserName',
+    //     name: "Nombre de Usuario"
+    // }
 
 
     // useEffect( ()=> {
@@ -33,11 +32,14 @@ const Navbar = ({ children }) => {
 
 
     function login() {
-        setIsLogged(true)
+        setUser({
+            name: 'Santiago S.R.',
+            nick: 'SantiSR'
+        })
     }
 
     function logout() {
-        setIsLogged(false)
+        setUser(null)
         showMenu(false)
     }
 
@@ -45,7 +47,7 @@ const Navbar = ({ children }) => {
         <>
             {/* Main navbar */}
             <div className="container-fluid mx-0">
-                <div className="row">
+                <div className="row ">
                     <div id="sidebarCol" className="d-none col-3 px-0">
                         <SideNavbar></SideNavbar>
                     </div>
@@ -55,17 +57,17 @@ const Navbar = ({ children }) => {
                                 id="btnCollapse"
                                 className="btn btn-info"
                                 onClick={toogleMenu}
-                                hidden={!isLogged}
+                                hidden={!user}
                             >
                                 {isMenuOpened ? <i className="bi bi-arrow-bar-left"></i> : <i className="bi bi-list"></i>}
                             </button>
                             <div className="vstack text-center">
-                            <h3>Budget Management App</h3>
-                            <small className="text-muted">Fernando Veras & Santiago San Román</small>
+                                <h3>Budget Management App</h3>
+                                <small className="text-dark">Fernando Veras & Santiago San Román</small>
 
                             </div>
 
-                            {isLogged
+                            {user
                                 ? <button className="btn btn-success"
                                     onClick={() => logout()}>
                                     <span className="badge rounded-pill bg-primary px-3">{user.nick}</span>

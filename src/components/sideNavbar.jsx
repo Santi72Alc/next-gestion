@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 const SideNavbar = () => {
     return (
-        <div className="bg-primary py-3 px-5">
+        <div className="navbar bg-primary px-4">
             <div className="vstack gap-3">
                 <h3 className="text-center my-3">Menu</h3>
                 {/* <hr /> */}
@@ -11,7 +11,7 @@ const SideNavbar = () => {
                     <a><i className="bi bi-house-fill"></i>Main page</a>
                 </Link>
                 <details open>
-                    <summary><i className="bi bi-file-earmark-text-fill"></i>Budgets</summary>
+                    <summary className="text-dark"><i className="bi bi-file-earmark-text-fill"></i>Budgets</summary>
                     <div className="vstack gap-3 px-3 mt-3">
                         <Link href="#">
                             <a><i className="bi bi-file-earmark-ruled-fill"></i>Maintenance</a>
@@ -19,12 +19,12 @@ const SideNavbar = () => {
                     </div>
                 </details>
                 <details>
-                    <summary><i className="bi bi-server"></i>Files maintenance</summary>
+                    <summary className="text-dark"><i className="bi bi-server"></i>Main files maintenance</summary>
                     <div className="vstack gap-3 px-3 mt-3">
                         <Link href="#">
                             <a><i className="bi bi-people-fill"></i>Users</a>
                         </Link>
-                        <Link href="#">
+                        <Link href="/customers">
                             <a><i className="bi bi-people-fill"></i>Customers</a>
                         </Link>
                         <Link href="#">
@@ -35,14 +35,15 @@ const SideNavbar = () => {
                         </Link>
                     </div>
                 </details>
-                <hr />
-                <span className="mb-3">
+                <hr className="text-dark" />
+                {/* <div> */}
                     <Link href="#">
                         <a><i className="bi bi-person-fill"></i>Profile</a>
                     </Link>
-                </span>
+                {/* </div> */}
             </div>
         </div>
+
     )
 }
 
