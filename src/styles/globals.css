@@ -34,7 +34,11 @@ summary i.bi {
   height: 80%;
 }
 
-
+.glass-effect {
+  background-color: #ffffff10;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
 
 * {
   box-sizing: border-box;
