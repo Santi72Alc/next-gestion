@@ -1,10 +1,11 @@
 import { useEffect } from 'react'
 import Head from 'next/head'
 import Navbar from '../components/navbar'
+import { UserProvider} from '../context/user'
 
 /**
  *  CSS imports
- */ 
+ */
 // bootstrap CSS theme
 import '../libs/themes/default/bootstrap.min.css'
 
@@ -18,10 +19,9 @@ function MyApp({ Component, pageProps }) {
   }, [])
 
   return (
-    <>
+    <UserProvider>
       <Head>
-
-        <link rel="stylesheet" 
+        <link rel="stylesheet"
           href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.7.0/font/bootstrap-icons.css" />
 
         <title>Budget Management</title>
@@ -29,7 +29,7 @@ function MyApp({ Component, pageProps }) {
       <Navbar>
         <Component {...pageProps} />
       </Navbar>
-    </>
+    </UserProvider>
   )
 }
 

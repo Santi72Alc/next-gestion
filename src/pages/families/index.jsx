@@ -11,11 +11,11 @@ const list = [
 export default function Families() {
     return (
         <div className="card-maintenance">
-            <div class="card shadow ">
-                <div class="card-header text-center">
+            <div className="card shadow ">
+                <div className="card-header text-center">
                     <h3>Families</h3>
                 </div>
-                <div class="card-body">
+                <div className="card-body">
                     <FamiliesList data={list}></FamiliesList>
                 </div>
                 <div className="card-footer">

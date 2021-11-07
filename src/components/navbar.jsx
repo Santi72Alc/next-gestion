@@ -1,46 +1,38 @@
-import { useEffect, useState } from 'react'
-import SideNavbar from './sideNavbar'
+import { useState, useContext } from "react";
+import Router from "next/router";
+import SideNavbar from "./sideNavbar";
+import UserContext from "../context/user";
 
 const Navbar = ({ children }) => {
-    // const strInOut = 'Login'   
-    const [isMenuOpened, setIsMenuOpened] = useState(false)
-    const [user, setUser] = useState(null)
-    // const user = {
-    //     nick: 'UserName',
-    //     name: "Nombre de Usuario"
-    // }
-
-
-    // useEffect( ()=> {
-
-    // }, [isMenuOpened])
+    const [isMenuOpened, setIsMenuOpened] = useState(false);
+    const { user, logout } = useContext(UserContext);
+    const [actualRoute, setActualRoute] = useState("")
 
 
     // Show the menu button on the left
     function showMenu(show = true) {
-        const $sidebarList = document.getElementById('sidebarCol').classList
-        if (show) $sidebarList.remove('d-none')
-        else $sidebarList.add('d-none')
-        setIsMenuOpened(show)
-
+        const $sidebarList = document.getElementById("sidebarCol").classList;
+        show ? $sidebarList.remove("d-none") : $sidebarList.add("d-none");
+        setIsMenuOpened(show);
+        $sidebarList = null;
     }
 
     // When press the menu button
     function toogleMenu() {
-        showMenu(!isMenuOpened)
+        showMenu(!isMenuOpened);
     }
 
-
-    function login() {
-        setUser({
-            name: 'Santiago S.R.',
-            nick: 'SantiSR'
-        })
+    function handleLogin() {
+        Router.push("/login")
     }
 
-    function logout() {
-        setUser(null)
-        showMenu(false)
+    function handleLogout() {
+        logout();               // Cerramos el user actual
+        showMenu(false);  
+        if (window.history.length > 1)      // Quitamos el menu lateral
+            Router.back()
+        else 
+            Router.push("/");       // Nos desplazamos a la ruta root
     }
 
     return (
@@ -53,40 +45,57 @@ const Navbar = ({ children }) => {
                     </div>
                     <div className="col mx-0 px-0">
                         <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3">
-                            <button type="button"
+                            <button
+                                type="button"
                                 id="btnCollapse"
                                 className="btn btn-info"
                                 onClick={toogleMenu}
-                                hidden={!user}
-                            >
-                                {isMenuOpened ? <i className="bi bi-arrow-bar-left"></i> : <i className="bi bi-list"></i>}
+                                hidden={!user}>
+                                {isMenuOpened ? (
+                                    <i className="bi bi-arrow-bar-left"></i>
+                                ) : (
+                                    <i className="bi bi-list"></i>
+                                )}
                             </button>
                             <div className="vstack text-center">
                                 <h3>Budget Management App</h3>
-                                <small className="text-dark">Fernando Veras & Santiago San Román</small>
-
+                                <small className="text-dark">
+                                    Fernando Veras & Santiago San Román
+                                </small>
                             </div>
 
-                            {user
-                                ? <button className="btn btn-success"
-                                    onClick={() => logout()}>
-                                    <span className="badge rounded-pill bg-primary px-3">{user.nick}</span>
-                                    {'  - Logout '}
+                            {user ? (
+                                <button
+                                    className="btn btn-success"
+                                    onClick={handleLogout}>
+                                    <span className="badge rounded-pill bg-primary px-3 py-2">
+                                        {user?.nick}
+                                    </span>
+                                    {" - Logout"}
                                 </button>
-                                : <button className="btn btn-info"
-                                    onClick={() => login()}>
-                                    {' Sign In'}
-                                </button>
+                            ) :
+                                true && (
+                                    <button
+                                        className="btn btn-info"
+                                        onClick={handleLogin}>
+                                        {" Login"}
+                                    </button>
+                                )
                             }
                         </nav>
-                        <div className="col m-3">
-                            {children}
-                        </div>
+                        <div className="col m-3">{children}</div>
                     </div>
                 </div>
             </div>
         </>
-    )
-}
+    );
+};
 
-export default Navbar
+
+// Navbar.getStaticProps = async (ctx) => {
+//     const { pathname } = ctx
+
+//     console.log("->", pathname);
+// }
+
+export default Navbar;
