@@ -19,7 +19,7 @@ const SideNavbar = () => {
                     </div>
                 </details>
                 <details>
-                    <summary className="text-dark"><i className="bi bi-server"></i>Main files maintenance</summary>
+                    <summary className="text-dark"><i className="bi bi-server"></i>Main files</summary>
                     <div className="vstack gap-3 px-3 mt-3">
                         <Link href="#">
                             <a><i className="bi bi-people-fill"></i>Users</a>
@@ -36,11 +36,11 @@ const SideNavbar = () => {
                     </div>
                 </details>
                 <hr className="text-dark" />
-                {/* <div> */}
+                <div className="mb-4">
                     <Link href="#">
                         <a><i className="bi bi-person-fill"></i>Profile</a>
                     </Link>
-                {/* </div> */}
+                </div>
             </div>
         </div>
 

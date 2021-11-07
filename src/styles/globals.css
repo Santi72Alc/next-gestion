@@ -6,19 +6,29 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-a, summary {
+summary {
   font-size: 1.4rem;
+  color:lightsalmon;
 }
 
 a {
+  color: lightcyan;
+  font-size: 1.2rem;
   text-decoration: none;
-  color: tomato;
 }
 
 a:hover {
   color: lightcyan;
   font-style: italic;
   transform: scale(1.1) translate(1.5rem);
+}
+
+p > a {
+  font-size: inherit;
+}
+p > a:hover {
+  text-transform: uppercase;
+  font-style: inherit;
 }
 
 a i.bi,

@@ -1,13 +1,12 @@
 import { useState, useContext } from "react";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import SideNavbar from "./sideNavbar";
 import UserContext from "../context/user";
 
 const Navbar = ({ children }) => {
-    const [isMenuOpened, setIsMenuOpened] = useState(false);
-    const { user, logout } = useContext(UserContext);
-    const [actualRoute, setActualRoute] = useState("")
-
+    const { user, login, logout, isLoggedIn } = useContext(UserContext);
+    const [isMenuOpened, setIsMenuOpened] = useState(user?.email);
+    const router = useRouter()
 
     // Show the menu button on the left
     function showMenu(show = true) {
@@ -23,16 +22,15 @@ const Navbar = ({ children }) => {
     }
 
     function handleLogin() {
-        Router.push("/login")
+        if (login()) {
+            router.replace("/");
+        }
     }
 
     function handleLogout() {
         logout();               // Cerramos el user actual
-        showMenu(false);  
-        if (window.history.length > 1)      // Quitamos el menu lateral
-            Router.back()
-        else 
-            Router.push("/");       // Nos desplazamos a la ruta root
+        showMenu(false);        // Quitamos el menu lateral
+        router.push("/");       // Nos desplazamos a la ruta root
     }
 
     return (
@@ -50,7 +48,7 @@ const Navbar = ({ children }) => {
                                 id="btnCollapse"
                                 className="btn btn-info"
                                 onClick={toogleMenu}
-                                hidden={!user}>
+                                hidden={!user.email}>
                                 {isMenuOpened ? (
                                     <i className="bi bi-arrow-bar-left"></i>
                                 ) : (
@@ -64,24 +62,17 @@ const Navbar = ({ children }) => {
                                 </small>
                             </div>
 
-                            {user ? (
+                            {isLoggedIn &&
                                 <button
                                     className="btn btn-success"
                                     onClick={handleLogout}>
                                     <span className="badge rounded-pill bg-primary px-3 py-2">
-                                        {user?.nick}
+                                        {user.nick}
                                     </span>
                                     {" - Logout"}
                                 </button>
-                            ) :
-                                true && (
-                                    <button
-                                        className="btn btn-info"
-                                        onClick={handleLogin}>
-                                        {" Login"}
-                                    </button>
-                                )
                             }
+
                         </nav>
                         <div className="col m-3">{children}</div>
                     </div>
