@@ -1,7 +1,7 @@
 import { useState, useContext } from "react";
 import { useRouter } from "next/router";
-import SideNavbar from "./sideNavbar";
-import UserContext from "../context/user";
+import SideNavbar from "../sideNavbar";
+import UserContext from "../../context/user";
 
 const Navbar = ({ children }) => {
     const { user, login, logout, isLoggedIn } = useContext(UserContext);
@@ -81,12 +81,5 @@ const Navbar = ({ children }) => {
         </>
     );
 };
-
-
-// Navbar.getStaticProps = async (ctx) => {
-//     const { pathname } = ctx
-
-//     console.log("->", pathname);
-// }
 
 export default Navbar;

@@ -1,5 +1,4 @@
-import Link from 'next/link'
-
+import Link from '../link'
 
 const SideNavbar = () => {
     return (
@@ -8,37 +7,37 @@ const SideNavbar = () => {
                 <h3 className="text-center my-3">Menu</h3>
                 {/* <hr /> */}
                 <Link href="/">
-                    <a><i className="bi bi-house-fill"></i>Main page</a>
+                    <i className="bi bi-house-fill"></i>Main page
                 </Link>
                 <details open>
                     <summary className="text-dark"><i className="bi bi-file-earmark-text-fill"></i>Budgets</summary>
                     <div className="vstack gap-3 px-3 mt-3">
                         <Link href="#">
-                            <a><i className="bi bi-file-earmark-ruled-fill"></i>Maintenance</a>
-                        </Link>
+                            <i className="bi bi-file-earmark-ruled-fill"></i>Maintenance
+                            </Link>
                     </div>
                 </details>
                 <details>
                     <summary className="text-dark"><i className="bi bi-server"></i>Main files</summary>
                     <div className="vstack gap-3 px-3 mt-3">
                         <Link href="#">
-                            <a><i className="bi bi-people-fill"></i>Users</a>
+                            <i className="bi bi-people-fill"></i>Users
                         </Link>
                         <Link href="/customers">
-                            <a><i className="bi bi-people-fill"></i>Customers</a>
+                            <i className="bi bi-people-fill"></i>Customers
                         </Link>
                         <Link href="#">
-                            <a><i className="bi bi-gpu-card"></i>Products</a>
+                            <i className="bi bi-gpu-card"></i>Products
                         </Link>
                         <Link href="/families">
-                            <a><i className="bi bi-pencil-square"></i>Prod. Families</a>
+                            <i className="bi bi-pencil-square"></i>Prod. Families
                         </Link>
                     </div>
                 </details>
                 <hr className="text-dark" />
                 <div className="mb-4">
                     <Link href="#">
-                        <a><i className="bi bi-person-fill"></i>Profile</a>
+                        <i className="bi bi-person-fill"></i>Profile
                     </Link>
                 </div>
             </div>

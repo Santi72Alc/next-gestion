@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import Link from 'next/dist/client/link'
+import Link from '../../components/link'
 import UserContext from '../../context/user'
 
 import styles from './login.module.css'
@@ -39,13 +39,11 @@ export default function Login() {
                             placeholder="Password" />
                     </div>
                     <div className="vstack gap-3">
-                        <Link href="/">
-                            <button onClick={handleLogin} className="btn btn-primary w-50 mx-auto">SignIn</button>
+                        <Link href="/" className="mx-auto">
+                            <button onClick={handleLogin} className="btn btn-primary">SignIn</button>
                         </Link>
-                        <Link href="/">
-                            <p className="text-info">I'm new here. <a >Please send me to register </a></p>
-
-
+                        <Link href="/" className="text-info">
+                                I'm new here. Please send me to register
                         </Link>
                     </div>
                 </form>
