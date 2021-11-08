@@ -1,5 +1,6 @@
 import Router from "next/router";
 import { createContext, useEffect, useState } from "react";
+import { validateUser } from "../services/users.services";
 import {
 	getLocalStorage,
 	setLocalStorage,
@@ -22,8 +23,16 @@ export function UserProvider({ children }) {
 		isLogged();
 	}, [user]);
 
+	/* Crear función de signUp para crear nuevo usuario */
+
 	const login = ({ email, password }) => {
-		return validateUser({ email, password });
+		const isValid = validateUser({ email, password });
+		if (isValid) {
+			const user = { email, nick: email.split("@")[0] };
+			setUser(user);
+			setLocalStorage(user);
+		}
+		return isValid;
 	};
 
 	const logout = () => {
@@ -35,25 +44,6 @@ export function UserProvider({ children }) {
 	const isLogged = () => {
 		const user = getLocalStorage();
 		setIsLoggedIn(user?.email ? true : false);
-	};
-
-	const validateUser = ({ email, password }) => {
-		if (isLoggedIn) {
-			return true;
-		}
-
-		alert("Entro en comprobación del login:"+ email +" "+ password);
-		/*
-		 * Aqui se llamara 'servicios' para hacer la llamada a la BD y comprobar la existencia del user
-		 */
-		if (email && password === "1111") {
-			const user = { email, nick: email.split("@")[0], token: "" };
-			setUser(user);
-			setLocalStorage(user);
-			return true;
-		}
-
-		return false;
 	};
 
 	const data = { user, login, logout, isLoggedIn };

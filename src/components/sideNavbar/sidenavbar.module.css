@@ -1,0 +1,21 @@
+.summary {
+    font-size: 1.4em;
+    font-weight: 500;
+    color: initial;
+  }
+  
+  .link {
+    color: lightcyan;
+    text-decoration: none;
+  }
+  
+  .link:hover {
+    color: lightcyan;
+    font-style: italic;
+  }
+  
+  .link i,
+  .link i {
+    margin-right: 15px;
+  }
+  

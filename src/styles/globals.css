@@ -6,23 +6,11 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
 
-summary {
-  font-size: 1.4rem;
-  color:lightsalmon;
+* {
+  box-sizing: border-box;
 }
 
-a {
-  color: lightcyan;
-  font-size: 1.2rem;
-  text-decoration: none;
-}
-
-a:hover {
-  color: lightcyan;
-  font-style: italic;
-  transform: scale(1.1) translate(1.5rem);
-}
-
+/* 
 p > a {
   font-size: inherit;
 }
@@ -30,11 +18,7 @@ p > a:hover {
   text-transform: uppercase;
   font-style: inherit;
 }
-
-a i.bi,
-summary i.bi {
-  margin-right: 10px;
-}
+ */
 
 
 .card-maintenance {
@@ -50,6 +34,34 @@ summary i.bi {
   -webkit-backdrop-filter: blur(12px);
 }
 
-* {
-  box-sizing: border-box;
+
+/* 
+  CARDS
+*/
+.card {
+  display: flex;
+  flex-direction: column;
+  margin-top: 4rem;
+  margin-left: auto;
+  margin-right: auto;
+  width: 60%;
+  min-width: 300px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.card-header {
+  background-color:lightskyblue;
+  padding: 10px 0px;
+}
+
+
+/* 
+  FORMULARIOS
+*/
+.form-group {
+  padding-bottom: 15px;
+}
+
+.form-group label {
+  margin-bottom: 5px;
 }

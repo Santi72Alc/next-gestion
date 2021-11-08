@@ -1,0 +1,9 @@
+
+.linkToRegister {
+    text-decoration: none;
+}
+
+.linkToRegister:hover {
+    font-style: inherit;
+    text-transform: uppercase;
+}
