@@ -5,5 +5,6 @@
 
 .linkToRegister:hover {
     font-style: inherit;
+    font-weight: 500;
     text-transform: uppercase;
 }

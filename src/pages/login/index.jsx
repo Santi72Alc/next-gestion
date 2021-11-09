@@ -1,22 +1,40 @@
 import Router from 'next/router'
 import { useContext } from 'react'
+
 import Link from '../../components/link'
 import UserContext from '../../context/user'
+import Alert, { Toast } from '../../libs/alerts'
 
 import styles from './login.module.css'
 
 export default function Login() {
     const { login } = useContext(UserContext)
+    
 
     function handleLogin() {
-        const email = document.getElementById('email').value
-        const password = document.getElementById('password').value
-        // login({ name: "Santiago San Román", nick: "SantiSR" })
+        const $email = document.getElementById('email')
+        const $password = document.getElementById('password')
 
-        const isLogged = login({ email, password })
-        console.log('isLogged :>> ', isLogged);
-        if (isLogged) Router.push("/")
-        else console.log("Error en autenticación");
+        const isLogged = login({ email: $email.value, password: $password.value })
+        if (isLogged) {
+            Toast.success.fire({
+                icon: "success",
+                title: 'User logged'
+            })
+            Router.push("/")
+        }
+        else {
+            Alert.fire({
+                title: `Invalid email or password.`,
+                text: `Please, check it!!`,
+                icon: "error",
+                timer: 4500,
+                returnFocus: false,
+
+            }).then((resp) =>{
+                $email.focus()
+            })
+        }
     }
 
 
@@ -47,13 +65,12 @@ export default function Login() {
             <div className="card-footer p-4">
                 <div className="vstack gap-2">
                     <button onClick={handleLogin} className="btn btn-primary w-50 mx-auto">I'm ready</button>
-                    <Link href="/signup" className={`text-muted text-center ${styles.linkToRegister}`}>
-                        I'm new here. Please, send me to register
+                    <Link href="/signup" className={`text-center ${styles.linkToRegister}`}>
+                        I'm new here! Please, send me to register
                     </Link>
                 </div>
             </div>
 
         </div>
-
     )
 }

@@ -64,7 +64,7 @@ export default function NewUser() {
             </div>
             <div className="card-footer p-4">
                 <div className="hstack gap-3">
-                    <button onClick={handleNewUser} className="btn btn-primary w-75">New user</button>
+                    <button onClick={handleNewUser} className="btn btn-primary w-75">Add me!</button>
                     <button onClick={() => Router.back()} className="btn btn-secondary w-25">Go back</button>
                 </div>
             </div>
