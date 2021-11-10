@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import Head from 'next/head'
-import Navbar from '../components/navbar'
-import { UserProvider} from '../context/user'
+import Navbar from '@Components/navbar'
+import { UserProvider} from '@Context/user'
 
 /**
  *  CSS imports

@@ -1,4 +1,3 @@
-
 const initialUser = {
 	email: "",
 	password: "",
@@ -6,8 +5,8 @@ const initialUser = {
 	nick: "",
 };
 
-export const validateNewUser = ({ email, password }) => {
-	if (!email || !password) return false;
+const validateNewUser = ({ email = "", password = "", fullName = "" }) => {
+	if (!email || !password || !fullName) return false;
 
 	/* 
 	 * Hacemos la llamada al api de Users para ver si existe
@@ -15,78 +14,73 @@ export const validateNewUser = ({ email, password }) => {
 	 Si no existe, Llamamos a la api para grabar el nuevo user
 	 y devolvemos true
 	*/
-	 
-	return false;
+
+	return true;
 };
 
-export const validateUser = ({ email, password }) => {
+const validateUser = ({ email = "", password = "" }) => {
 	if (!email || !password) return false;
-
 	/* 
-	 * Hacemos la llamada al api de Users para ver si existe
-	 Si NO existe en la BD devolvemos false
-	 Si exite, devolvemos el user { email, fullName, Nick }
+	* Hacemos la llamada al api de Users para ver si existe
+	Si NO existe en la BD devolvemos false
+	Si exite, devolvemos el user { email, fullName, Nick }
 	*/
-	 
-	if (email && password === "1234") {
+	
+	console.log("en services validateUser", email, password)
+	if (password === "1234") {
 		return true;
 	}
 	return false;
 };
 
-
-async function getAll() {
-	try {
-		const data = await Users.find();
+async function loginUser({ email = "", password = "" }) {
+	if (validateUser({email, password})) {
+		// De momento... luego se saca de la BD
+		const fullName = "Santiago San Román";
+		const nick = email.split("@")[0];
 		return {
 			success: true,
-			data,
-		};
-	} catch (error) {
-		return {
-			success: false,
-			message: error.stack,
+			data: { email, fullName, nick },
 		};
 	}
+	return {
+		success: false,
+	};
 }
 
-async function getOneByEmail(email) {
+async function addUser({
+	email = "",
+	password = "",
+	fullName = "",
+	nick = email.split("@")[0],
+}) {
 	try {
-		const data = Users.findOne({ email });
-		return {
-			success: true,
-			data,
-		};
-	} catch (error) {
-		return {
-			success: false,
-			message: error.stack,
-		};
-	}
-}
-
-async function addUser({ email, password, fullName, nick }) {
-	try {
-		if (!email || !password)
+		if (!validateNewUser({ email, password, fullName })) {
 			throw new Error("Email and Password are required");
-		// const resp = await getOneByEmail(email.trim());
+		}
+
 		const resp = { success: false };
-		if (resp.success) throw new Error("The email already exists");
+		if (resp.success) {
+			throw new Error("The email already exists");
+		}
+
 		const body = { email, password, fullName, nick };
 		// const newUser = new Users(body);
 		// await newUser.save();
 		return {
 			success: true,
 			data: { email, fullName, nick },
+			message: "User added",
 		};
 	} catch (error) {
 		return {
 			success: false,
-			message: error.stack,
+			message: error.message,
 		};
 	}
 }
 
 export default {
-	validateUser,
+	addUser,
+	loginUser,
 };

@@ -21,12 +21,6 @@ const Navbar = ({ children }) => {
         showMenu(!isMenuOpened);
     }
 
-    function handleLogin() {
-        if (login()) {
-            router.replace("/");
-        }
-    }
-
     function handleLogout() {
         logout();               // Cerramos el user actual
         showMenu(false);        // Quitamos el menu lateral
@@ -57,9 +51,15 @@ const Navbar = ({ children }) => {
                             </button>
                             <div className="vstack text-center">
                                 <h3>Budget Management App</h3>
-                                <small className="text-dark">
-                                    Fernando Veras & Santiago San Román
-                                </small>
+                                <div className="hstack gap-3 justify-content-center">
+                                    <small className="text-dark">
+                                        &#169; 2021
+                                    </small>
+                                    <small className="text-white fst-italic">
+                                        Fernando Veras & Santiago San Román
+                                    </small>
+                                </div>
+
                             </div>
 
                             {isLoggedIn &&

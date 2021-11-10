@@ -1,13 +1,13 @@
 import Router from 'next/router';
-import { useContext, useEffect} from 'react'
+import { useContext, useEffect } from 'react'
 
 import UserContext from '../context/user';
 
-export default function Home() {
+const Home = () => {
   const { isLoggedIn } = useContext(UserContext);
 
-  useEffect( () => {
-    if (!isLoggedIn) Router.replace("/login")
+  useEffect(() => {
+    !isLoggedIn && Router.replace('/login')
   })
 
   return (
@@ -16,3 +16,6 @@ export default function Home() {
     </>
   )
 }
+
+
+export default Home;

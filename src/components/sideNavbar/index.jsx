@@ -1,4 +1,4 @@
-import Link from '../link'
+import Link from '@Components/link'
 
 import styles from './sidenavbar.module.css'
 

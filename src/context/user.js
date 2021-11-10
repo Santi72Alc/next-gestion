@@ -1,6 +1,6 @@
 import Router from "next/router";
 import { createContext, useEffect, useState } from "react";
-import { validateUser } from "../services/users.services";
+import usersServices from "@Services/users.services";
 import {
 	getLocalStorage,
 	setLocalStorage,
@@ -23,16 +23,28 @@ export function UserProvider({ children }) {
 		isLogged();
 	}, [user]);
 
-	/* Crear función de signUp para crear nuevo usuario */
-
-	const login = ({ email, password }) => {
-		const isValid = validateUser({ email, password });
-		if (isValid) {
-			const user = { email, nick: email.split("@")[0] };
+	const login = async ({ email = "", password = "" }) => {
+		const resp = await usersServices.loginUser({ email, password });
+		if (resp.success) {
+			const { email, fullName, nick } = resp.data;
+			const user = { email, fullName, nick };
 			setUser(user);
 			setLocalStorage(user);
 		}
-		return isValid;
+		return resp.success;
+	};
+
+	const newUser = ({
+		email = "",
+		password = "",
+		fullName = "",
+		nick = "",
+	}) => {
+		if (validateNewUser({ email, password })) {
+			console.log("en services create", body);
+		}
+		const newUser = { email, fullName, nick };
+		return newUser;
 	};
 
 	const logout = () => {
@@ -46,7 +58,7 @@ export function UserProvider({ children }) {
 		setIsLoggedIn(user?.email ? true : false);
 	};
 
-	const data = { user, login, logout, isLoggedIn };
+	const data = { user, login, newUser, logout, isLoggedIn };
 	return <UserContext.Provider value={data}>{children}</UserContext.Provider>;
 }
 

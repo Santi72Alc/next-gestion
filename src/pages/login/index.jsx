@@ -1,9 +1,9 @@
 import Router from 'next/router'
 import { useContext } from 'react'
 
-import Link from '../../components/link'
-import UserContext from '../../context/user'
-import Alert, { Toast } from '../../libs/alerts'
+import Link from '@Components/link'
+import UserContext from '@Context/user'
+import myAlerts from '@Libs/alerts'
 
 import styles from './login.module.css'
 
@@ -11,21 +11,21 @@ export default function Login() {
     const { login } = useContext(UserContext)
     
 
-    function handleLogin() {
+    async function handleLogin() {
         const $email = document.getElementById('email')
         const $password = document.getElementById('password')
 
-        const isLogged = login({ email: $email.value, password: $password.value })
+        const isLogged = await login({ email: $email.value, password: $password.value })
         if (isLogged) {
-            Toast.success.fire({
+            myAlerts.ToastSucces.fire({
                 icon: "success",
                 title: 'User logged'
             })
             Router.push("/")
         }
         else {
-            Alert.fire({
-                title: `Invalid email or password.`,
+            myAlerts.Alert.fire({
+                title: `Invalid email or password`,
                 text: `Please, check it!!`,
                 icon: "error",
                 timer: 4500,
@@ -33,6 +33,7 @@ export default function Login() {
 
             }).then((resp) =>{
                 $email.focus()
+                $password.value = ''
             })
         }
     }
