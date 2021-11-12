@@ -1,65 +1,80 @@
 import Router from "next/router";
 import { createContext, useEffect, useState } from "react";
-import usersServices from "@Services/users.services";
+import usersServices, { initialUser, ROLES } from "@Services/users.services";
+
 import {
-	getLocalStorage,
+	getActualUser,
+	closeActualUser,
 	setLocalStorage,
-	deleteLocalStorage,
 } from "./sessionStorage";
 
 const UserContext = createContext();
 
-const initialUser = {
-	email: "",
-	nick: "",
-	token: "",
-};
-
 export function UserProvider({ children }) {
 	const [user, setUser] = useState(initialUser);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [isFirstUser, setIsFirstUser] = useState(false);
 
-	useEffect(() => {
+	useEffect(async () => {
+		const isFirstUser = await usersServices.isFirstUser();
+		setIsFirstUser(isFirstUser);
 		isLogged();
 	}, [user]);
 
-	const login = async ({ email = "", password = "" }) => {
+	const login = async ({
+		email = "",
+		password = "",
+		keepSessionAlive = false,
+	}) => {
 		const resp = await usersServices.loginUser({ email, password });
 		if (resp.success) {
-			const { email, fullName, nick } = resp.data;
-			const user = { email, fullName, nick };
+			const { email, fullName, nick, role } = resp.data;
+			const user = { email, fullName, nick, role };
 			setUser(user);
-			setLocalStorage(user);
+			setLocalStorage({ user, keepSessionAlive });
 		}
 		return resp.success;
 	};
 
-	const newUser = ({
-		email = "",
-		password = "",
-		fullName = "",
-		nick = "",
-	}) => {
-		if (validateNewUser({ email, password })) {
-			console.log("en services create", body);
-		}
-		const newUser = { email, fullName, nick };
-		return newUser;
+	const createUser = async (user = { ...initialUser, isAdmin: false }) => {
+		let { isAdmin, ...newUser } = user;
+		newUser.role = getRoleName(isAdmin);
+		alert(JSON.stringify(newUser))
+		return await usersServices.addUser(newUser);
 	};
 
-	const logout = () => {
-		deleteLocalStorage();
+	const logout = ({ keepAlive = false }) => {
+		closeActualUser(keepAlive);
 		setUser(initialUser);
 		Router.replace("/");
 	};
 
 	const isLogged = () => {
-		const user = getLocalStorage();
+		const user = getActualUser();
 		setIsLoggedIn(user?.email ? true : false);
 	};
 
-	const data = { user, login, newUser, logout, isLoggedIn };
-	return <UserContext.Provider value={data}>{children}</UserContext.Provider>;
+	const getRoleName = (isAdmin = false) => {
+		if (isAdmin) {
+			return isFirstUser ? ROLES.RootAdmin : ROLES.Admin;
+		} else return ROLES.Default;
+	};
+
+	const dataToExport = {
+		ROLES,
+		user,
+		login,
+		createUser,
+		logout,
+		isLoggedIn,
+		isFirstUser,
+		isRootAdmin: getRoleName(true) === ROLES.RootAdmin,
+	};
+	return (
+		<UserContext.Provider value={dataToExport}>
+			{children}
+		</UserContext.Provider>
+	);
 }
 
 export default UserContext;

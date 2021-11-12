@@ -1,8 +1,12 @@
 import Link from '@Components/link'
+import UserContext from '@Context/user'
+import { useContext } from 'react'
+import userModel from 'src/models/user.model'
 
 import styles from './sidenavbar.module.css'
 
 const SideNavbar = () => {
+    const { user } = useContext(UserContext)
     return (
         <div className="navbar bg-primary px-4">
             <div className="vstack gap-3">

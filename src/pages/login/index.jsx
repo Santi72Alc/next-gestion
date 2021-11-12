@@ -9,7 +9,7 @@ import styles from './login.module.css'
 
 export default function Login() {
     const { login } = useContext(UserContext)
-    
+
 
     async function handleLogin() {
         const $email = document.getElementById('email')
@@ -31,7 +31,7 @@ export default function Login() {
                 timer: 4500,
                 returnFocus: false,
 
-            }).then((resp) =>{
+            }).then((resp) => {
                 $email.focus()
                 $password.value = ''
             })
@@ -60,18 +60,31 @@ export default function Login() {
                             className="form-control"
                             placeholder="Password" />
                     </div>
+                    <div className="form-group">
+                        <div className="form-check">
+                            <input className="form-check-input"
+                                type="checkbox"
+                                id="isPermanent"
+                            />
+                            <label className="form-check-label" htmlFor="isPermanent">
+                                Keep session alive
+                            </label>
+                        </div>
+                    </div>
                 </form>
             </div>
 
             <div className="card-footer p-4">
                 <div className="vstack gap-2">
                     <button onClick={handleLogin} className="btn btn-primary w-50 mx-auto">I'm ready</button>
-                    <Link href="/signup" className={`text-center ${styles.linkToRegister}`}>
-                        I'm new here! Please, send me to register
-                    </Link>
+                    {/*
+                        <Link href="/signup" className={`text-center ${styles.linkToRegister}`}>
+                            I'm new here! Please, send me to register
+                        </Link>
+                    */}
                 </div>
             </div>
 
-        </div>
+        </div >
     )
 }

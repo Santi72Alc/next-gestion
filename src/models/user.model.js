@@ -1,25 +1,26 @@
-import mongoose from 'mongoose'
-import bcrypt from 'bcrypt'
+import { model, models, Schema } from "mongoose";
+// import bcrypt from 'bcrypt'
 
-const userSchema = new mongoose.Schema({
-    email : {
-        type: String,
-        unique: [true, 'The user email already exist'],
-        required: [true, 'The user email is required']
-    },
-    fullName: String,
-    nick: String,
-    password: {
-        type: String,
-        minlength: [4, 'The user password must be longer than 4ch'],
-        required: [true, 'The user password is required']
-    }
-
-}, {
-    timestamps: true,
-    versionKey: false
-})
-
+const userSchema = new Schema(
+	{
+		email: {
+			type: String,
+			unique: [true, "The user email already exist"],
+			required: [true, "The user email is required"],
+		},
+		fullName: String,
+		nick: String,
+		password: {
+			type: String,
+			minlength: [4, "The user password must be longer than 4ch"],
+			required: [true, "The user password is required"],
+		},
+	},
+	{
+		timestamps: true,
+		versionKey: false,
+	}
+);
 
 // userSchema.pre('save', (next) => {
 //     const user = this
@@ -32,4 +33,6 @@ const userSchema = new mongoose.Schema({
 //     next()
 // })
 
-export default mongoose.models.Users || mongoose.model('Users', userSchema)
+const Users = models?.Users || model("Users", userSchema);
+
+export default Users;

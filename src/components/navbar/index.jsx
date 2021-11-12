@@ -52,11 +52,11 @@ const Navbar = ({ children }) => {
                             <div className="vstack text-center">
                                 <h3>Budget Management App</h3>
                                 <div className="hstack gap-3 justify-content-center">
-                                    <small className="text-dark">
-                                        &#169; 2021
-                                    </small>
+                                    
                                     <small className="text-white fst-italic">
-                                        Fernando Veras & Santiago San Román
+                                        Fernando Veras · {" "}
+                                        <small className="text-dark">&#169; 2021</small>
+                                        {" "} · Santiago San Román
                                     </small>
                                 </div>
 
