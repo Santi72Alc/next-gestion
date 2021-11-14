@@ -6,7 +6,8 @@
             "@Services/*": ["./src/services/*"],
             "@ApiServices/*": ["./src/services/api/*"],
             "@Libs/*": ["./src/libs/*"],
-            "@Context/*": ["./src/context/*"]
+            "@Context/*": ["./src/context/*"],
+            "@Models/*": ["./src/models/*"]
         }
     },
     "exclude": ["node_modules/*"]

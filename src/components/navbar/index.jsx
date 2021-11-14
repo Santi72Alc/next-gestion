@@ -42,7 +42,7 @@ const Navbar = ({ children }) => {
                                 id="btnCollapse"
                                 className="btn btn-info"
                                 onClick={toogleMenu}
-                                hidden={!user.email}>
+                                hidden={!user?.email}>
                                 {isMenuOpened ? (
                                     <i className="bi bi-arrow-bar-left"></i>
                                 ) : (

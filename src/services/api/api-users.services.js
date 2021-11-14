@@ -1,6 +1,7 @@
 import dbConnected from "@Libs/utils/database";
 import { initialUser } from "@Services/users.services";
-import Users from "src/models/user.model";
+import Users from "@Models/user.model";
+import { comparePassword } from "@Libs/utils/auth";
 
 const newUser = async (body = initialUser) => {
 	try {
@@ -35,14 +36,13 @@ const validateNewUser = async (email, password, fullName) => {
 		throw new Error("Email, Password and Full Name are required");
 	try {
 		/* 
-		Hacemos la llamada al api de Users para ver si existe
+		Buscamos en Users para ver si existe ese email
 		Si existe en la BD devolvemos false
 		Si no existe, devolvemos true
 		*/
 		const resp = await Users.findOne({ email });
 
 		if (resp) throw new Error("The email already exists");
-
 		return true;
 	} catch (error) {
 		throw new Error(error);
@@ -65,18 +65,18 @@ const getUsers = async filter => {
 const loginUser = async (email = "", passwordToCheck = "") => {
 	try {
 		await dbConnected();
-		const resp = await Users.findOne({ email });
+		const { _doc } = await Users.findOne({ email });
 
-		const { password, ...data } = resp._doc;
-		if (password !== passwordToCheck)
+		const { password, ...data } = _doc;
+		if (comparePassword(passwordToCheck, password))
 			return {
-				success: false,
-				message: "Email or Password wrong. Please check!",
+				success: true,
+				data,
+				message: "Users Logged",
 			};
 		return {
-			success: true,
-			data,
-			message: "Users Logged",
+			success: false,
+			message: "Email or Password wrong. Please check!",
 		};
 	} catch (error) {
 		throw new Error(error.message);

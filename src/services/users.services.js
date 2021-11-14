@@ -58,7 +58,7 @@ const createUser = async (user = initialUser) => {
 		 * query: void
 		 */
 		const url = `${URL_USERS}/new`;
-		const { data } = await axios.post(url, { data: user });
+		const { data } = await axios.post(url, user);
 
 		// ??? faltaria posible controlar el status
 		return {

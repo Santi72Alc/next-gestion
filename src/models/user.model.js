@@ -1,6 +1,6 @@
+import { hashPassword } from "@Libs/utils/auth";
 import { ROLES } from "@Services/users.services";
 import { model, models, Schema } from "mongoose";
-// import bcrypt from 'bcrypt'
 
 const userSchema = new Schema(
 	{
@@ -33,16 +33,13 @@ const userSchema = new Schema(
 	}
 );
 
-// userSchema.pre('save', (next) => {
-//     const user = this
-//     if (user.isNew) {
-//         const salt = bcrypt.genSaltSync(10)
-//         user.password = bcrypt.hashSync(user.password, salt)
-//         console.log("Codificada la pass ", user.password)
-//     }
-//     if (!user.nick) user.nick = user.email.split('@')[0]
-//     next()
-// })
+userSchema.pre("save", function () {
+	if (this.isNew) {
+		const hashedPassword = hashPassword(this.password);
+		this.password = hashedPassword;
+	}
+	if (!this.nick) this.nick = this.email.split("@")[0];
+});
 
 const Users = models?.Users || model("Users", userSchema);
 

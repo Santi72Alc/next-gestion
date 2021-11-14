@@ -40,7 +40,7 @@ export function UserProvider({ children }) {
 
 	const logout = () => {
 		closeActualUser();
-		setUser(initialUser);
+		setUser(null);
 		setIsLoggedIn(false);
 		Router.replace("/");
 	};
@@ -57,6 +57,10 @@ export function UserProvider({ children }) {
 		isAdmin: user?.email && getActualUser()?.role === ROLES.Admin,
 		isMainAdmin: user?.email && getActualUser()?.role === ROLES.MainAdmin,
 	};
+
+
+
+
 	return (
 		<UserContext.Provider value={dataToExport}>
 			{children}

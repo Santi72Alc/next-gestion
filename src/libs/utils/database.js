@@ -40,12 +40,13 @@ async function dbConnect() {
 	}
 
 	if (!DB_cached.promise) {
-		const opts = {
-			bufferCommands: false,
-		};
 
 		try {
-			DB_cached.promise = await mongoose.connect(MONGODB_URI, opts);
+			DB_cached.promise = await mongoose.connect(MONGODB_URI, {
+				useNewUrlParser: true,
+				useUnifiedTopology: true,
+				bufferCommands: false
+			});
 		} catch (error) {
 			console.error("*** Error connecting to database.\n", error.message);
 		}
