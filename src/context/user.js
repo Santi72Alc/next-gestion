@@ -1,53 +1,71 @@
 import Router from "next/router";
 import { createContext, useEffect, useState } from "react";
-import { validateUser } from "../services/users.services";
-import {
-	getLocalStorage,
-	setLocalStorage,
-	deleteLocalStorage,
-} from "./sessionStorage";
+import usersServices, { initialUser, ROLES } from "@Services/users.services";
 
+import {
+	getActualUser,
+	closeActualUser,
+	setActualUser,
+	isLogged,
+} from "@Services/sessionStorage.services";
+
+const { password, ...initialUserState } = initialUser;
 const UserContext = createContext();
 
-const initialUser = {
-	email: "",
-	nick: "",
-	token: "",
-};
-
 export function UserProvider({ children }) {
-	const [user, setUser] = useState(initialUser);
+	const [user, setUser] = useState(initialUserState);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [isFirstUser, setIsFirstUser] = useState(false);
 
-	useEffect(() => {
-		isLogged();
+	useEffect(async () => {
+		const isFirstUser = await usersServices.isFirstUser();
+		setIsFirstUser(isFirstUser);
+		setIsLoggedIn(isLogged);
 	}, [user]);
 
-	/* Crear función de signUp para crear nuevo usuario */
-
-	const login = ({ email, password }) => {
-		const isValid = validateUser({ email, password });
-		if (isValid) {
-			const user = { email, nick: email.split("@")[0] };
+	const login = async (
+		email = "",
+		password = ""
+	) => {
+		const { data } = await usersServices.loginUser(email, password);
+		if (data.success) {
+			const { email, fullName, nick, role } = data.data;
+			const user = { email, fullName, nick, role };
 			setUser(user);
-			setLocalStorage(user);
+			setActualUser(user);
+			setIsLoggedIn(true);
 		}
-		return isValid;
+		return data.success;
 	};
 
 	const logout = () => {
-		deleteLocalStorage();
-		setUser(initialUser);
+		closeActualUser();
+		setUser(null);
+		setIsLoggedIn(false);
 		Router.replace("/");
 	};
 
-	const isLogged = () => {
-		const user = getLocalStorage();
-		setIsLoggedIn(user?.email ? true : false);
+	const dataToExport = {
+		ROLES,
+		user,
+		login,
+		logout,
+		isLoggedIn,
+		setIsLoggedIn,
+		isFirstUser,
+		setIsFirstUser,
+		isAdmin: user?.email && getActualUser()?.role === ROLES.Admin,
+		isMainAdmin: user?.email && getActualUser()?.role === ROLES.MainAdmin,
 	};
 
-	const data = { user, login, logout, isLoggedIn };
-	return <UserContext.Provider value={data}>{children}</UserContext.Provider>;
+
+
+
+	return (
+		<UserContext.Provider value={dataToExport}>
+			{children}
+		</UserContext.Provider>
+	);
 }
 
 export default UserContext;

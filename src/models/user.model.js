@@ -1,35 +1,46 @@
-import mongoose from 'mongoose'
-import bcrypt from 'bcrypt'
+import { hashPassword } from "@Libs/utils/auth";
+import { ROLES } from "@Services/users.services";
+import { model, models, Schema } from "mongoose";
 
-const userSchema = new mongoose.Schema({
-    email : {
-        type: String,
-        unique: [true, 'The user email already exist'],
-        required: [true, 'The user email is required']
-    },
-    fullName: String,
-    nick: String,
-    password: {
-        type: String,
-        minlength: [4, 'The user password must be longer than 4ch'],
-        required: [true, 'The user password is required']
-    }
+const userSchema = new Schema(
+	{
+		email: {
+			type: String,
+			unique: [true, "The user email already exists"],
+			required: [true, "The user email is required"],
+		},
+		fullName: {
+			type: String,
+			trim: true,
+		},
+		nick: {
+			type: String,
+			trim: true,
+		},
+		password: {
+			type: String,
+			minlength: [4, "The user password must be longer than 4ch"],
+			required: [true, "The user password is required"],
+		},
+		role: {
+			type: String,
+			enum: Object.values(ROLES),
+		},
+	},
+	{
+		timestamps: true,
+		versionKey: false,
+	}
+);
 
-}, {
-    timestamps: true,
-    versionKey: false
-})
+userSchema.pre("save", function () {
+	if (this.isNew) {
+		const hashedPassword = hashPassword(this.password);
+		this.password = hashedPassword;
+	}
+	if (!this.nick) this.nick = this.email.split("@")[0];
+});
 
+const Users = models?.Users || model("Users", userSchema);
 
-// userSchema.pre('save', (next) => {
-//     const user = this
-//     if (user.isNew) {
-//         const salt = bcrypt.genSaltSync(10)
-//         user.password = bcrypt.hashSync(user.password, salt)
-//         console.log("Codificada la pass ", user.password)
-//     }
-//     if (!user.nick) user.nick = user.email.split('@')[0]
-//     next()
-// })
-
-export default mongoose.models.Users || mongoose.model('Users', userSchema)
+export default Users;

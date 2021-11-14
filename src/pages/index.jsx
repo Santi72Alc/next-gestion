@@ -1,18 +1,34 @@
 import Router from 'next/router';
-import { useContext, useEffect} from 'react'
+import { useContext, useEffect, useState } from 'react'
 
-import UserContext from '../context/user';
+import UserContext from '@Context/user';
+import { isLogged } from "@Services/sessionStorage.services"
 
-export default function Home() {
-  const { isLoggedIn } = useContext(UserContext);
+const Home = () => {
+  const { isLoggedIn, isFirstUser } = useContext(UserContext);
+  const [isLoading, setIsLoading] = useState(true)
 
-  useEffect( () => {
-    if (!isLoggedIn) Router.replace("/login")
-  })
+  useEffect(() => {
+    if (isFirstUser) Router.replace("/signup")
+    else {
+      if (isLogged()) {
+        setIsLoading(false)
+      } else Router.replace('/login')
+    }
+  }, [isFirstUser, isLoggedIn])
 
   return (
     <>
-      <h3 className="text-center">Página principal</h3>
+      {
+        isLoading
+          ?
+          <h3 className="text-center">Redirecting</h3>
+          :
+          <h3 className="text-center">Página principal</h3>
+      }
     </>
   )
 }
+
+
+export default Home;
