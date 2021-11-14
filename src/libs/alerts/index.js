@@ -4,8 +4,7 @@ export const optsToast = {
 	toast: true,
 	position: "bottom-right",
 	iconColor: "white",
-	timer: 3000,
-	timerProgressBar: true,
+	timer: 5000,
 	showConfirmButton: false,
 };
 
@@ -14,6 +13,7 @@ const Alert = Swal.mixin();
 export const Toast = {
 	success: Swal.mixin({
 		...optsToast,
+		
 		customClass: {
 			popup: "bg-success",
 			title: "text-white text-bold",

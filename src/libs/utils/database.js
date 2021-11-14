@@ -10,10 +10,10 @@ const DB_NAME = process.env.DB_NAME || "db_pruebas";
 const DB_USER = process.env.DB_USER || "";
 const DB_PASSWORD = process.env.DB_PASSWORD || "";
 // URI si hay usuario en la BD o vacio
-const strWithUser = DB_USER ? `${DB_USER}:${DB_PASSWORD}@` : "";
+const strIfUser = DB_USER ? `${DB_USER}:${DB_PASSWORD}@` : "";
 
 // URI de conexión a BD
-const URI_Connection = `mongodb://${strWithUser}${DB_HOST}:${DB_PORT}/${DB_NAME}`;
+const URI_Connection = `mongodb://${strIfUser}${DB_HOST}:${DB_PORT}/${DB_NAME}`;
 
 const MONGODB_URI = process.env.MONGODB_URI || URI_Connection;
 
@@ -44,16 +44,14 @@ async function dbConnect() {
 			bufferCommands: false,
 		};
 
-		DB_cached.promise = mongoose.connect(MONGODB_URI, opts)
-		.then( conn => {
-			console.log(`Connected to database: ${conn.connection.name}`)
-		})
-		.catch( error => {
-			console.error('*** Error connecting to database.\n', error)
-		})
+		try {
+			DB_cached.promise = await mongoose.connect(MONGODB_URI, opts);
+		} catch (error) {
+			console.error("*** Error connecting to database.\n", error.message);
+		}
 	}
-	DB_cached.conn = await DB_cached.promise;
-	
+	DB_cached.conn = DB_cached.promise;
+
 	return DB_cached.conn;
 }
 

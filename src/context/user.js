@@ -5,70 +5,57 @@ import usersServices, { initialUser, ROLES } from "@Services/users.services";
 import {
 	getActualUser,
 	closeActualUser,
-	setLocalStorage,
-} from "./sessionStorage";
+	setActualUser,
+	isLogged,
+} from "@Services/sessionStorage.services";
 
+const { password, ...initialUserState } = initialUser;
 const UserContext = createContext();
 
 export function UserProvider({ children }) {
-	const [user, setUser] = useState(initialUser);
+	const [user, setUser] = useState(initialUserState);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
 	const [isFirstUser, setIsFirstUser] = useState(false);
 
 	useEffect(async () => {
 		const isFirstUser = await usersServices.isFirstUser();
 		setIsFirstUser(isFirstUser);
-		isLogged();
+		setIsLoggedIn(isLogged);
 	}, [user]);
 
-	const login = async ({
+	const login = async (
 		email = "",
-		password = "",
-		keepSessionAlive = false,
-	}) => {
-		const resp = await usersServices.loginUser({ email, password });
-		if (resp.success) {
-			const { email, fullName, nick, role } = resp.data;
+		password = ""
+	) => {
+		const { data } = await usersServices.loginUser(email, password);
+		if (data.success) {
+			const { email, fullName, nick, role } = data.data;
 			const user = { email, fullName, nick, role };
 			setUser(user);
-			setLocalStorage({ user, keepSessionAlive });
+			setActualUser(user);
+			setIsLoggedIn(true);
 		}
-		return resp.success;
+		return data.success;
 	};
 
-	const createUser = async (user = { ...initialUser, isAdmin: false }) => {
-		let { isAdmin, ...newUser } = user;
-		newUser.role = getRoleName(isAdmin);
-		alert(JSON.stringify(newUser))
-		return await usersServices.addUser(newUser);
-	};
-
-	const logout = ({ keepAlive = false }) => {
-		closeActualUser(keepAlive);
+	const logout = () => {
+		closeActualUser();
 		setUser(initialUser);
+		setIsLoggedIn(false);
 		Router.replace("/");
-	};
-
-	const isLogged = () => {
-		const user = getActualUser();
-		setIsLoggedIn(user?.email ? true : false);
-	};
-
-	const getRoleName = (isAdmin = false) => {
-		if (isAdmin) {
-			return isFirstUser ? ROLES.RootAdmin : ROLES.Admin;
-		} else return ROLES.Default;
 	};
 
 	const dataToExport = {
 		ROLES,
 		user,
 		login,
-		createUser,
 		logout,
 		isLoggedIn,
+		setIsLoggedIn,
 		isFirstUser,
-		isRootAdmin: getRoleName(true) === ROLES.RootAdmin,
+		setIsFirstUser,
+		isAdmin: user?.email && getActualUser()?.role === ROLES.Admin,
+		isMainAdmin: user?.email && getActualUser()?.role === ROLES.MainAdmin,
 	};
 	return (
 		<UserContext.Provider value={dataToExport}>

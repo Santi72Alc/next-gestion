@@ -1,5 +1,9 @@
+import axios from "axios";
+
+const URL_USERS = "/api/v1/users";
+
 export const ROLES = {
-	RootAdmin: "Root Admin",
+	MainAdmin: "Main Admin",
 	Admin: "Admin",
 	User: "User",
 	Default: "User",
@@ -13,70 +17,23 @@ export const initialUser = {
 	role: ROLES.Default,
 };
 
-async function loginUser({ email = "", password = "" }) {
-	const resp = await validateUser({ email, password });
-	if (resp.success) {
-		return {
-			success: true,
-			data,
-			message: resp.message,
-		};
-	}
-	return {
-		success: false,
-		message: resp.message,
-	};
-}
-
-const validateUser = ({ email = "", password = "" }) => {
-	if (!email || !password)
-		return {
-			success: false,
-			message: "Email & Password are required, please check!",
-		};
-	/* 
-	* Hacemos la llamada al api de Users para ver si existe
-	Si NO existe en la BD devolvemos false
-	Si exite, devolvemos el user { email, fullName, Nick }
-	*/
-
-	console.log("en services validateUser", email, password);
-	// USER DE EJEMPLO
-	const user = {
-		email,
-		fullName: "Santiago San Román",
-		nick: email.split("@")[0],
-		role: ROLES.User,
-	};
-	if (password === "1234") {
-		return { success: true, data: user, message: "User logged" };
-	}
-	return {
-		success: false,
-		message: "Error in Email or Password, please check!",
-	};
-};
-
-async function addUser({
-	email,
-	password,
-	fullName,
-	nick,
-	role,
-} = initialUser) {
+async function loginUser(email = "", password = "") {
 	try {
-		await validateNewUser({ email, password, fullName });
-		nick = nick || email.split("@")[0];
-		/*  Creamos el nuevo usuario en la DB */
-		// const body = { email, password, fullName, nick, role };
-		// const newUser = new Users(body);
-		// await newUser.save();
-		return {
-			success: true,
-			data: { email, fullName, nick, role },
-			message: `User ${fullName} added like ${role} role`
-		};
+		if (!email || !password)
+			throw new Error("Email and Password are required");
+
+		/**
+		 * Llamada (AXIOS) a la api para logar el usuario
+		 * url: api/v?/users
+		 * Tipo: GET
+		 * data: { email, password }
+		 * params: void
+		 * query: void
+		 */
+		const url = `${URL_USERS}/login`;
+		return await axios.get(url, { params: { email, password } });
 	} catch (error) {
+		console.log("Error logging user", error);
 		return {
 			success: false,
 			message: error.message,
@@ -84,35 +41,82 @@ async function addUser({
 	}
 }
 
-const validateNewUser = async ({ email, password, fullName } = initialUser) => {
-	if (!email || !password || !fullName)
-		throw new Error("Email, Password and Full Name are required");
+/*
+	Create a new User
+*/
+const createUser = async (user = initialUser) => {
+	try {
+		if (!user.email || !user.password || !user.fullName)
+			throw new Error("Email, Password and Full Name are required");
 
-	/* 
-	 * Hacemos la llamada al api de Users para ver si existe
-	 Si existe en la BD devolvemos false
-	 Si no existe, devolvemos true
-	*/
+		/**
+		 * Llamada (AXIOS) a la api para añadir el usuario
+		 * url: api/v?/users/new
+		 * Tipo: POST
+		 * data: {email, password, fullName, nick, role }
+		 * params: void
+		 * query: void
+		 */
+		const url = `${URL_USERS}/new`;
+		const { data } = await axios.post(url, { data: user });
 
-	const isSuccess = false;
-	if (isSuccess) {
-		throw new Error("The email already exists in database");
+		// ??? faltaria posible controlar el status
+		return {
+			success: true,
+			data,
+			message: `User ${data.fullName} added`,
+		};
+	} catch (error) {
+		return {
+			success: false,
+			message: error.message,
+		};
 	}
-
-	return true;
 };
 
 const getUsersCount = async () => {
 	// Llamada al api para recoger el numero de usuarios en la BD
-	let count = 0;
-	return count;
+	try {
+		/**
+		 * Llamada (AXIOS) a la api para Número de usuarios
+		 * url: api/v?/users
+		 * Tipo: GET
+		 * data: void
+		 * params: void
+		 * query: void
+		 */
+		const url = URL_USERS;
+		const resp = await axios({
+			method: "GET",
+			url,
+		});
+		return {
+			success: true,
+			data: resp.data.length,
+		};
+	} catch (error) {
+		return {
+			success: false,
+			message: error.message,
+		};
+	}
 };
 
-const isFirstUser = async () => (await getUsersCount()) === 0;
+const setRoleName = ({ isFirstUser = false, isAdmin = false }) => {
+	if (isAdmin) {
+		return isFirstUser ? ROLES.MainAdmin : ROLES.Admin;
+	} else return ROLES.Default;
+};
+
+const isFirstUser = async () => {
+	const { data } = await getUsersCount();
+	return data === 0;
+};
 
 export default {
-	addUser,
+	createUser,
 	loginUser,
 	getUsersCount,
 	isFirstUser,
+	setRoleName,
 };

@@ -1,3 +1,4 @@
+import { ROLES } from "@Services/users.services";
 import { model, models, Schema } from "mongoose";
 // import bcrypt from 'bcrypt'
 
@@ -5,15 +6,25 @@ const userSchema = new Schema(
 	{
 		email: {
 			type: String,
-			unique: [true, "The user email already exist"],
+			unique: [true, "The user email already exists"],
 			required: [true, "The user email is required"],
 		},
-		fullName: String,
-		nick: String,
+		fullName: {
+			type: String,
+			trim: true,
+		},
+		nick: {
+			type: String,
+			trim: true,
+		},
 		password: {
 			type: String,
 			minlength: [4, "The user password must be longer than 4ch"],
 			required: [true, "The user password is required"],
+		},
+		role: {
+			type: String,
+			enum: Object.values(ROLES),
 		},
 	},
 	{

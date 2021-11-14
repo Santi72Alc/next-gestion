@@ -2,11 +2,11 @@ import { useContext } from 'react'
 import Router from 'next/router'
 import myAlerts from "@Libs/alerts"
 import UserContext from '@Context/user'
+import usersServices from '@Services/users.services'
 
 // import styles from './new-user.module.css'
-
-export default function NewUser() {
-    const {  createUser, isFirstUser, isRootAdmin } = useContext(UserContext)
+function NewUser() {
+    const { isFirstUser, setIsFirstUser } = useContext(UserContext)
 
     async function handleNewUser() {
         const email = document.getElementById('email').value
@@ -15,17 +15,17 @@ export default function NewUser() {
         const nick = document.getElementById('nick').value
         const isAdmin = document.getElementById('roleAdmin').checked
 
-        // Setting the user role
-        console.log("Data introducida en front: ", { email, password, fullName, nick, isAdmin});
+        // Llamamos al servicio para crear el usuario
+        const userToCreate = { email, password, fullName, nick, role: usersServices.setRoleName({ isAdmin, isFirstUser }) }
+        const resp = await usersServices.createUser(userToCreate)
 
-        const resp = await createUser({ email, password, fullName, nick, isAdmin })
-
-        console.log("REspuesta de API: ", resp);
+        // User created
         if (resp.success) {
-            myAlerts.ToastSucces.fire(resp.message)
+            myAlerts.ToastSucces.fire({ titleText: resp.message })
+            setIsFirstUser(false)
             Router.replace("/")
         } else {
-            myAlerts.ToasError.fire(resp.message)
+            myAlerts.ToasError.fire({ titleText: resp.message })
         }
     }
 
@@ -39,7 +39,7 @@ export default function NewUser() {
         <div className="card">
             <div className="card-header text-center">
                 <h3>Sign up</h3>
-                {isFirstUser && <h4 className="fst-italic">· Root Administrator ·</h4>}
+                {isFirstUser && <h4 className="fst-italic">· Main Administrator ·</h4>}
             </div>
             <div className="card-body">
                 <form>
@@ -80,24 +80,28 @@ export default function NewUser() {
                             <input className="form-check-input"
                                 type="checkbox"
                                 id="roleAdmin"
-                                checked={isRootAdmin}
-                                hidden={!isRootAdmin}
-                                disabled={isRootAdmin}
+                                defaultChecked={isFirstUser || false}
+                                hidden={!isFirstUser}
+                                disabled={isFirstUser}
                             />
                             <label className="form-checkbox-label text-danger" htmlFor="roleAdmin">
-                                {isFirstUser ? 'ROOT ADMINISTRATOR ' : 'Administrator '}
+                                {isFirstUser ? 'MAIN ADMINISTRATOR ' : 'Administrator '}
                             </label>
                         </div>
                     </div>
                 </form>
             </div >
             <div className="card-footer p-4">
-                <div className="hstack gap-3">
+                <div className={isFirstUser ? "d-flex justify-content-center" : "hstack gap-3"}>
                     <button onClick={handleNewUser} className="btn btn-primary w-75">Add me!</button>
-                    <button onClick={() => Router.back()} className="btn btn-secondary w-25">Go back</button>
+                    {!isFirstUser &&
+                        <button onClick={() => Router.back()} className="btn btn-secondary w-25">Go back</button>
+                    }
                 </div>
             </div>
         </div >
 
     )
 }
+
+export default NewUser

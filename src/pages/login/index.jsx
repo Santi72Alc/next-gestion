@@ -1,22 +1,24 @@
 import Router from 'next/router'
 import { useContext } from 'react'
 
-import Link from '@Components/link'
+// import Link from '@Components/link'
 import UserContext from '@Context/user'
 import myAlerts from '@Libs/alerts'
 
-import styles from './login.module.css'
+// import styles from './login.module.css'
+// import usersServices from '@Services/users.services'
 
 export default function Login() {
-    const { login } = useContext(UserContext)
-
+    const { login, setIsLoggedIn } = useContext(UserContext)
 
     async function handleLogin() {
         const $email = document.getElementById('email')
         const $password = document.getElementById('password')
+        // const keepAlive = document.getElementById('keepAlive').checked
 
-        const isLogged = await login({ email: $email.value, password: $password.value })
-        if (isLogged) {
+        const isUserLogged = await login($email.value, $password.value)
+        setIsLoggedIn(isUserLogged)
+        if (isUserLogged) {
             myAlerts.ToastSucces.fire({
                 icon: "success",
                 title: 'User logged'
@@ -60,17 +62,17 @@ export default function Login() {
                             className="form-control"
                             placeholder="Password" />
                     </div>
-                    <div className="form-group">
+                   {/*  <div className="form-group">
                         <div className="form-check">
                             <input className="form-check-input"
                                 type="checkbox"
-                                id="isPermanent"
+                                id="keepAlive"
                             />
-                            <label className="form-check-label" htmlFor="isPermanent">
+                            <label className="form-check-label" htmlFor="keepAlive">
                                 Keep session alive
                             </label>
                         </div>
-                    </div>
+                    </div> */}
                 </form>
             </div>
 

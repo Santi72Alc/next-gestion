@@ -1,11 +1,11 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/router";
-import SideNavbar from "../sideNavbar";
-import UserContext from "../../context/user";
+import SideNavbar from "@Components/sideNavbar";
+import UserContext from "@Context/user";
 
 const Navbar = ({ children }) => {
-    const { user, login, logout, isLoggedIn } = useContext(UserContext);
-    const [isMenuOpened, setIsMenuOpened] = useState(user?.email);
+    const { user, logout, isLoggedIn } = useContext(UserContext);
+    const [isMenuOpened, setIsMenuOpened] = useState(user?.email || false);
     const router = useRouter()
 
     // Show the menu button on the left
@@ -52,7 +52,7 @@ const Navbar = ({ children }) => {
                             <div className="vstack text-center">
                                 <h3>Budget Management App</h3>
                                 <div className="hstack gap-3 justify-content-center">
-                                    
+
                                     <small className="text-white fst-italic">
                                         Fernando Veras · {" "}
                                         <small className="text-dark">&#169; 2021</small>
