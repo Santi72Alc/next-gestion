@@ -1,11 +1,11 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useRouter } from "next/router";
-import SideNavbar from "../sideNavbar";
-import UserContext from "../../context/user";
+import SideNavbar from "@Components/sideNavbar";
+import UserContext from "@Context/user";
 
 const Navbar = ({ children }) => {
-    const { user, login, logout, isLoggedIn } = useContext(UserContext);
-    const [isMenuOpened, setIsMenuOpened] = useState(user?.email);
+    const { user, logout, isLoggedIn } = useContext(UserContext);
+    const [isMenuOpened, setIsMenuOpened] = useState(user?.email || false);
     const router = useRouter()
 
     // Show the menu button on the left
@@ -19,12 +19,6 @@ const Navbar = ({ children }) => {
     // When press the menu button
     function toogleMenu() {
         showMenu(!isMenuOpened);
-    }
-
-    function handleLogin() {
-        if (login()) {
-            router.replace("/");
-        }
     }
 
     function handleLogout() {
@@ -48,7 +42,7 @@ const Navbar = ({ children }) => {
                                 id="btnCollapse"
                                 className="btn btn-info"
                                 onClick={toogleMenu}
-                                hidden={!user.email}>
+                                hidden={!user?.email}>
                                 {isMenuOpened ? (
                                     <i className="bi bi-arrow-bar-left"></i>
                                 ) : (
@@ -57,9 +51,15 @@ const Navbar = ({ children }) => {
                             </button>
                             <div className="vstack text-center">
                                 <h3>Budget Management App</h3>
-                                <small className="text-dark">
-                                    Fernando Veras & Santiago San Román
-                                </small>
+                                <div className="hstack gap-3 justify-content-center">
+
+                                    <small className="text-white fst-italic">
+                                        Fernando Veras · {" "}
+                                        <small className="text-dark">&#169; 2021</small>
+                                        {" "} · Santiago San Román
+                                    </small>
+                                </div>
+
                             </div>
 
                             {isLoggedIn &&
