@@ -1,6 +1,6 @@
 import Swal from "sweetalert2";
 
-export const optsToast = {
+const optsToast = {
 	toast: true,
 	position: "bottom-right",
 	iconColor: "white",
@@ -10,30 +10,31 @@ export const optsToast = {
 
 const Alert = Swal.mixin();
 
-export const Toast = {
-	success: Swal.mixin({
-		...optsToast,
-		
-		customClass: {
-			popup: "bg-success",
-			title: "text-white text-bold",
-			text: "text-white"
-		},
-	}),
-	error:  Swal.mixin({
-		...optsToast,
-		customClass: {
-			popup: "bg-danger",
-			title: "text-white text-bold",
-			text: "text-white"
-		},
-	}),
-};
+
+export const ToastSuccess = Swal.mixin({
+	...optsToast,
+	icon: "success",
+	customClass: {
+		popup: "bg-success",
+		title: "text-white text-bold",
+		text: "text-white"
+	},
+})
+
+export const ToastError = Swal.mixin({
+	...optsToast,
+	icon: "error",
+	customClass: {
+		popup: "bg-danger",
+		title: "text-white text-bold",
+		text: "text-white"
+	},
+})
 
 
 const Alerts = {
 	Alert,
-	ToastSucces: Toast.success,
-	ToasError: Toast.error
+	ToastSuccess,
+	ToastError
 }
 export default Alerts

@@ -4,12 +4,22 @@ const defaultOptions = {
 	key: COOKIE_KEY,
 };
 
-const setActualUser = (
-	{ email, fullName, nick, role },
-	{ key } = defaultOptions
-) => {
-	const user = { email, fullName, nick, role };
-	if (!user?.email || !user?.fullName || !user?.nick || !user?.role) {
+export const defaultStorageData = {
+	_id: "",
+	email: "",
+	fullName: "",
+	nick: "",
+	role: "",
+};
+
+const setActualUser = (user = defaultStorageData, { key } = defaultOptions) => {
+	if (
+		!user._id ||
+		!user.email ||
+		!user.fullName ||
+		!user.nick ||
+		!user.role
+	) {
 		console.error("There are fields missing to save in 'client storage'");
 		return null;
 	}
@@ -28,7 +38,7 @@ const getActualUser = (key = COOKIE_KEY) => {
 		const data = JSON.parse(savedData);
 		return data;
 	}
-	console.log("Error deploying cookies not allowed");
+	console.log("*** Error deploying cookies not allowed");
 	return null;
 };
 
@@ -36,12 +46,13 @@ const closeActualUser = ({ key } = defaultOptions) => {
 	if (typeof window !== "undefined") {
 		sessionStorage.removeItem(key);
 	}
-	return null;
 };
 
-const isLogged = () => {
-	if (getActualUser()) return true;
-	return false;
-};
+const isUserLogged = () => (getActualUser()?._id ? true : false);
 
-export { setActualUser, getActualUser, closeActualUser, isLogged };
+export default {
+	setActualUser,
+	getActualUser,
+	closeActualUser,
+	isUserLogged,
+};

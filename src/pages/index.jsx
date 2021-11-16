@@ -1,21 +1,21 @@
 import Router from 'next/router';
 import { useContext, useEffect, useState } from 'react'
 
-import UserContext from '@Context/user';
-import { isLogged } from "@Services/sessionStorage.services"
+import authContext from '@Context/auth.context';
 
 const Home = () => {
-  const { isLoggedIn, isFirstUser } = useContext(UserContext);
+  const { isLogged } = useContext(authContext);
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    if (isFirstUser) Router.replace("/signup")
-    else {
-      if (isLogged()) {
-        setIsLoading(false)
-      } else Router.replace('/login')
-    }
-  }, [isFirstUser, isLoggedIn])
+    import("bootstrap/dist/js/bootstrap")
+  }, [])
+
+  useEffect(() => {
+    isLogged
+      ? setIsLoading(false)
+      : Router.replace('/login')
+  }, [isLogged])
 
   return (
     <>

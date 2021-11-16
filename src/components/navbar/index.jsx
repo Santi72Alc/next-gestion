@@ -1,12 +1,11 @@
 import { useState, useContext, useEffect } from "react";
-import { useRouter } from "next/router";
+import Router from "next/router";
 import SideNavbar from "@Components/sideNavbar";
-import UserContext from "@Context/user";
+import AuthContext from "@Context/auth.context";
 
 const Navbar = ({ children }) => {
-    const { user, logout, isLoggedIn } = useContext(UserContext);
-    const [isMenuOpened, setIsMenuOpened] = useState(user?.email || false);
-    const router = useRouter()
+    const { user, logout, isLogged } = useContext(AuthContext);
+    const [isMenuOpened, setIsMenuOpened] = useState(false);
 
     // Show the menu button on the left
     function showMenu(show = true) {
@@ -24,7 +23,7 @@ const Navbar = ({ children }) => {
     function handleLogout() {
         logout();               // Cerramos el user actual
         showMenu(false);        // Quitamos el menu lateral
-        router.push("/");       // Nos desplazamos a la ruta root
+        Router.push("/");       // Nos desplazamos a la ruta root
     }
 
     return (
@@ -62,7 +61,7 @@ const Navbar = ({ children }) => {
 
                             </div>
 
-                            {isLoggedIn &&
+                            {isLogged &&
                                 <button
                                     className="btn btn-success"
                                     onClick={handleLogout}>

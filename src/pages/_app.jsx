@@ -1,7 +1,9 @@
 import { useEffect } from 'react'
 import Head from 'next/head'
 import Navbar from '@Components/navbar'
-import { UserProvider } from '@Context/user'
+import LayoutProviders from '@Context/layout.context'
+// import { AuthProvider } from '@Context/auth.context'
+// import { UsersProvider } from '@Context/users.context'
 
 /**
  *  CSS imports
@@ -14,10 +16,6 @@ import '../styles/globals.css'
 
 function MyApp({ Component, pageProps }) {
 
-  useEffect(() => {
-    import("bootstrap/dist/js/bootstrap")
-  }, [])
-
   return (
     <>
       <Head>
@@ -26,11 +24,11 @@ function MyApp({ Component, pageProps }) {
 
         <title>Budgets Management</title>
       </Head>
-      <UserProvider>
+      <LayoutProviders>
         <Navbar>
           <Component {...pageProps} />
         </Navbar>
-      </UserProvider>
+      </LayoutProviders>
     </>
   )
 }

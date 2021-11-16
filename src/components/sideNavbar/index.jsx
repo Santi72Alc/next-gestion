@@ -1,12 +1,11 @@
 import Link from '@Components/link'
-import UserContext from '@Context/user'
+import AuthContext from '@Context/auth.context'
 import { useContext } from 'react'
-import userModel from 'src/models/user.model'
 
 import styles from './sidenavbar.module.css'
 
 const SideNavbar = () => {
-    const { user } = useContext(UserContext)
+    const { user } = useContext(AuthContext)
     return (
         <div className="navbar bg-primary px-4">
             <div className="vstack gap-3">
@@ -43,7 +42,7 @@ const SideNavbar = () => {
                 <hr className={"text-dark"} />
                 <div className="mb-4">
                     <Link href="#" className={styles.link}>
-                        <i className="bi bi-person-fill"></i>Profile
+                        <i className="bi bi-person-fill"></i>Profile ({user.role})
                     </Link>
                 </div>
             </div>
