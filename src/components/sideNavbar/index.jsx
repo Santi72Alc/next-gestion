@@ -1,11 +1,12 @@
 import Link from '@Components/link'
-import AuthContext from '@Context/auth.context'
 import { useContext } from 'react'
+import AuthContext from 'src/contexts/auth.context'
 
 import styles from './sidenavbar.module.css'
 
 const SideNavbar = () => {
     const { user } = useContext(AuthContext)
+    
     return (
         <div className="navbar bg-primary px-4">
             <div className="vstack gap-3">

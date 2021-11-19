@@ -1,10 +1,12 @@
 import Router from 'next/router';
 import { useContext, useEffect, useState } from 'react'
 
-import authContext from '@Context/auth.context';
+import AuthContext from 'src/contexts/auth.context';
+import UsersContext from 'src/contexts/users.context';
 
 const Home = () => {
-  const { isLogged } = useContext(authContext);
+  const { isLogged } = useContext(AuthContext)
+  const { isFirstUser, usersCount, updateUsersInfo } = useContext(UsersContext)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -12,10 +14,17 @@ const Home = () => {
   }, [])
 
   useEffect(() => {
-    isLogged
-      ? setIsLoading(false)
-      : Router.replace('/login')
-  }, [isLogged])
+    usersCount || updateUsersInfo()
+    if (usersCount === 0) {
+      Router.replace('/signup')
+    } else {
+      if (!isLogged) Router.replace("login")
+      else {
+        setIsLoading(false)
+        Router.replace("/")
+      }
+    }
+  }, [isLogged, usersCount])
 
   return (
     <>

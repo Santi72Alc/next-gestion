@@ -1,10 +1,12 @@
-import { useState, useContext, useEffect } from "react";
+import { useContext, useState } from "react";
 import Router from "next/router";
 import SideNavbar from "@Components/sideNavbar";
-import AuthContext from "@Context/auth.context";
+import Link from "@Components/link";
+
+import AuthContext from "src/contexts/auth.context";
 
 const Navbar = ({ children }) => {
-    const { user, logout, isLogged } = useContext(AuthContext);
+    const { user, logout, isLogged } = useContext(AuthContext)
     const [isMenuOpened, setIsMenuOpened] = useState(false);
 
     // Show the menu button on the left
@@ -49,7 +51,9 @@ const Navbar = ({ children }) => {
                                 )}
                             </button>
                             <div className="vstack text-center">
-                                <h3>Budget Management App</h3>
+                                <Link href="/" className="h2 text-decoration-none text-dark">
+                                    Budget Management App
+                                </Link>
                                 <div className="hstack gap-3 justify-content-center">
 
                                     <small className="text-white fst-italic">
@@ -71,7 +75,6 @@ const Navbar = ({ children }) => {
                                     {" - Logout"}
                                 </button>
                             }
-
                         </nav>
                         <div className="col m-3">{children}</div>
                     </div>

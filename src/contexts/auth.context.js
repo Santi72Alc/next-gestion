@@ -1,24 +1,19 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useState } from "react";
+import Router from "next/router";
 
 import authServices from "@Services/auth.services";
-import storageServices, {
-	defaultStorageData,
-} from "@Services/sessionStorage.services";
+import storageServices from "@Services/sessionStorage.services";
+import { initialAuthContext } from '@Services/constants'
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-	const [user, setUser] = useState(defaultStorageData);
+	const [user, setUser] = useState(initialAuthContext);
 	const [isLogged, setIsLogged] = useState(false);
-
-	// useEffect(async () => {
-	// 	setIsLogged(isLogged);
-	// }, [user]);
 
 	const login = async (email = "", password = "") => {
 		const resp = await authServices.loginUser(email, password);
 		if (resp.success) {
-			
 			const { _id, email, fullName, nick, role } = resp.data
 			const user = { _id, email, fullName, nick, role }
 			setUser(user);
@@ -31,8 +26,9 @@ export function AuthProvider({ children }) {
 
 	const logout = () => {
 		storageServices.closeActualUser();
-		setUser(defaultStorageData);
+		setUser(initialAuthContext);
 		setIsLogged(false);
+		Router.replace("/")
 	};
 
 	const dataToExport = {
@@ -49,4 +45,4 @@ export function AuthProvider({ children }) {
 	);
 }
 
-export default AuthContext;
+export default AuthContext

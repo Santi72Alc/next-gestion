@@ -4,7 +4,7 @@ const optsToast = {
 	toast: true,
 	position: "bottom-right",
 	iconColor: "white",
-	timer: 5000,
+	timer: 8000,
 	showConfirmButton: false,
 };
 

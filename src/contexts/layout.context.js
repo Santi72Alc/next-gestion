@@ -2,7 +2,7 @@ const { AuthProvider } = require("./auth.context");
 const { UsersProvider } = require("./users.context");
 
 
-function LayoutProviders({ children }) {
+export function LayoutProviders({ children }) {
 
     return (
         <AuthProvider>
@@ -12,5 +12,3 @@ function LayoutProviders({ children }) {
         </AuthProvider>
     )
 }
-
-export default LayoutProviders

@@ -5,11 +5,10 @@ export const getAllCountries = () => countriesDB.getAllCountries()
 
 export const getNames = () => {
     const countries = getAllCountries()
-    const countriesId = Object.keys(countries)
-    const dataToReturn = countriesId.map(id => {
+    const namesToReturn = Object.keys(countries).map(id => {
         return { id, name: getCountryData({ id, property: 'name' }) }
     })
-    return dataToReturn
+    return namesToReturn
 }
 
 export default {

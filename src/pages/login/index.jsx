@@ -1,17 +1,20 @@
 import { useContext, useEffect } from 'react'
 import Router from 'next/router'
 
-import Link from '@Components/link'
-import AuthContext from '@Context/auth.context'
-import UsersContext from '@Context/users.context'
+import AuthContext from 'src/contexts/auth.context'
+import UsersContext from 'src/contexts/users.context'
 
 import { ToastError, ToastSuccess } from '@Libs/alerts'
 
-import styles from './login.module.css'
+// import styles from './login.module.css'
 
 export default function Login() {
     const { login } = useContext(AuthContext)
-    const { isFirstUser } = useContext(UsersContext)
+    const { isFirstUser, usersCount, updateUsersInfo } = useContext(UsersContext)
+
+    useEffect(async () => {
+       isFirstUser && Router.replace("/signup")
+    }, [])
 
     async function handleLogin() {
         const $email = document.getElementById('email')
@@ -19,6 +22,7 @@ export default function Login() {
         // const keepAlive = document.getElementById('keepAlive').checked
 
         const resp = await login($email.value, $password.value)
+
         if (resp.success) {
             ToastSuccess.fire({
                 titleText: resp.message
@@ -38,13 +42,13 @@ export default function Login() {
         <div className="card">
 
             <div className="card-header">
-                <h3 className="text-center">Sign in</h3>
+                <h3 className="text-center">Login Page</h3>
             </div>
 
             <div className="card-body">
                 <form>
                     <div className="form-group">
-                        <label htmlFor="email">User email</label>
+                        <label htmlFor="email">Email</label>
                         <input type="email" id="email"
                             className="form-control"
                             placeholder="Type your registered email" />
@@ -72,16 +76,6 @@ export default function Login() {
             <div className="card-footer p-4">
                 <div className="vstack gap-2">
                     <button onClick={handleLogin} className="btn btn-primary w-50 mx-auto">Login</button>
-
-                    {isFirstUser &&
-                        <div className="vstack text-center mt-2">
-                            <span>I would to create a new company, please!</span>
-                            <Link href="/signinAdmin" className={styles.linkToRegister}>
-                                Let's go!!
-                            </Link>
-                        </div>
-
-                    }
                 </div>
             </div>
 

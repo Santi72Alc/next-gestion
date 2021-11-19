@@ -1,9 +1,7 @@
 import { model, models, Schema } from "mongoose";
 
 import { hashPassword } from "@Libs/utils/auth";
-import { usersConstants } from "@Services/constants";
-
-const ROLES = usersConstants.ROLES
+import { ROLES } from "@Services/constants";
 
 const userSchema = new Schema(
 	{

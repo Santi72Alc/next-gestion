@@ -1,34 +1,29 @@
-import countriesServices from "./countries.services"
-
-const ROLES = {
+export const ROLES = {
     MainAdmin: "Main Admin",
     Admin: "Admin",
     User: "User",
     Default: "User",
 }
 
-export const usersConstants = {
-    URL_USERS: "/api/v1/users",
-    ROLES,
-    initialUserProfile: {
-        _id: "",
-        email: "",
-        password: "",
-        fullName: "",
-        nick: "",
-        role: ROLES.Default,
-    }
+export const BASE_URL = {
+    USERS: "/api/v1/users"
 }
 
-export const COUNTRIES = {
-    getAll: () => countriesServices.getAllCountries(),
-    getById: (id, property) => countriesServices.getCountry(id, property),
-    names: countriesServices.getNames
+/* CONTEXT */
+export const initialAuthContext = {
+    _id: "",
+    email: "",
+    fullName: "",
+    nick: "",
+    role: "",
 }
 
-const constants = {
-    users: usersConstants,
-    COUNTRIES
+/* USERS */
+export const initialUserProfile = {
+    _id: "",
+    email: "",
+    password: "",
+    fullName: "",
+    nick: "",
+    role: ROLES.Default,
 }
-
-export default constants

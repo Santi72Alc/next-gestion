@@ -1,7 +1,6 @@
 import axios from "axios";
-import { usersConstants } from "./constants";
+import { BASE_URL } from "./constants";
 
-const { URL_USERS } = usersConstants
 async function loginUser(email = "", password = "") {
 	try {
 		if (!email || !password)
@@ -17,12 +16,12 @@ async function loginUser(email = "", password = "") {
 		 */
 		// const url = `${URL_USERS}/login`;
 		const { data } = await axios({
-			method: 'POST',
-			baseURL: URL_USERS,
-			url: '/login',
-			data: { email, password }
+			method: "POST",
+			baseURL: BASE_URL.USERS,
+			url: "/login",
+			data: { email, password },
 		});
-		return data
+		return data;
 	} catch (error) {
 		return {
 			success: false,

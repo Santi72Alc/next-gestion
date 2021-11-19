@@ -1,13 +1,15 @@
 import axios from "axios";
 
-import { usersConstants } from "./constants";
+import { initialUserProfile, BASE_URL } from "./constants";
 /*
 	Create a new MAIN ADMIN
 */
-const createUser = async ({ user = usersConstants.initialUserProfile }) => {
+const createUser = async ({ user = initialUserProfile }) => {
 	try {
 		if (!user.email || !user.password || !user.fullName)
-			throw new Error("Email, Password and Full Name are required");
+			throw new Error(
+				"Email, Password and Full Name are required, plase check!!"
+			);
 
 		/**
 		 * Llamada (AXIOS) a la api para añadir el usuario
@@ -17,14 +19,13 @@ const createUser = async ({ user = usersConstants.initialUserProfile }) => {
 		 * params: void
 		 * query: void
 		 */
-		const url = `${usersConstants.URL_USERS}/new`;
-		const { data } = await axios.post(url, user);
-
-		return {
-			success: true,
-			data,
-			message: `Main Admin ${data.fullName} added`,
-		};
+		// const url = `${usersConstants.URL_USERS}/new`;
+		return await axios({
+			method: "POST",
+			baseURL: BASE_URL.USERS,
+			url: "/new",
+			data: user,
+		});
 	} catch (error) {
 		return {
 			success: false,
@@ -43,13 +44,11 @@ export const getAllUsers = async () => {
 		 * params: void
 		 * query: void
 		 */
-		const url = `${usersConstants.URL_USERS}`;
-		const { data } = await axios.get(url);
-		return {
-			success: true,
-			data,
-			message: `All users feched`,
-		};
+		return await axios({
+			method: "GET",
+			baseURL: BASE_URL.USERS,
+			url: "/",
+		});
 	} catch (error) {
 		return {
 			success: false,
@@ -60,5 +59,5 @@ export const getAllUsers = async () => {
 
 export default {
 	createUser,
-	getAllUsers
+	getAllUsers,
 };

@@ -1,9 +1,6 @@
-import { useEffect } from 'react'
 import Head from 'next/head'
 import Navbar from '@Components/navbar'
-import LayoutProviders from '@Context/layout.context'
-// import { AuthProvider } from '@Context/auth.context'
-// import { UsersProvider } from '@Context/users.context'
+import { LayoutProviders } from 'src/contexts/layout.context'
 
 /**
  *  CSS imports
@@ -15,7 +12,6 @@ import '@Libs/themes/spacelab/bootstrap.min.css'
 import '../styles/globals.css'
 
 function MyApp({ Component, pageProps }) {
-
   return (
     <>
       <Head>
