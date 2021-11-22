@@ -1,12 +1,14 @@
 import Link from '@Components/link'
 import { useContext } from 'react'
+
 import AuthContext from 'src/contexts/auth.context'
 
+import { ROLES } from '@Services/constants'
 import styles from './sidenavbar.module.css'
 
 const SideNavbar = () => {
-    const { user } = useContext(AuthContext)
-    
+    const { user, isAdmin, isMainAdmin } = useContext(AuthContext)
+
     return (
         <div className="navbar bg-primary px-4">
             <div className="vstack gap-3">
@@ -20,10 +22,10 @@ const SideNavbar = () => {
                     <div className="vstack gap-3 px-3 mt-3">
                         <Link href="#" className={styles.link}>
                             <i className="bi bi-file-earmark-ruled-fill"></i>Maintenance
-                            </Link>
+                        </Link>
                     </div>
                 </details>
-                <details>
+                <details hidden={!isMainAdmin && !isAdmin}>
                     <summary className={`${styles.summary} text-`}><i className="bi bi-server"></i>Main files</summary>
                     <div className="vstack gap-3 px-3 mt-3">
                         <Link href="#" className={styles.link}>

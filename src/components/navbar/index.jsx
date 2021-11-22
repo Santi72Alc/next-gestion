@@ -35,10 +35,15 @@ const Navbar = ({ children }) => {
         return false
     }
 
+    function unLogged() {
+        if (!isFirstUser && !isLogged) return true
+        return false
+    }
+
     return (
         <>
             {/* Main navbar */}
-            <div className="container-fluid mx-0">
+            <div className="container-fluid">
                 <div className="row ">
                     <div id="sidebarCol" className="d-none col-3 px-0">
                         <SideNavbar></SideNavbar>
@@ -50,7 +55,7 @@ const Navbar = ({ children }) => {
                                 id="btnCollapse"
                                 className="btn btn-info"
                                 onClick={toogleMenu}
-                                hidden={!user?.email}>
+                                hidden={!isLogged}>
                                 {isMenuOpened ? (
                                     <i className="bi bi-arrow-bar-left"></i>
                                 ) : (
@@ -72,6 +77,7 @@ const Navbar = ({ children }) => {
 
                             </div>
 
+                            {/* Button logout */}
                             {isLogged &&
                                 <button
                                     className="btn btn-success"
@@ -83,18 +89,27 @@ const Navbar = ({ children }) => {
                                 </button>
                             }
 
+                            {/* Button Create MAIN ADMIN */}
                             {isInitialState() &&
-                                <>
-                                    <button
-                                        className="btn btn-success"
-                                        onClick={() => router.push("/signup")}>
-                                        <div className="vstack">
-                                            <span>* NO USERS *</span>
-                                            <span>Create MAIN ADMIN</span>
-                                        </div>
-                                    </button>
-                                </>
+                                <button
+                                    className="btn btn-success"
+                                    onClick={() => router.push("/signup")}>
+                                    <div className="vstack">
+                                        <span>* NO USERS *</span>
+                                        <span>Create MAIN ADMIN</span>
+                                    </div>
+                                </button>
                             }
+
+                            {/* Button login if USERS & NO user logged */}
+                            {unLogged() &&
+                                <button
+                                    className="btn btn-success"
+                                    onClick={() => router.push("/login")}>
+                                    Login
+                                </button>
+                            }
+
                         </nav>
                         <div className="col m-3">{children}</div>
                     </div>
