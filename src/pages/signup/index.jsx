@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 import { ToastError, ToastSuccess } from "@Libs/alerts"
 
 import AuthContext from 'src/contexts/auth.context'
@@ -11,6 +11,7 @@ import { ROLES } from '@Services/constants'
 export default function SignUp() {
     const { user, isLogged } = useContext(AuthContext)
     const { isFirstUser, createUser } = useContext(UsersContext)
+    const router = useRouter()
 
     async function handleNewUser() {
         const email = document.getElementById('email').value
@@ -25,7 +26,7 @@ export default function SignUp() {
         // User created
         if (resp.success) {
             ToastSuccess.fire({ titleText: resp.message })
-            Router.replace("/")
+            router.replace("/")
         } else {
             ToastError.fire({ titleText: resp.message })
         }
@@ -101,7 +102,7 @@ export default function SignUp() {
                         disabled={(!isLogged || user.role !== ROLES.MainAdmin) && !isFirstUser}
                     >Add me!
                     </button>
-                    <button onClick={() => Router.back()} className="btn btn-secondary w-25">Go back</button>
+                    <button onClick={() => router.back()} className="btn btn-secondary w-25">Go back</button>
                 </div>
             </div>
         </div >

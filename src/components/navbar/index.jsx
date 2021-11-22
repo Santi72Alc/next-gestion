@@ -1,13 +1,16 @@
 import { useContext, useState } from "react";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import SideNavbar from "@Components/sideNavbar";
 import Link from "@Components/link";
 
 import AuthContext from "src/contexts/auth.context";
+import UsersContext from "@Context/users.context";
 
 const Navbar = ({ children }) => {
     const { user, logout, isLogged } = useContext(AuthContext)
+    const { isFirstUser } = useContext(UsersContext)
     const [isMenuOpened, setIsMenuOpened] = useState(false);
+    const router = useRouter()
 
     // Show the menu button on the left
     function showMenu(show = true) {
@@ -25,7 +28,11 @@ const Navbar = ({ children }) => {
     function handleLogout() {
         logout();               // Cerramos el user actual
         showMenu(false);        // Quitamos el menu lateral
-        Router.push("/");       // Nos desplazamos a la ruta root
+    }
+
+    function isInitialState() {
+        if (isFirstUser && router.pathname === '/') return true
+        return false
     }
 
     return (
@@ -74,6 +81,19 @@ const Navbar = ({ children }) => {
                                     </span>
                                     {" - Logout"}
                                 </button>
+                            }
+
+                            {isInitialState() &&
+                                <>
+                                    <button
+                                        className="btn btn-success"
+                                        onClick={() => router.push("/signup")}>
+                                        <div className="vstack">
+                                            <span>* NO USERS *</span>
+                                            <span>Create MAIN ADMIN</span>
+                                        </div>
+                                    </button>
+                                </>
                             }
                         </nav>
                         <div className="col m-3">{children}</div>

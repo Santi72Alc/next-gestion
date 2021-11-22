@@ -6,25 +6,20 @@ import UsersContext from 'src/contexts/users.context';
 
 const Home = () => {
   const { isLogged } = useContext(AuthContext)
-  const { isFirstUser, usersCount, updateUsersInfo } = useContext(UsersContext)
+  const { usersCount, updateUsersInfo } = useContext(UsersContext)
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    import("bootstrap/dist/js/bootstrap")
-  }, [])
+  // useEffect(() => {
+  //   import("bootstrap/dist/js/bootstrap")
+  // }, [])
 
   useEffect(() => {
-    usersCount || updateUsersInfo()
-    if (usersCount === 0) {
-      Router.replace('/signup')
-    } else {
-      if (!isLogged) Router.replace("login")
-      else {
-        setIsLoading(false)
-        Router.replace("/")
-      }
-    }
-  }, [isLogged, usersCount])
+    // ! Mirar de quitar los accesos automáticos y poner
+    // ! sobre un botón en navbar
+    // TODO poner boto en navbar pricipal para hacer login
+    updateUsersInfo()
+    setIsLoading(false)
+  }, [isLogged])
 
   return (
     <>

@@ -1,9 +1,8 @@
 import { createContext, useState } from "react";
-import Router from "next/router";
 
 import authServices from "@Services/auth.services";
 import storageServices from "@Services/sessionStorage.services";
-import { initialAuthContext } from '@Services/constants'
+import { initialAuthContext } from "@Services/constants";
 
 const AuthContext = createContext();
 
@@ -14,8 +13,8 @@ export function AuthProvider({ children }) {
 	const login = async (email = "", password = "") => {
 		const resp = await authServices.loginUser(email, password);
 		if (resp.success) {
-			const { _id, email, fullName, nick, role } = resp.data
-			const user = { _id, email, fullName, nick, role }
+			const { _id, email, fullName, nick, role } = resp.data;
+			const user = { _id, email, fullName, nick, role };
 			setUser(user);
 			setIsLogged(true);
 			// Keep the user in session
@@ -28,14 +27,13 @@ export function AuthProvider({ children }) {
 		storageServices.closeActualUser();
 		setUser(initialAuthContext);
 		setIsLogged(false);
-		Router.replace("/")
 	};
 
 	const dataToExport = {
 		user,
 		login,
 		logout,
-		isLogged
+		isLogged,
 	};
 
 	return (
@@ -45,4 +43,4 @@ export function AuthProvider({ children }) {
 	);
 }
 
-export default AuthContext
+export default AuthContext;

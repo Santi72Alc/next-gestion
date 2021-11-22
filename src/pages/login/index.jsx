@@ -1,5 +1,5 @@
 import { useContext, useEffect } from 'react'
-import Router from 'next/router'
+import { useRouter } from 'next/router'
 
 import AuthContext from 'src/contexts/auth.context'
 import UsersContext from 'src/contexts/users.context'
@@ -11,9 +11,10 @@ import { ToastError, ToastSuccess } from '@Libs/alerts'
 export default function Login() {
     const { login } = useContext(AuthContext)
     const { isFirstUser, usersCount, updateUsersInfo } = useContext(UsersContext)
+    const router = useRouter()
 
     useEffect(async () => {
-       isFirstUser && Router.replace("/signup")
+        isFirstUser && router.replace("/signup")
     }, [])
 
     async function handleLogin() {
@@ -27,7 +28,7 @@ export default function Login() {
             ToastSuccess.fire({
                 titleText: resp.message
             })
-            Router.replace("/")
+            router.replace("/")
         }
         else {
             ToastError.fire({
