@@ -1,5 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { toast } from 'react-hot-toast'
+
 import SideNavbar from "@Components/sideNavbar";
 import Link from "@Components/link";
 
@@ -25,9 +27,12 @@ const Navbar = ({ children }) => {
     }
 
     useEffect(() => {
+        const toastLoading = toast.loading("Loading...")
         getActualUser()
-        setInterval(() =>
+        setInterval(() => {
+            toast.dismiss(toastLoading)
             setIsLoading(false)
+        }
             , 300)
     }, [])
 
@@ -37,6 +42,7 @@ const Navbar = ({ children }) => {
     }
 
     function handleLogout() {
+        toast.success(`Bye ${user.nick}`)
         logout();               // Cerramos el user actual
         showMenu(false);        // Quitamos el menu lateral
     }
@@ -78,10 +84,6 @@ const Navbar = ({ children }) => {
 
                             </div>
 
-                            {isLoading &&
-                                <div className="h4 text-bold text-info">Loading...</div>
-                            }
-                            
                             {!isLoading &&
                                 <div className="buttons">
                                     {/* Button Logout */}

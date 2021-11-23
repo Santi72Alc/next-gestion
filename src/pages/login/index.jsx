@@ -1,6 +1,6 @@
 import { useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
-import { ToastError, ToastSuccess } from '@Libs/alerts'
+import { toast } from 'react-hot-toast'
 
 import AuthContext from 'src/contexts/auth.context'
 import UsersContext from 'src/contexts/users.context'
@@ -13,7 +13,6 @@ export default function Login() {
     useEffect(() => {
         isFirstUser && router.replace("/signup")
         getActualUser()
-
     }, [])
 
     async function handleLogin() {
@@ -24,15 +23,11 @@ export default function Login() {
         const resp = await login($email.value, $password.value, keepAlive)
 
         if (resp.success) {
-            ToastSuccess.fire({
-                titleText: resp.message
-            })
+            toast.success(resp.message)
             router.replace("/")
         }
         else {
-            ToastError.fire({
-                titleText: resp.message,
-            })
+            toast.error(resp.message)
             $email.focus()
             $password.value = ''
         }

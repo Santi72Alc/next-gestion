@@ -1,5 +1,7 @@
 import Head from 'next/head'
 import Navbar from '@Components/navbar'
+
+import { Toaster } from 'react-hot-toast'
 import { LayoutProviders } from 'src/contexts/layout.context'
 
 /**
@@ -29,6 +31,33 @@ function MyApp({ Component, pageProps }) {
         <title>Budgets Management</title>
       </Head>
       <LayoutProviders>
+        <Toaster
+          position="bottom-right"
+          toastOptions={{
+            success: {
+              duration: 4000,
+              iconTheme: {
+                primary: "green",
+                secondary: "white"
+              },
+              style: {
+                backgroundColor: "limegreen",
+                color: "black"
+              }
+            },
+            error: {
+              duration: 4000,
+              iconTheme: {
+                primary: "red",
+                secondary: "white"
+              },
+              style: {
+                backgroundColor: "darkorange",
+                color: "black"
+              }
+            }
+          }}
+        />
         <Navbar>
           <Component {...pageProps} />
         </Navbar>

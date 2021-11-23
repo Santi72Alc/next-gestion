@@ -9,8 +9,8 @@ import UsersContext from 'src/contexts/users.context'
 import { ROLES } from '@Services/constants'
 
 export default function SignUp() {
-    const { user, isLogged } = useContext(AuthContext)
     const { isFirstUser, createUser } = useContext(UsersContext)
+    const { isLogged } = useContext(AuthContext)
     const router = useRouter()
 
     async function handleNewUser() {
