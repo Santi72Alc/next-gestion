@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 import { toast } from 'react-hot-toast'
@@ -6,43 +6,43 @@ import { toast } from 'react-hot-toast'
 import AuthContext from 'src/contexts/auth.context'
 import UsersContext from 'src/contexts/users.context'
 
-import { ROLES } from '@Services/constants'
-
-export default function SignUp() {
-    const { isFirstUser, createUser } = useContext(UsersContext)
-    const { isLogged } = useContext(AuthContext)
+export default function Profile() {
+    const { updateUser } = useContext(UsersContext)
+    const { user, isLogged, isAdmin, setActualUser } = useContext(AuthContext)
     const router = useRouter()
 
-    async function handleNewUser() {
-        const email = document.getElementById('email').value
-        const password = document.getElementById('password').value
-        const fullName = document.getElementById('fullName').value
-        const nick = document.getElementById('nick').value
-        const isAdmin = isFirstUser || document.getElementById('roleAdmin').checked
+    useEffect(() => {
+        setUserData(user)
+    }, [])
 
-        // Llamamos al servicio para crear el Admin & Company
-        const user = { email, password, fullName, nick }
-        const resp = await createUser({ user }, { isAdmin, isFirstUser })
-        // User created
-        if (resp.success) {
-            toast.success(resp.message)
-            router.replace("/")
-        } else {
-            toast.error(resp.message)
-        }
+
+    function setUserData({ email, fullName, nick }) {
+        document.getElementById('email').value = email
+        document.getElementById('fullName').value = fullName
+        document.getElementById('nick').value = nick
     }
 
-    function handleInputEmail(event) {
-        const $nickname = document.getElementById('nick')
-        const email = event.target.value
-        $nickname.value = $nickname.value || email.split('@')[0]
+    async function handleUpdateUser() {
+        const fullName = document.getElementById('fullName').value
+        const nick = document.getElementById('nick').value
+
+        const newUser = {
+            _id: user._id,
+            fullName,
+            nick
+        }
+        const { data } = await updateUser({ user: { ...newUser } })
+        if (data.success)
+            toast.success(data.message)
+        else
+            toast.error(data.message)
     }
 
     return (
         <div className="card">
             <div className="card-header text-center">
-                <h3>Create a new user</h3>
-                <h5 className="fst-italic">· Main Administrator ·</h5>
+                <h3>Profile</h3>
+                <h5 className="fst-italic">· {user.role} ·</h5>
             </div>
             <div className="card-body">
                 <form>
@@ -50,15 +50,8 @@ export default function SignUp() {
                         <label htmlFor="email">User email</label>
                         <input type="email" id="email"
                             className="form-control"
-                            placeholder="Type your email"
-                            onChange={handleInputEmail}
+                            disabled
                         />
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input type="password" id="password"
-                            className="form-control"
-                            placeholder="Password" />
                     </div>
                     <div className="row">
                         <div className="col-12 col-md-6">
@@ -78,29 +71,16 @@ export default function SignUp() {
                             </div>
                         </div>
                     </div>
-                    <div className="form-group">
-                        <div className="form-check">
-                            <input className="form-check-input"
-                                type="checkbox"
-                                id="roleAdmin"
-                                defaultChecked={isFirstUser}
-                                hidden={!isFirstUser}
-                                disabled={isFirstUser}
-                            />
-                            <label className="form-checkbox-label text-danger" htmlFor="roleAdmin">
-                                {isFirstUser ? 'MAIN ADMINISTRATOR ' : 'Administrator '}
-                            </label>
-                        </div>
-                    </div>
+
                 </form>
             </div >
             <div className="card-footer p-4">
                 <div className="hstack gap-3">
                     <button
-                        onClick={handleNewUser}
+                        onClick={handleUpdateUser}
                         className="btn btn-primary w-75"
-                        disabled={(!isLogged || user.role !== ROLES.MainAdmin) && !isFirstUser}
-                    >Add me!
+                        disabled={!isLogged || !isAdmin}
+                    >Save data
                     </button>
                     <button onClick={() => router.back()} className="btn btn-secondary w-25">Go back</button>
                 </div>

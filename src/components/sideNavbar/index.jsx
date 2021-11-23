@@ -3,7 +3,6 @@ import { useContext } from 'react'
 
 import AuthContext from 'src/contexts/auth.context'
 
-import { ROLES } from '@Services/constants'
 import styles from './sidenavbar.module.css'
 
 const SideNavbar = () => {
@@ -44,7 +43,7 @@ const SideNavbar = () => {
                 </details>
                 <hr className={"text-dark"} />
                 <div className="mb-4">
-                    <Link href="#" className={styles.link}>
+                    <Link href="/profile" className={styles.link}>
                         <i className="bi bi-person-fill"></i>Profile ({user.role})
                     </Link>
                 </div>

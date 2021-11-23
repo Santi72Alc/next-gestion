@@ -2,7 +2,7 @@ import axios from "axios";
 
 import { initialUserProfile, BASE_URL } from "./constants";
 /*
-	Create a new MAIN ADMIN
+	POST a new USER
 */
 const createUser = async ({ user = initialUserProfile }) => {
 	try {
@@ -24,6 +24,39 @@ const createUser = async ({ user = initialUserProfile }) => {
 			method: "POST",
 			baseURL: BASE_URL.USERS,
 			url: "/new",
+			data: user,
+		});
+	} catch (error) {
+		return {
+			success: false,
+			message: error.message,
+		};
+	}
+};
+
+/*
+	UPDATE a user
+*/
+const updateUser = async ({ user = initialUserProfile }) => {
+	try {
+		if (!user._id) {
+			throw new Error("Error updating data");
+		}
+		if (!user.fullName)
+			throw new Error("Email and Full Name are required, plase check!!");
+
+		/**
+		 * Llamada (AXIOS) a la api para editar el usuario
+		 * url: api/v?/users/:id
+		 * Tipo: POST
+		 * data: {email, fullName, nick, role }
+		 * params: id
+		 * query: void
+		 */
+		return await axios({
+			method: "PATCH",
+			baseURL: BASE_URL.USERS,
+			url: `/${user._id}`,
 			data: user,
 		});
 	} catch (error) {
@@ -60,4 +93,5 @@ export const getAllUsers = async () => {
 export default {
 	createUser,
 	getAllUsers,
+	updateUser,
 };

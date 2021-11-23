@@ -48,6 +48,22 @@ export function UsersProvider({ children }) {
 		return data;
 	};
 
+	const updateUser = async ({ user = initialUserProfile }) => {
+		if (!user._id) {
+			return {
+				success: false,
+				message: "Error updating data",
+			};
+		}
+		if (!user.fullName) {
+			return {
+				success: false,
+				message: "Email and Full Name are required, please check!",
+			};
+		}
+		return await usersServices.updateUser({ user });
+	};
+
 	const setRoleName = ({ isAdmin = false, isFirstUser = false }) => {
 		if (isAdmin) {
 			return isFirstUser ? ROLES.MainAdmin : ROLES.Admin;
@@ -58,6 +74,7 @@ export function UsersProvider({ children }) {
 		usersCount,
 		isFirstUser,
 		createUser,
+		updateUser,
 		updateUsersInfo,
 		users,
 	};

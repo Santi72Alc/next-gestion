@@ -11,7 +11,7 @@ export default function Login() {
     const router = useRouter()
 
     useEffect(() => {
-        isFirstUser && router.replace("/signup")
+        isFirstUser && router.replace("/firtsuser")
         getActualUser()
     }, [])
 

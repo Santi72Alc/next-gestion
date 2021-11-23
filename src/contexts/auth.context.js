@@ -66,6 +66,7 @@ export function AuthProvider({ children }) {
 		isLogged,
 		setActualUser,
 		getActualUser,
+		hasUserThisRole
 	};
 
 	return (

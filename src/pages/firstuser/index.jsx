@@ -42,7 +42,7 @@ export default function SignUp() {
         <div className="card">
             <div className="card-header text-center">
                 <h3>Create a new user</h3>
-                <h5 className="fst-italic">· Main Administrator ·</h5>
+                <h5 className="fst-italic">· {isMainAdmin ? 'Main Administrator' : "Admin"} ·</h5>
             </div>
             <div className="card-body">
                 <form>
@@ -84,7 +84,6 @@ export default function SignUp() {
                                 type="checkbox"
                                 id="roleAdmin"
                                 defaultChecked={isFirstUser}
-                                hidden={!isFirstUser}
                                 disabled={isFirstUser}
                             />
                             <label className="form-checkbox-label text-danger" htmlFor="roleAdmin">

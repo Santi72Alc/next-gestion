@@ -42,10 +42,50 @@ const newUser = async (body = initialUserProfile) => {
 	}
 };
 
+const updateUser = async (user = initialUserProfile) => {
+	try {
+		if (!user._id) {
+			throw new Error("Error updating data");
+		}
+		if (!user.fullName) throw new Error("Full Name are required");
+		user;
+		await dbConnected();
+
+		const userExists = await Users.exists({ _id: user._id });
+		if (!userExists)
+			return {
+				success: false,
+				message: "User not found",
+			};
+
+		// Buscamos el user por _id y actualizamos los datos recibidos
+		const userUpdated = await Users.findByIdAndUpdate(
+			user._id,
+			{ ...user },
+			{ new: true }
+		);
+		
+		// Cogemos los campos del registro que nos interesa devolver
+		const { _id, email, fullName, nick, role } = userUpdated;
+		if (userUpdated)
+			return {
+				success: true,
+				data: { _id, email, fullName, nick, role },
+				message: "Data user updated!",
+			};
+		return {
+			success: false,
+			message: "Error updating data user!",
+		};
+	} catch (error) {
+		throw new Error(error.message);
+	}
+};
+
 const loginUser = async (email = "", passwordToCheck = "") => {
 	try {
 		await dbConnected();
-		const resp = await Users.findOne({ email } );
+		const resp = await Users.findOne({ email });
 		// Quitamos 'passsword' de la data a devolver
 		const { password, ...data } = resp._doc;
 		if (comparePassword(passwordToCheck, password)) {
@@ -68,7 +108,8 @@ const loginUser = async (email = "", passwordToCheck = "") => {
 };
 
 export default {
-	newUser,
 	loginUser,
+	newUser,
+	updateUser,
 	getAllUsers,
 };

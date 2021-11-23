@@ -2,11 +2,12 @@ import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { toast } from 'react-hot-toast'
 
+import AuthContext from "src/contexts/auth.context";
+import UsersContext from "@Context/users.context";
+
 import SideNavbar from "@Components/sideNavbar";
 import Link from "@Components/link";
 
-import AuthContext from "src/contexts/auth.context";
-import UsersContext from "@Context/users.context";
 import BtnLogout from "@Components/buttons/BtnLogout";
 import BtnFirstUser from "@Components/buttons/BtnFirstUser";
 import BtnLogin from "@Components/buttons/BtnLogin";
@@ -32,8 +33,7 @@ const Navbar = ({ children }) => {
         setInterval(() => {
             toast.dismiss(toastLoading)
             setIsLoading(false)
-        }
-            , 300)
+        }, 300)
     }, [])
 
     // When press the menu button
@@ -42,7 +42,7 @@ const Navbar = ({ children }) => {
     }
 
     function handleLogout() {
-        toast.success(`Bye ${user.nick}`)
+        toast.success(`See you soon, ${user.nick}`)
         logout();               // Cerramos el user actual
         showMenu(false);        // Quitamos el menu lateral
     }
@@ -63,11 +63,7 @@ const Navbar = ({ children }) => {
                                 className="btn btn-info"
                                 onClick={toogleMenu}
                                 hidden={!isLogged}>
-                                {isMenuOpened ? (
-                                    <i className="bi bi-arrow-bar-left"></i>
-                                ) : (
-                                    <i className="bi bi-list"></i>
-                                )}
+                                <i className={`bi ${isMenuOpened ? 'bi-arrow-bar-left' : 'bi-list'}`}></i>
                             </button>
                             <div className="vstack text-center">
                                 <Link href="/" className="h2 text-decoration-none text-dark">
@@ -85,7 +81,7 @@ const Navbar = ({ children }) => {
                             </div>
 
                             {!isLoading &&
-                                <div className="buttons">
+                                <div className="mx-auto my-2 my-sm-0">
                                     {/* Button Logout */}
                                     {isLogged && <BtnLogout name={user.nick} onClick={handleLogout} />}
 
