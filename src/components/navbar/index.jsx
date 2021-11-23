@@ -1,15 +1,19 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import SideNavbar from "@Components/sideNavbar";
 import Link from "@Components/link";
 
 import AuthContext from "src/contexts/auth.context";
 import UsersContext from "@Context/users.context";
+import BtnLogout from "@Components/buttons/BtnLogout";
+import BtnFirstUser from "@Components/buttons/BtnFirstUser";
+import BtnLogin from "@Components/buttons/BtnLogin";
 
 const Navbar = ({ children }) => {
-    const { user, logout, isLogged } = useContext(AuthContext)
+    const { user, logout, isLogged, getActualUser } = useContext(AuthContext)
     const { isFirstUser } = useContext(UsersContext)
     const [isMenuOpened, setIsMenuOpened] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const router = useRouter()
 
     // Show the menu button on the left
@@ -20,6 +24,13 @@ const Navbar = ({ children }) => {
         $sidebarList = null;
     }
 
+    useEffect(() => {
+        getActualUser()
+        setInterval(() =>
+            setIsLoading(false)
+            , 300)
+    }, [])
+
     // When press the menu button
     function toogleMenu() {
         showMenu(!isMenuOpened);
@@ -28,16 +39,6 @@ const Navbar = ({ children }) => {
     function handleLogout() {
         logout();               // Cerramos el user actual
         showMenu(false);        // Quitamos el menu lateral
-    }
-
-    function isInitialState() {
-        if (isFirstUser && router.pathname === '/') return true
-        return false
-    }
-
-    function unLogged() {
-        if (!isFirstUser && !isLogged) return true
-        return false
     }
 
     return (
@@ -77,41 +78,27 @@ const Navbar = ({ children }) => {
 
                             </div>
 
-                            {/* Button logout */}
-                            {isLogged &&
-                                <button
-                                    className="btn btn-success"
-                                    onClick={handleLogout}>
-                                    <span className="badge rounded-pill bg-primary px-3 py-2">
-                                        {user.nick}
-                                    </span>
-                                    {" - Logout"}
-                                </button>
+                            {isLoading &&
+                                <div className="h4 text-bold text-info">Loading...</div>
                             }
+                            
+                            {!isLoading &&
+                                <div className="buttons">
+                                    {/* Button Logout */}
+                                    {isLogged && <BtnLogout name={user.nick} onClick={handleLogout} />}
 
-                            {/* Button Create MAIN ADMIN */}
-                            {isInitialState() &&
-                                <button
-                                    className="btn btn-success"
-                                    onClick={() => router.push("/signup")}>
-                                    <div className="vstack">
-                                        <span>* NO USERS *</span>
-                                        <span>Create MAIN ADMIN</span>
-                                    </div>
-                                </button>
-                            }
+                                    {/* Button login if USERS & NO user logged */}
+                                    {!isLogged && <BtnLogin onClick={() => router.replace("/login")} />}
 
-                            {/* Button login if USERS & NO user logged */}
-                            {unLogged() &&
-                                <button
-                                    className="btn btn-success"
-                                    onClick={() => router.push("/login")}>
-                                    Login
-                                </button>
+                                    {/* Button Create MAIN ADMIN */}
+                                    {isFirstUser && router.pathname === '/' &&
+                                        <BtnFirstUser onClick={() => router.replace("/signin")} />
+                                    }
+                                </div>
                             }
 
                         </nav>
-                        <div className="col m-3">{children}</div>
+                        <div className="col m-2">{children}</div>
                     </div>
                 </div>
             </div>
