@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { useRouter } from 'next/router'
 import { ToastError, ToastSuccess } from "@Libs/alerts"
 
@@ -7,7 +7,6 @@ import UsersContext from 'src/contexts/users.context'
 
 import { ROLES } from '@Services/constants'
 
-// import styles from './new-user.module.css'
 export default function SignUp() {
     const { user, isLogged } = useContext(AuthContext)
     const { isFirstUser, createUser } = useContext(UsersContext)

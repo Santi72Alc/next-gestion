@@ -1,28 +1,27 @@
 import { useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import { ToastError, ToastSuccess } from '@Libs/alerts'
 
 import AuthContext from 'src/contexts/auth.context'
 import UsersContext from 'src/contexts/users.context'
 
-import { ToastError, ToastSuccess } from '@Libs/alerts'
-
-// import styles from './login.module.css'
-
 export default function Login() {
-    const { login } = useContext(AuthContext)
-    const { isFirstUser, usersCount, updateUsersInfo } = useContext(UsersContext)
+    const { login, getActualUser } = useContext(AuthContext)
+    const { isFirstUser } = useContext(UsersContext)
     const router = useRouter()
 
-    useEffect(async () => {
+    useEffect(() => {
         isFirstUser && router.replace("/signup")
+        getActualUser()
+
     }, [])
 
     async function handleLogin() {
         const $email = document.getElementById('email')
         const $password = document.getElementById('password')
-        // const keepAlive = document.getElementById('keepAlive').checked
+        const keepAlive = document.getElementById('keepAlive').checked
 
-        const resp = await login($email.value, $password.value)
+        const resp = await login($email.value, $password.value, keepAlive)
 
         if (resp.success) {
             ToastSuccess.fire({
@@ -60,7 +59,7 @@ export default function Login() {
                             className="form-control"
                             placeholder="Password" />
                     </div>
-                    {/*  <div className="form-group">
+                    <div className="form-group">
                         <div className="form-check">
                             <input className="form-check-input"
                                 type="checkbox"
@@ -70,7 +69,7 @@ export default function Login() {
                                 Keep session alive
                             </label>
                         </div>
-                    </div> */}
+                    </div>
                 </form>
             </div>
 

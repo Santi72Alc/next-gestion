@@ -4,29 +4,48 @@ import authServices from "@Services/auth.services";
 import storageServices from "@Services/sessionStorage.services";
 import { initialAuthContext, ROLES } from "@Services/constants";
 
-const AuthContext = createContext();
+const AuthContext = createContext(initialAuthContext);
 
 export function AuthProvider({ children }) {
-	const [user, setUser] = useState(initialAuthContext);
-	const [isLogged, setIsLogged] = useState(false);
-	const [isMainAdmin, setIsMainAdmin] = useState(false);
-	const [isAdmin, setIsAdmin] = useState(false);
-	const [isUser, setIsUser] = useState(false);
+	const [user, setUser] = useState(initialAuthContext.user);
+	const [isLogged, setIsLogged] = useState(initialAuthContext.isLogged);
+	const [isMainAdmin, setIsMainAdmin] = useState(
+		initialAuthContext.isMainAdmin
+	);
+	const [isAdmin, setIsAdmin] = useState(initialAuthContext.isAdmin);
+	const [isUser, setIsUser] = useState(initialAuthContext.isUser);
 
-	const login = async (email = "", password = "") => {
+	function hasUserThisRole(user, roles = []) {
+		return roles.includes(user.role);
+	}
+
+	const setActualUser = (user = initialAuthContext.user) => {
+		setUser(user);
+		setIsLogged(true);
+		setIsMainAdmin(hasUserThisRole(user, [ROLES.MainAdmin]));
+		setIsAdmin(hasUserThisRole(user, [ROLES.MainAdmin, ROLES.Admin]));
+		setIsUser(hasUserThisRole(user, [ROLES.User]));
+	};
+
+	const getActualUser = () => {
+		// Miramos si está guardado el login del usuario
+		const user = storageServices.getActualUser();
+		user && setActualUser(user);
+		return user;
+	};
+
+	const login = async (
+		email = "",
+		password = "",
+		keepSessionAlive = true
+	) => {
 		const resp = await authServices.loginUser(email, password);
 		if (resp.success) {
 			const { _id, email, fullName, nick, role } = resp.data;
 			const user = { _id, email, fullName, nick, role };
-			setUser(user);
-			setIsLogged(true);
-			setIsMainAdmin(role === ROLES.MainAdmin ? true : false);
-			setIsAdmin(
-				[ROLES.MainAdmin, ROLES.Admin].includes(role) ? true : false
-			);
-			setIsUser(role === ROLES.User ? true : false);
+			setActualUser(user);
 			// Keep the user in session
-			storageServices.setActualUser(user);
+			storageServices.setActualUser(user, { keepSessionAlive });
 		}
 		return resp;
 	};
@@ -45,6 +64,8 @@ export function AuthProvider({ children }) {
 		isAdmin,
 		isUser,
 		isLogged,
+		setActualUser,
+		getActualUser,
 	};
 
 	return (

@@ -1,12 +1,12 @@
-import { createContext, useState, useEffect} from "react";
+import { createContext, useState, useEffect } from "react";
 
 import { ROLES, initialUserProfile } from "@Services/constants";
 import usersServices from "@Services/users.services";
 
 const UsersContext = createContext({
-	...initialUserProfile,
 	isFirstUser: false,
 	usersCount: 0,
+	...initialUserProfile,
 });
 
 export function UsersProvider({ children }) {
@@ -19,15 +19,11 @@ export function UsersProvider({ children }) {
 	}, []);
 
 	const updateUsersInfo = () => {
-		getAllUsers()
-			.then(users => {
-				setUsers(users);
-				return users;
-			})
-			.then(value => {
-				setUsersCount(value.length);
-				setIsFirstUser(value.length === 0);
-			});
+		getAllUsers().then(users => {
+			setUsers(users);
+			setUsersCount(users.length);
+			setIsFirstUser(users.length === 0);
+		});
 	};
 
 	const getAllUsers = async () => {

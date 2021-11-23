@@ -10,12 +10,20 @@ export const BASE_URL = {
 }
 
 /* CONTEXT */
-export const initialAuthContext = {
+const user = {
     _id: "",
     email: "",
     fullName: "",
     nick: "",
     role: "",
+}
+export const initialAuthContext = {
+   user,
+   isLogged: false,
+   isMainAdmin: false,
+   isAdmin: false,
+   isMainAdmin: false,
+   isUser: false
 }
 
 /* USERS */
