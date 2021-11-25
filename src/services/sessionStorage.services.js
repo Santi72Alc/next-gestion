@@ -11,25 +11,16 @@ export const defaultStorageData = {
 	fullName: "",
 	nick: "",
 	role: "",
+	keepAlive: false,
 };
 
 const setActualUser = (
-	user = defaultStorageData,
+	user,
 	{
 		key = defaultOptions.key,
 		keepSessionAlive = defaultOptions.keepSessionAlive,
 	}
 ) => {
-	if (
-		!user._id ||
-		!user.email ||
-		!user.fullName ||
-		!user.nick ||
-		!user.role
-	) {
-		console.error("There are fields missing to save in 'client storage'");
-		return null;
-	}
 	// NO se permite guardar en el storage de cliente
 	if (typeof window === "undefined") {
 		console.log("Error deploying cookies not allowed");
@@ -37,6 +28,7 @@ const setActualUser = (
 	}
 
 	// Ok. Guardamos los datos en el storage del cliente
+	user.keepSessionAlive = keepSessionAlive;
 	const dataToSave = JSON.stringify(user);
 	if (keepSessionAlive) localStorage.setItem(key, dataToSave);
 	else sessionStorage.setItem(key, dataToSave);
@@ -60,11 +52,8 @@ const closeActualUser = ({ key } = defaultOptions) => {
 	}
 };
 
-const isUserLogged = () => (getActualUser()?._id ? true : false);
-
 export default {
 	setActualUser,
 	getActualUser,
 	closeActualUser,
-	isUserLogged,
 };

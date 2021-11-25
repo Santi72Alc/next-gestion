@@ -19,12 +19,17 @@ export function AuthProvider({ children }) {
 		return roles.includes(user.role);
 	}
 
-	const setActualUser = (user = initialAuthContext.user) => {
+	const setActualUser = (
+		user = initialAuthContext.user,
+		keepAlive = false
+	) => {
 		setUser(user);
 		setIsLogged(true);
 		setIsMainAdmin(hasUserThisRole(user, [ROLES.MainAdmin]));
 		setIsAdmin(hasUserThisRole(user, [ROLES.MainAdmin, ROLES.Admin]));
 		setIsUser(hasUserThisRole(user, [ROLES.User]));
+
+		storageServices.setActualUser(user, { keepSessionAlive: keepAlive });
 	};
 
 	const getActualUser = () => {
@@ -34,18 +39,12 @@ export function AuthProvider({ children }) {
 		return user;
 	};
 
-	const login = async (
-		email = "",
-		password = "",
-		keepSessionAlive = true
-	) => {
+	const login = async (email = "", password = "", keepAlive = true) => {
 		const resp = await authServices.loginUser(email, password);
 		if (resp.success) {
 			const { _id, email, fullName, nick, role } = resp.data;
 			const user = { _id, email, fullName, nick, role };
-			setActualUser(user);
-			// Keep the user in session
-			storageServices.setActualUser(user, { keepSessionAlive });
+			setActualUser(user, keepAlive);
 		}
 		return resp;
 	};
@@ -66,7 +65,7 @@ export function AuthProvider({ children }) {
 		isLogged,
 		setActualUser,
 		getActualUser,
-		hasUserThisRole
+		hasUserThisRole,
 	};
 
 	return (

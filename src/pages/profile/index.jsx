@@ -32,9 +32,10 @@ export default function Profile() {
             nick
         }
         const { data } = await updateUser({ user: { ...newUser } })
-        if (data.success)
+        if (data.success) {
+            setActualUser(data.data)
             toast.success(data.message)
-        else
+        } else
             toast.error(data.message)
     }
 
