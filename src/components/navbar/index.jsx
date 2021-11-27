@@ -1,8 +1,8 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useRouter } from "next/router";
 import { toast } from 'react-hot-toast'
 
-import AuthContext from "src/contexts/auth.context";
+import ActualUserContext from "@Context/actualUser.context";
 import UsersContext from "@Context/users.context";
 
 import SideNavbar from "@Components/sideNavbar";
@@ -13,10 +13,9 @@ import BtnFirstUser from "@Components/buttons/BtnFirstUser";
 import BtnLogin from "@Components/buttons/BtnLogin";
 
 const Navbar = ({ children }) => {
-    const { user, logout, isLogged, getActualUser } = useContext(AuthContext)
+    const { user, logout, isLogged } = useContext(ActualUserContext)
     const { isFirstUser } = useContext(UsersContext)
     const [isMenuOpened, setIsMenuOpened] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
     const router = useRouter()
 
     // Show the menu button on the left
@@ -24,17 +23,7 @@ const Navbar = ({ children }) => {
         const $sidebarList = document.getElementById("sidebarCol").classList;
         show ? $sidebarList.remove("d-none") : $sidebarList.add("d-none");
         setIsMenuOpened(show);
-        $sidebarList = null;
     }
-
-    useEffect(() => {
-        const toastLoading = toast.loading("Loading...")
-        getActualUser()
-        setInterval(() => {
-            toast.dismiss(toastLoading)
-            setIsLoading(false)
-        }, 300)
-    }, [])
 
     // When press the menu button
     function toogleMenu() {
@@ -80,20 +69,18 @@ const Navbar = ({ children }) => {
 
                             </div>
 
-                            {!isLoading &&
-                                <div className="mx-auto my-2 my-sm-0">
-                                    {/* Button Logout */}
-                                    {isLogged && <BtnLogout name={user.nick} onClick={handleLogout} />}
+                            <div className="mx-auto my-2 my-sm-0">
+                                {/* Button Create MAIN ADMIN */}
+                                {isFirstUser && router.pathname === '/' &&
+                                    <BtnFirstUser onClick={() => router.replace("/firstuser")} />
+                                }
 
-                                    {/* Button login if USERS & NO user logged */}
-                                    {!isLogged && <BtnLogin onClick={() => router.replace("/login")} />}
-
-                                    {/* Button Create MAIN ADMIN */}
-                                    {isFirstUser && router.pathname === '/' &&
-                                        <BtnFirstUser onClick={() => router.replace("/signin")} />
-                                    }
-                                </div>
-                            }
+                                {!isFirstUser && isLogged &&
+                                    <BtnLogout name={user.nick} onClick={handleLogout} />
+                                }
+                                {!isFirstUser && !isLogged &&
+                                    <BtnLogin onClick={() => router.replace("/login")} />}
+                            </div>
 
                         </nav>
                         <div className="col m-2">{children}</div>

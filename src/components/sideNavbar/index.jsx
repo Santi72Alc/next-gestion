@@ -1,7 +1,7 @@
 import Link from '@Components/link'
 import { useContext } from 'react'
 
-import AuthContext from 'src/contexts/auth.context'
+import AuthContext from '@Context/auth.context_NOUSAR'
 
 import styles from './sidenavbar.module.css'
 
