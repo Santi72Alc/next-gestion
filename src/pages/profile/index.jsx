@@ -68,7 +68,7 @@ export default function Profile() {
                         <div className="col-12 col-md-6">
                             <div className="form-group">
                                 <label htmlFor="fullName">Full name</label>
-                                <input type="fullName" id="fullName"
+                                <input type="text" id="fullName"
                                     className="form-control"
                                     placeholder="Type your name" />
                             </div>
@@ -76,7 +76,7 @@ export default function Profile() {
                         <div className="col-12 col-md-6">
                             <div className="form-group">
                                 <label htmlFor="nick">Nick</label>
-                                <input type="nick" id="nick"
+                                <input type="text" id="nick"
                                     className="form-control"
                                     placeholder="Type your nick" />
                             </div>
