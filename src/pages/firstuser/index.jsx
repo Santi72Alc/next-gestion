@@ -14,7 +14,26 @@ export default function FirstUser() {
         !isFirstUser && router.replace("/")
     }, [])
 
-    function getDataFromInputs() {
+    function getUserDataFromInputs() {
+        const email = document.getElementById('email').value
+        const password = document.getElementById('password').value
+        const password2 = document.getElementById('password2').value
+        const fullName = document.getElementById('fullName').value
+        const nick = document.getElementById('nick').value
+        const isAdmin = isFirstUser
+
+        return {
+            email,
+            password,
+            password2,
+            fullName,
+            nick,
+            isAdmin
+        }
+    }
+
+
+    function getCompanyDataFromInputs() {
         const email = document.getElementById('email').value
         const password = document.getElementById('password').value
         const password2 = document.getElementById('password2').value
@@ -33,7 +52,7 @@ export default function FirstUser() {
     }
 
     async function handleNewUser() {
-        const { email, password, password2, fullName, nick, isAdmin } = getDataFromInputs()
+        const { email, password, password2, fullName, nick, isAdmin } = getUserDataFromInputs()
 
         if (!email || !password || !fullName) {
             toast.error("Email, FullName and Password are required!")
@@ -82,8 +101,8 @@ export default function FirstUser() {
                     <div className="row">
                         <div className="col-12 col-md-6">
                             <div className="form-group">
-                                <label htmlFor="fullName">User full name</label>
-                                <input type="fullName" id="fullName"
+                                <label htmlFor="fullName">Full name</label>
+                                <input type="text" id="fullName"
                                     className="form-control"
                                     placeholder="Type your name" />
                             </div>
@@ -91,7 +110,7 @@ export default function FirstUser() {
                         <div className="col-12 col-md-6">
                             <div className="form-group">
                                 <label htmlFor="nick">Nick</label>
-                                <input type="nick" id="nick"
+                                <input type="text" id="nick"
                                     className="form-control"
                                     placeholder="Type your nick" />
                             </div>
@@ -117,29 +136,183 @@ export default function FirstUser() {
                         </div>
                     </div>
 
-                    <div className="form-group">
-                        <div className="form-check">
-                            <input className="form-check-input"
-                                type="checkbox"
-                                id="roleAdmin"
-                                defaultChecked={isFirstUser}
-                                disabled={isFirstUser}
-                            />
-                            <label className="form-checkbox-label text-danger" htmlFor="roleAdmin">
-                                {isFirstUser ? 'MAIN ADMINISTRATOR ' : 'Administrator '}
-                            </label>
-                        </div>
+                    <div className="row text-dark">
+                        <div className="col"><hr /></div>
+                        <div className="col-6 col-md-4"><h5 className="text-center fst-italic">Company details (<span className="h6">required</span>)</h5></div>
+                        <div className="col"><hr /></div>
                     </div>
+                    {/* Basic Details ******************************************* */}
+                    <details open>
+                        <summary className="fw-bold">Basic details</summary>
+
+                        {/* Nombre, email y NIF */}
+                        <div className="row">
+                            <div className="col-12 col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="companyName">Name</label>
+                                    <input type="text" id="companyName"
+                                        className="form-control form-control-sm"
+                                        defaultValue="Default Company Name"
+                                        placeholder="Type company name" />
+                                </div>
+                            </div>
+
+                            {/* Email */}
+                            <div className="form-group col-12 col-md-4">
+                                <label htmlFor="companyEmail">Email</label>
+                                <input type="email" id="companyEmail"
+                                    className="form-control form-control-sm"
+                                    placeholder="Type company email" />
+                            </div>
+                            <div className="col-12 col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="companyTaxId">Tax Id / NIF</label>
+                                    <input type="text" id="companyTaxId"
+                                        className="form-control form-control-sm"
+                                        placeholder="Tax identification" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Telefono 1 y 2 */}
+                        <div className="row">
+                            <div className="co-12 col-md-6">
+                                <div className="form-group">
+                                    <label htmlFor="companyPhoneNumber1">Phone number 1</label>
+                                    <input type="text" id="companyPhoneNumber1"
+                                        className="form-control form-control-sm"
+                                        placeholder="Type phone number" />
+                                </div>
+                            </div>
+                            <div className="co-12 col-md-6">
+                                <div className="form-group">
+                                    <label htmlFor="companyPhoneNumber2">Phone number 2</label>
+                                    <input type="text" id="companyPhoneNumber2"
+                                        className="form-control form-control-sm"
+                                        placeholder="Type phone number" />
+                                </div>
+                            </div>
+                        </div>
+                    </details>
+
+                    {/* Address ************************************************** */}
+                    <details>
+                        <summary className="fw-bold">Address</summary>
+                        <div className="row">
+
+                            {/* Dirección */}
+                            <div className="co-12 col-md-8">
+                                <div className="form-group">
+                                    <label htmlFor="companyAddress">Address</label>
+                                    <input type="text" id="companyAddress"
+                                        className="form-control form-control-sm"
+                                        placeholder="Type company address" />
+                                </div>
+                            </div>
+                            <div className="co-12 col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="companyPostalCode">Postal Code</label>
+                                    <input type="text" id="companyPostalCode"
+                                        className="form-control form-control-sm"
+                                        placeholder="Type postal code" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* País, Provincia, Ciudad */}
+                        <div className="row">
+                            <div className="co-12 col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="companyCountry">Country</label>
+                                    <input type="text" id="companyCountry"
+                                        className="form-control form-control-sm"
+                                        defaultValue="Spain"
+                                        placeholder="Select country" />
+                                </div>
+                            </div>
+                            <div className="co-12 col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="companyProvince">Province</label>
+                                    <input type="text" id="companyProvince"
+                                        className="form-control form-control-sm"
+                                        placeholder="Select province" />
+                                </div>
+                            </div>
+                            <div className="co-12 col-md-4">
+                                <div className="form-group">
+                                    <label htmlFor="companyCity">City</label>
+                                    <input type="text" id="companyCity"
+                                        className="form-control form-control-sm"
+                                        placeholder="Type company city" />
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+                    </details>
+
+
+                    <div className="row text-dark">
+                        <div className="col"><hr /></div>
+                        <div className="col-6 col-md-4"><h5 className="text-center fst-italic">More info</h5></div>
+                        <div className="col"><hr /></div>
+                    </div>
+
+                    {/* Bank Acount ************************************************ */}
+                    <details>
+                        <summary className="fw-bold">Bank acount</summary>
+                        <div className="row">
+                            <div className="col-6">
+                                <div className="form-group">
+                                    <label htmlFor="companyBsnkName">BankName</label>
+                                    <input type="text" id="companyBsnkName"
+                                        className="form-control form-control-sm"
+                                        placeholder="Type phone number" />
+                                </div>
+                            </div>
+                            <div className="col-6">
+                                <div className="form-group">
+                                    <label htmlFor="companyIban">IBAN</label>
+                                    <input type="text" id="companyIban"
+                                        className="form-control form-control-sm"
+                                        placeholder="IBAN acount number" />
+                                </div>
+                            </div>
+                        </div>
+
+                    </details>
+
+                    {/* Others ************************************************** */}
+                    <details>
+                        <summary className="fw-bold">Others (logo, etc.)</summary>
+                        <div className="row">
+                            <div className="col-12 col-md-6 col-xl-5">
+                                {/* Logo */}
+                                <div className="form-group">
+                                    <label htmlFor="companyLogo">Logo file</label>
+                                    <input type="file" id="companyLogo"
+                                        className="form-control form-control-sm"
+                                        placeholder="Company logo" />
+                                </div>
+                            </div>
+                        </div>
+                    </details>
                 </form>
             </div >
-            <div className="card-footer p-4">
-                <div className="hstack gap-3">
+            <div className="card-footer ">
+                <div className="hstack gap-3 justify-content-center">
                     <button
                         onClick={handleNewUser}
-                        className="btn btn-primary w-75"
-                    >Add me!
+                        className="btn btn-primary w-50"
+                    >Add me!!
                     </button>
-                    <button onClick={() => router.replace("/")} className="btn btn-secondary w-25">Go back</button>
+                    <button
+                        onClick={() => router.replace("/")}
+                        className="btn btn-outline-secondary"
+                    >Cancel
+                    </button>
                 </div>
             </div>
         </div >
