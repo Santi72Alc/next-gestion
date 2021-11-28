@@ -4,6 +4,7 @@ import { toast } from 'react-hot-toast'
 
 import ActualUserContext from "@Context/actualUser.context";
 import UsersContext from "@Context/users.context";
+import storageServices from "@Services/localStorage.services";
 
 import SideNavbar from "@Components/sideNavbar";
 import Link from "@Components/link";
@@ -13,7 +14,7 @@ import BtnFirstUser from "@Components/buttons/BtnFirstUser";
 import BtnLogin from "@Components/buttons/BtnLogin";
 
 const Navbar = ({ children }) => {
-    const { user, logout, isLogged } = useContext(ActualUserContext)
+    const { user, logout, isLogged, setActualUser } = useContext(ActualUserContext)
     const { isFirstUser } = useContext(UsersContext)
     const [isMenuOpened, setIsMenuOpened] = useState(false);
     const [isLoading, setIsLoading] = useState(false)
@@ -21,11 +22,15 @@ const Navbar = ({ children }) => {
 
     useEffect(() => {
         const toastLoading = toast.loading("Loading...", { position: "top-center" })
+        const newUser = storageServices.getActualUser()
+        if (user && newUser && user._id !== newUser._id) {
+            setActualUser(newUser, { keepAlive: newUser.keepAlive })
+        }
         setTimeout(() => {
             setIsLoading(false)
             toast.remove(toastLoading)
         }, 450)
-    }, [])
+    }, [user])
 
 
     // Show the menu button on the left

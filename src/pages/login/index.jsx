@@ -46,10 +46,10 @@ export default function Login() {
     }
 
     return (
-        <div className="card">
+        <div className="card w-25 ">
 
             <div className="card-header">
-                <h3 className="text-center">Login Page</h3>
+                <h3 className="text-center">Login</h3>
             </div>
 
             <div className="card-body">
@@ -80,9 +80,12 @@ export default function Login() {
                 </form>
             </div>
 
-            <div className="card-footer p-4">
-                <div className="vstack gap-2">
-                    <button onClick={handleLogin} className="btn btn-primary w-50 mx-auto">Login</button>
+            <div className="card-footer">
+                {/* <div className="vstack gap-2"> */}
+                <div className="hstack gap-3 justify-content-center">
+                    <button onClick={handleLogin} className="btn btn-primary w-50">Login</button>
+                    <button onClick={() => router.replace("/")} className="btn btn-secondary">Cancel</button>
+                    {/* </div> */}
                 </div>
             </div>
 

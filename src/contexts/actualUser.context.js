@@ -1,5 +1,7 @@
-import authServices from "@Services/auth.services";
 import { createContext, useState } from "react";
+
+import authServices from "@Services/auth.services";
+import storageServices from "@Services/localStorage.services";
 
 const Roles = {
 	MainAdmin: "Main Admin",
@@ -41,11 +43,13 @@ export function ActualUserProvider({ children }) {
 		password = "",
 		keepAlive = initialContext.keepAlive
 	) => {
-		// Call loginUser service
+		// Llamamos al servicio para logar el user
+		// devuelve obj {success, data (usuario), message}
 		const resp = await authServices.loginUser(email, password);
 		if (resp.success) {
-			setActualUser(resp.data, { keepAlive });
-			// authServices.setActualUser({_id, keepAlive})
+			const user = resp.data;
+			setActualUser(user, { keepAlive });
+			storageServices.setActualUser(user, { keepAlive });
 		}
 		return resp;
 	};
@@ -60,6 +64,7 @@ export function ActualUserProvider({ children }) {
 		setUser(null);
 		setIsLogged(initialUserContext.isLogged);
 		setKeepAlive(initialUserContext.keepAlive);
+		storageServices.closeActualUser();
 	};
 
 	/*************************************************

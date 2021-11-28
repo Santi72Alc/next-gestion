@@ -93,12 +93,12 @@ const loginUser = async (email = "", passwordToCheck = "") => {
 			return {
 				success: true,
 				data: { _id, email, fullName, nick, role },
-				message: "User logged",
+				message: `User ${nick ? nick : fullName} logged`,
 			};
 		} else
 			return {
 				success: false,
-				message: "User or Password not valids, please check!!",
+				message: "User or Password not found, please check!!",
 			};
 
 		return null;

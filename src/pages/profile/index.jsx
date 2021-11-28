@@ -37,9 +37,9 @@ export default function Profile() {
             nick
         }
         const { data } = await updateUser({ user: { ...newUser } })
-        console.log("object", data);
         if (data.success) {
             setActualUser(data.data)
+            router.push("/")
             toast.success(data.message)
         } else
             toast.error(data.message)
