@@ -1,12 +1,11 @@
 import Link from '@Components/link'
 import { useContext } from 'react'
 
-import AuthContext from 'src/contexts/auth.context'
-
+import ActualUserContext from '@Context/actualUser.context'
 import styles from './sidenavbar.module.css'
 
 const SideNavbar = () => {
-    const { user, isAdmin, isMainAdmin } = useContext(AuthContext)
+    const { user, isAdmin, isMainAdmin } = useContext(ActualUserContext)
 
     return (
         <div className="navbar bg-primary px-4">

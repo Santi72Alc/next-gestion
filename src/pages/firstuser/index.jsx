@@ -1,28 +1,54 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 import { toast } from 'react-hot-toast'
 
-import AuthContext from 'src/contexts/auth.context'
 import UsersContext from 'src/contexts/users.context'
 
-import { ROLES } from '@Services/constants'
-
-export default function SignUp() {
-    const { user, isLogged } = useContext(AuthContext)
-    const { isFirstUser, createUser } = useContext(UsersContext)
+export default function FirstUser() {
+    const { isFirstUser, createUser, updateUsersInfo } = useContext(UsersContext)
     const router = useRouter()
 
-    async function handleNewUser() {
+    useEffect(async () => {
+        await updateUsersInfo()
+        console.log("isFirstUser", isFirstUser);
+        !isFirstUser && router.replace("/")
+    }, [])
+
+    function getDataFromInputs() {
         const email = document.getElementById('email').value
         const password = document.getElementById('password').value
+        const password2 = document.getElementById('password2').value
         const fullName = document.getElementById('fullName').value
         const nick = document.getElementById('nick').value
-        const isAdmin = isFirstUser || document.getElementById('roleAdmin').checked
+        const isAdmin = isFirstUser
+
+        return {
+            email,
+            password,
+            password2,
+            fullName,
+            nick,
+            isAdmin
+        }
+    }
+
+    async function handleNewUser() {
+        const { email, password, password2, fullName, nick, isAdmin } = getDataFromInputs()
+
+
+        if (!email || !password || !fullName) {
+            toast.error("Email, FullName and Password are required!")
+            return false
+        }
+        if (password !== password2) {
+            toast.error("Passwords don't match, please check!!")
+            return false
+        }
 
         // Llamamos al servicio para crear el Admin & Company
         const user = { email, password, fullName, nick }
-        const resp = await createUser({ user }, { isAdmin, isFirstUser })
+        const resp = await createUser(user, { isAdmin, isFirstUser })
         // User created
         if (resp.success) {
             toast.success(resp.message)
@@ -41,8 +67,8 @@ export default function SignUp() {
     return (
         <div className="card">
             <div className="card-header text-center">
-                <h3>Create a new user</h3>
-                <h5 className="fst-italic">· {isMainAdmin ? 'Main Administrator' : "Admin"} ·</h5>
+                {/* <h3>Create a new user</h3> */}
+                <h3 className="fst-italic">· Main Administrator ·</h3>
             </div>
             <div className="card-body">
                 <form>
@@ -54,12 +80,7 @@ export default function SignUp() {
                             onChange={handleInputEmail}
                         />
                     </div>
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input type="password" id="password"
-                            className="form-control"
-                            placeholder="Password" />
-                    </div>
+
                     <div className="row">
                         <div className="col-12 col-md-6">
                             <div className="form-group">
@@ -78,6 +99,26 @@ export default function SignUp() {
                             </div>
                         </div>
                     </div>
+
+                    <div className="row">
+                        <div className="col-12 col-md-6">
+                            <div className="form-group">
+                                <label htmlFor="password">Password</label>
+                                <input type="password" id="password"
+                                    className="form-control"
+                                    placeholder="Password" />
+                            </div>
+                        </div>
+                        <div className="col-12 col-md-6">
+                            <div className="form-group">
+                                <label htmlFor="password">Repeat Password</label>
+                                <input type="password" id="password2"
+                                    className="form-control"
+                                    placeholder="Repeat password" />
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="form-group">
                         <div className="form-check">
                             <input className="form-check-input"
@@ -98,10 +139,9 @@ export default function SignUp() {
                     <button
                         onClick={handleNewUser}
                         className="btn btn-primary w-75"
-                        disabled={(!isLogged || user.role !== ROLES.MainAdmin) && !isFirstUser}
                     >Add me!
                     </button>
-                    <button onClick={() => router.back()} className="btn btn-secondary w-25">Go back</button>
+                    <button onClick={() => router.replace("/")} className="btn btn-secondary w-25">Go back</button>
                 </div>
             </div>
         </div >

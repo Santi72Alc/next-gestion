@@ -23,19 +23,19 @@ const newUser = async (body = initialUserProfile) => {
 
 		// Comprobamos si el usuario existe
 		const userExists = await Users.exists({ email: body.email });
-		if (!userExists) {
-			const newUser = new Users(body);
-			await newUser.save();
-			const { password, ...data } = body;
+		if (userExists)
 			return {
-				success: true,
-				data,
-				message: "User added",
+				success: false,
+				message: "User already exists",
 			};
-		}
+
+		const newUser = new Users(body);
+		await newUser.save();
+		const { password, ...data } = body;
 		return {
-			success: false,
-			message: "User already exists",
+			success: true,
+			data,
+			message: "User added",
 		};
 	} catch (error) {
 		throw new Error(error.message);
@@ -64,7 +64,7 @@ const updateUser = async (user = initialUserProfile) => {
 			{ ...user },
 			{ new: true }
 		);
-		
+
 		// Cogemos los campos del registro que nos interesa devolver
 		const { _id, email, fullName, nick, role } = userUpdated;
 		if (userUpdated)

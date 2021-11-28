@@ -3,68 +3,56 @@ import { createContext, useState, useEffect } from "react";
 import { ROLES, initialUserProfile } from "@Services/constants";
 import usersServices from "@Services/users.services";
 
-const UsersContext = createContext({
+const initialUserContext = {
 	isFirstUser: false,
 	usersCount: 0,
-	...initialUserProfile,
-});
+	users: [{ ...initialUserProfile }],
+};
+
+const UsersContext = createContext(initialUserContext);
 
 export function UsersProvider({ children }) {
 	const [users, setUsers] = useState([]);
-	const [usersCount, setUsersCount] = useState(0);
-	const [isFirstUser, setIsFirstUser] = useState(true);
+	const [usersCount, setUsersCount] = useState(initialUserContext.usersCount);
+	const [isFirstUser, setIsFirstUser] = useState(
+		initialUserContext.isFirstUser
+	);
 
 	useEffect(() => {
 		updateUsersInfo();
 	}, []);
 
-	const updateUsersInfo = () => {
-		getAllUsers().then(users => {
-			setUsers(users);
-			setUsersCount(users.length);
-			setIsFirstUser(users.length === 0);
-		});
+	const updateUsersInfo = async () => {
+		const users = await usersServices.getAllUsers();
+
+		setUsers(users);
+		setUsersCount(users.length);
+		setIsFirstUser(users.length === 0);
+		console.log("users: ", users);
 	};
 
-	const getAllUsers = async () => {
-		const { data } = await usersServices.getAllUsers();
-		return data;
-	};
-
+	/**
+	 * Create a new user
+	 * @param {object} user	{...initialUserProfile }
+	 * @param {object} options { isAdmin, isFirstUser }
+	 * @returns user || null
+	 */
 	const createUser = async (
-		{ user = initialUserProfile },
-		{ isAdmin = false, isFirstUser = false }
+		user = { ...initialUserProfile },
+		options = { isAdmin: false, isFirstUser: false }
 	) => {
-		if (!user.email || !user.fullName || !user.password) {
-			return {
-				success: false,
-				message:
-					"Email, Password and Full Name are required, please check!",
-			};
-		}
-		const role = setRoleName({ isAdmin, isFirstUser });
+		const role = getRoleName(options);
 		const newUser = { role, ...user };
-		const { data } = await usersServices.createUser({ user: newUser });
+		const { data } = await usersServices.createUser((user = newUser));
+		if (data.success) updateUsersInfo();
 		return data;
 	};
 
-	const updateUser = async ({ user = initialUserProfile }) => {
-		if (!user._id) {
-			return {
-				success: false,
-				message: "Error updating data",
-			};
-		}
-		if (!user.fullName) {
-			return {
-				success: false,
-				message: "Email and Full Name are required, please check!",
-			};
-		}
+	const updateUser = async ({ user = { ...initialUserProfile } }) => {
 		return await usersServices.updateUser({ user });
 	};
 
-	const setRoleName = ({ isAdmin = false, isFirstUser = false }) => {
+	const getRoleName = ({ isAdmin = false, isFirstUser = false }) => {
 		if (isAdmin) {
 			return isFirstUser ? ROLES.MainAdmin : ROLES.Admin;
 		} else return ROLES.Default;
@@ -73,10 +61,9 @@ export function UsersProvider({ children }) {
 	const dataToExport = {
 		usersCount,
 		isFirstUser,
-		createUser,
-		updateUser,
-		updateUsersInfo,
 		users,
+		createUser,
+		updateUsersInfo,
 	};
 
 	return (

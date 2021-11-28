@@ -4,7 +4,7 @@ import { initialUserProfile, BASE_URL } from "./constants";
 /*
 	POST a new USER
 */
-const createUser = async ({ user = initialUserProfile }) => {
+const createUser = async ( user = { ...initialUserProfile, password } ) => {
 	try {
 		if (!user.email || !user.password || !user.fullName)
 			throw new Error(
@@ -37,7 +37,7 @@ const createUser = async ({ user = initialUserProfile }) => {
 /*
 	UPDATE a user
 */
-const updateUser = async ({ user = initialUserProfile }) => {
+const updateUser = async ({ user = { ...initialUserProfile } }) => {
 	try {
 		if (!user._id) {
 			throw new Error("Error updating data");
@@ -77,11 +77,16 @@ export const getAllUsers = async () => {
 		 * params: void
 		 * query: void
 		 */
-		return await axios({
+		const { data } = await axios({
 			method: "GET",
 			baseURL: BASE_URL.USERS,
 			url: "/",
 		});
+		const users = data.map(user => {
+			const { _id, email, fullName, nick, role } = user;
+			return user;
+		});
+		return users;
 	} catch (error) {
 		return {
 			success: false,

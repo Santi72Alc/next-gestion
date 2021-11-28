@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { toast } from 'react-hot-toast'
 
-import AuthContext from "src/contexts/auth.context";
+import ActualUserContext from "@Context/actualUser.context";
 import UsersContext from "@Context/users.context";
 
 import SideNavbar from "@Components/sideNavbar";
@@ -13,28 +13,27 @@ import BtnFirstUser from "@Components/buttons/BtnFirstUser";
 import BtnLogin from "@Components/buttons/BtnLogin";
 
 const Navbar = ({ children }) => {
-    const { user, logout, isLogged, getActualUser } = useContext(AuthContext)
+    const { user, logout, isLogged } = useContext(ActualUserContext)
     const { isFirstUser } = useContext(UsersContext)
     const [isMenuOpened, setIsMenuOpened] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
+    const [isLoading, setIsLoading] = useState(false)
     const router = useRouter()
+
+    useEffect(() => {
+        const toastLoading = toast.loading("Loading...", { position: "top-center" })
+        setTimeout(() => {
+            setIsLoading(false)
+            toast.remove(toastLoading)
+        }, 450)
+    }, [])
+
 
     // Show the menu button on the left
     function showMenu(show = true) {
         const $sidebarList = document.getElementById("sidebarCol").classList;
         show ? $sidebarList.remove("d-none") : $sidebarList.add("d-none");
         setIsMenuOpened(show);
-        $sidebarList = null;
     }
-
-    useEffect(() => {
-        const toastLoading = toast.loading("Loading...")
-        getActualUser()
-        setInterval(() => {
-            toast.dismiss(toastLoading)
-            setIsLoading(false)
-        }, 300)
-    }, [])
 
     // When press the menu button
     function toogleMenu() {
@@ -45,6 +44,7 @@ const Navbar = ({ children }) => {
         toast.success(`See you soon, ${user.nick}`)
         logout();               // Cerramos el user actual
         showMenu(false);        // Quitamos el menu lateral
+        router.replace("/")
     }
 
     return (
@@ -52,9 +52,11 @@ const Navbar = ({ children }) => {
             {/* Main navbar */}
             <div className="container-fluid">
                 <div className="row ">
-                    <div id="sidebarCol" className="d-none col-3 px-0">
-                        <SideNavbar></SideNavbar>
-                    </div>
+                    {user &&
+                        <div id="sidebarCol" className="d-none col-3 px-0">
+                            <SideNavbar></SideNavbar>
+                        </div>
+                    }
                     <div className="col mx-0 px-0">
                         <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3">
                             <button
@@ -82,16 +84,16 @@ const Navbar = ({ children }) => {
 
                             {!isLoading &&
                                 <div className="mx-auto my-2 my-sm-0">
-                                    {/* Button Logout */}
-                                    {isLogged && <BtnLogout name={user.nick} onClick={handleLogout} />}
 
-                                    {/* Button login if USERS & NO user logged */}
-                                    {!isLogged && <BtnLogin onClick={() => router.replace("/login")} />}
-
-                                    {/* Button Create MAIN ADMIN */}
                                     {isFirstUser && router.pathname === '/' &&
-                                        <BtnFirstUser onClick={() => router.replace("/signin")} />
+                                        <BtnFirstUser onClick={() => router.replace("/firstuser")} />
                                     }
+
+                                    {!isFirstUser && isLogged &&
+                                        <BtnLogout name={user.nick} onClick={handleLogout} />
+                                    }
+                                    {!isFirstUser && !isLogged &&
+                                        <BtnLogin onClick={() => router.replace("/login")} />}
                                 </div>
                             }
 
