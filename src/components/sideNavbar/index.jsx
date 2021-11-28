@@ -1,12 +1,13 @@
 import Link from '@Components/link'
-import UserContext from '@Context/user'
 import { useContext } from 'react'
-import userModel from 'src/models/user.model'
 
+import ActualUserContext from '@Context/actualUser.context'
 import styles from './sidenavbar.module.css'
+import { ROLES } from '@Services/constants'
 
 const SideNavbar = () => {
-    const { user } = useContext(UserContext)
+    const { user, hasUserRole } = useContext(ActualUserContext)
+
     return (
         <div className="navbar bg-primary px-4">
             <div className="vstack gap-3">
@@ -20,10 +21,10 @@ const SideNavbar = () => {
                     <div className="vstack gap-3 px-3 mt-3">
                         <Link href="#" className={styles.link}>
                             <i className="bi bi-file-earmark-ruled-fill"></i>Maintenance
-                            </Link>
+                        </Link>
                     </div>
                 </details>
-                <details>
+                <details hidden={!hasUserRole([ROLES.MainAdmin, ROLES.Admin])}>
                     <summary className={`${styles.summary} text-`}><i className="bi bi-server"></i>Main files</summary>
                     <div className="vstack gap-3 px-3 mt-3">
                         <Link href="#" className={styles.link}>
@@ -42,8 +43,8 @@ const SideNavbar = () => {
                 </details>
                 <hr className={"text-dark"} />
                 <div className="mb-4">
-                    <Link href="#" className={styles.link}>
-                        <i className="bi bi-person-fill"></i>Profile
+                    <Link href="/profile" className={styles.link}>
+                        <i className="bi bi-person-fill"></i>Profile ({user.role})
                     </Link>
                 </div>
             </div>

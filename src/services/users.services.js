@@ -1,53 +1,15 @@
 import axios from "axios";
 
-const URL_USERS = "/api/v1/users";
-
-export const ROLES = {
-	MainAdmin: "Main Admin",
-	Admin: "Admin",
-	User: "User",
-	Default: "User",
-};
-
-export const initialUser = {
-	email: "",
-	password: "",
-	fullName: "",
-	nick: "",
-	role: ROLES.Default,
-};
-
-async function loginUser(email = "", password = "") {
-	try {
-		if (!email || !password)
-			throw new Error("Email and Password are required");
-
-		/**
-		 * Llamada (AXIOS) a la api para logar el usuario
-		 * url: api/v?/users
-		 * Tipo: GET
-		 * data: { email, password }
-		 * params: void
-		 * query: void
-		 */
-		const url = `${URL_USERS}/login`;
-		return await axios.get(url, { params: { email, password } });
-	} catch (error) {
-		console.log("Error logging user", error);
-		return {
-			success: false,
-			message: error.message,
-		};
-	}
-}
-
+import { initialUserProfile, BASE_URL } from "./constants";
 /*
-	Create a new User
+	POST a new USER
 */
-const createUser = async (user = initialUser) => {
+const createUser = async ( user = { ...initialUserProfile, password } ) => {
 	try {
 		if (!user.email || !user.password || !user.fullName)
-			throw new Error("Email, Password and Full Name are required");
+			throw new Error(
+				"Email, Password and Full Name are required, plase check!!"
+			);
 
 		/**
 		 * Llamada (AXIOS) a la api para añadir el usuario
@@ -57,15 +19,13 @@ const createUser = async (user = initialUser) => {
 		 * params: void
 		 * query: void
 		 */
-		const url = `${URL_USERS}/new`;
-		const { data } = await axios.post(url, user);
-
-		// ??? faltaria posible controlar el status
-		return {
-			success: true,
-			data,
-			message: `User ${data.fullName} added`,
-		};
+		// const url = `${usersConstants.URL_USERS}/new`;
+		return await axios({
+			method: "POST",
+			baseURL: BASE_URL.USERS,
+			url: "/new",
+			data: user,
+		});
 	} catch (error) {
 		return {
 			success: false,
@@ -74,26 +34,59 @@ const createUser = async (user = initialUser) => {
 	}
 };
 
-const getUsersCount = async () => {
-	// Llamada al api para recoger el numero de usuarios en la BD
+/*
+	UPDATE a user
+*/
+const updateUser = async ({ user = { ...initialUserProfile } }) => {
+	try {
+		if (!user._id) {
+			throw new Error("Error updating data");
+		}
+		if (!user.fullName)
+			throw new Error("Email and Full Name are required, plase check!!");
+
+		/**
+		 * Llamada (AXIOS) a la api para editar el usuario
+		 * url: api/v?/users/:id
+		 * Tipo: POST
+		 * data: {email, fullName, nick, role }
+		 * params: id
+		 * query: void
+		 */
+		return await axios({
+			method: "PATCH",
+			baseURL: BASE_URL.USERS,
+			url: `/${user._id}`,
+			data: user,
+		});
+	} catch (error) {
+		return {
+			success: false,
+			message: error.message,
+		};
+	}
+};
+
+export const getAllUsers = async () => {
 	try {
 		/**
-		 * Llamada (AXIOS) a la api para Número de usuarios
+		 * Llamada (AXIOS) a la api para recoger TODOS los users
 		 * url: api/v?/users
 		 * Tipo: GET
 		 * data: void
 		 * params: void
 		 * query: void
 		 */
-		const url = URL_USERS;
-		const resp = await axios({
+		const { data } = await axios({
 			method: "GET",
-			url,
+			baseURL: BASE_URL.USERS,
+			url: "/",
 		});
-		return {
-			success: true,
-			data: resp.data.length,
-		};
+		const users = data.map(user => {
+			const { _id, email, fullName, nick, role } = user;
+			return user;
+		});
+		return users;
 	} catch (error) {
 		return {
 			success: false,
@@ -102,21 +95,8 @@ const getUsersCount = async () => {
 	}
 };
 
-const setRoleName = ({ isFirstUser = false, isAdmin = false }) => {
-	if (isAdmin) {
-		return isFirstUser ? ROLES.MainAdmin : ROLES.Admin;
-	} else return ROLES.Default;
-};
-
-const isFirstUser = async () => {
-	const { data } = await getUsersCount();
-	return data === 0;
-};
-
 export default {
 	createUser,
-	loginUser,
-	getUsersCount,
-	isFirstUser,
-	setRoleName,
+	getAllUsers,
+	updateUser,
 };

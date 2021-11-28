@@ -6,7 +6,7 @@
             "@Services/*": ["./src/services/*"],
             "@ApiServices/*": ["./src/services/api/*"],
             "@Libs/*": ["./src/libs/*"],
-            "@Context/*": ["./src/context/*"],
+            "@Context/*": ["src/contexts/*"],
             "@Models/*": ["./src/models/*"]
         }
     },

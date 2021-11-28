@@ -2,12 +2,13 @@ import apiUsersServices from "@Services/api/api-users.services";
 
 export default async function handler(req, res) {
 	try {
-		const { email, password } = req.query;
+		const { email, password } = req.body;
 		const resp = await apiUsersServices.loginUser(email, password);
-		if (resp.success) return res.status(200).json(resp);
-		else
-			return res.status(202).json(resp);
+
+		let status = 203;
+		if (resp.success) status = 200;
+		return res.status(status).json(resp);
 	} catch (error) {
-		return res.json(error.message);
+		return res.status(500).json(error.message);
 	}
 }

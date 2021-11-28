@@ -12,9 +12,13 @@ export default async function handler(req, res) {
 			role,
 		});
 
-		if (resp.success) return res.status(201).json(resp.data);
-		else return res.status(500).json(resp);
+		let status = 202;
+		if (resp.success) status = 201;
+		return res.status(status).json(resp);
 	} catch (error) {
-		return res.json(error.message);
+		return res.status(207).json({
+			success: false,
+			message: error.message,
+		});
 	}
 }

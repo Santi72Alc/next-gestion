@@ -2,46 +2,58 @@ const COOKIE_KEY = "gp-user";
 
 const defaultOptions = {
 	key: COOKIE_KEY,
+	keepSessionAlive: false,
+};
+
+export const defaultStorageData = {
+	_id: "",
+	email: "",
+	fullName: "",
+	nick: "",
+	role: "",
+	keepAlive: false,
 };
 
 const setActualUser = (
-	{ email, fullName, nick, role },
-	{ key } = defaultOptions
+	user,
+	{
+		key = defaultOptions.key,
+		keepSessionAlive = defaultOptions.keepSessionAlive,
+	}
 ) => {
-	const user = { email, fullName, nick, role };
-	if (!user?.email || !user?.fullName || !user?.nick || !user?.role) {
-		console.error("There are fields missing to save in 'client storage'");
+	// NO se permite guardar en el storage de cliente
+	if (typeof window === "undefined") {
+		console.log("Error deploying cookies not allowed");
 		return null;
 	}
-	if (typeof window !== "undefined") {
-		const dataToSave = JSON.stringify(user);
-		sessionStorage.setItem(key, dataToSave);
-		return user;
-	}
-	console.log("Error deploying cookies not allowed");
-	return null;
+
+	// Ok. Guardamos los datos en el storage del cliente
+	user.keepSessionAlive = keepSessionAlive;
+	const dataToSave = JSON.stringify(user);
+	if (keepSessionAlive) localStorage.setItem(key, dataToSave);
+	else sessionStorage.setItem(key, dataToSave);
+	return user;
 };
 
-const getActualUser = (key = COOKIE_KEY) => {
-	if (typeof window !== "undefined") {
-		const savedData = sessionStorage.getItem(key);
-		const data = JSON.parse(savedData);
-		return data;
+const getActualUser = (key = defaultOptions.key) => {
+	if (typeof window === "undefined") {
+		console.log("*** Error deploying cookies not allowed");
+		return null;
 	}
-	console.log("Error deploying cookies not allowed");
-	return null;
+	// Ok. Recogemos los datos del store del cliente
+	const userSaved = localStorage.getItem(key) || sessionStorage.getItem(key);
+	return JSON.parse(userSaved);
 };
 
 const closeActualUser = ({ key } = defaultOptions) => {
 	if (typeof window !== "undefined") {
+		localStorage.removeItem(key);
 		sessionStorage.removeItem(key);
 	}
-	return null;
 };
 
-const isLogged = () => {
-	if (getActualUser()) return true;
-	return false;
+export default {
+	setActualUser,
+	getActualUser,
+	closeActualUser,
 };
-
-export { setActualUser, getActualUser, closeActualUser, isLogged };

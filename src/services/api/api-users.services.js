@@ -1,61 +1,81 @@
 import dbConnected from "@Libs/utils/database";
-import { initialUser } from "@Services/users.services";
 import Users from "@Models/user.model";
 import { comparePassword } from "@Libs/utils/auth";
+import { initialUserProfile } from "@Services/constants";
 
-const newUser = async (body = initialUser) => {
+export const getUsersCount = async (filter = {}) => {
+	const count = (await getAllUsers()).length;
+	return count;
+};
+
+export const getAllUsers = async () => {
+	await dbConnected();
+	const resp = await Users.find();
+	return resp;
+};
+
+const newUser = async (body = initialUserProfile) => {
 	try {
+		if (!body.email || !body.password || !body.fullName)
+			throw new Error("Email, Password and Full Name are required");
+
 		await dbConnected();
 
-		const { email, password, fullName } = body;
-
-		// Validamos los datos recibido para el nuevo usuario
-		const isValid = await validateNewUser(email, password, fullName);
-
-		if (isValid) {
-			const { password, ...data } = body;
-			const newUser = new Users(body);
-			newUser.save();
-			return {
-				success: true,
-				data,
-				message: "User added",
-			};
-		} else
+		// Comprobamos si el usuario existe
+		const userExists = await Users.exists({ email: body.email });
+		if (userExists)
 			return {
 				success: false,
-				message: "Creating user. Something went wrong",
+				message: "User already exists",
 			};
-	} catch (error) {
-		return { success: false, message: error.message };
-	}
-};
 
-const validateNewUser = async (email, password, fullName) => {
-	if (!email || !password || !fullName)
-		throw new Error("Email, Password and Full Name are required");
-	try {
-		/* 
-		Buscamos en Users para ver si existe ese email
-		Si existe en la BD devolvemos false
-		Si no existe, devolvemos true
-		*/
-		const resp = await Users.findOne({ email });
-
-		if (resp) throw new Error("The email already exists");
-		return true;
-	} catch (error) {
-		throw new Error(error);
-	}
-};
-
-const getUsers = async filter => {
-	try {
-		await dbConnected();
-		const resp = await Users.find(filter);
+		const newUser = new Users(body);
+		await newUser.save();
+		const { password, ...data } = body;
 		return {
 			success: true,
-			data: resp,
+			data,
+			message: "User added",
+		};
+	} catch (error) {
+		throw new Error(error.message);
+	}
+};
+
+const updateUser = async (user = initialUserProfile) => {
+	try {
+		if (!user._id) {
+			throw new Error("Error updating data");
+		}
+		if (!user.fullName) throw new Error("Full Name are required");
+		user;
+		await dbConnected();
+
+		const userExists = await Users.exists({ _id: user._id });
+		if (!userExists)
+			return {
+				success: false,
+				message: "User not found",
+			};
+
+		// Buscamos el user por _id y actualizamos los datos recibidos
+		const userUpdated = await Users.findByIdAndUpdate(
+			user._id,
+			{ ...user },
+			{ new: true }
+		);
+
+		// Cogemos los campos del registro que nos interesa devolver
+		const { _id, email, fullName, nick, role } = userUpdated;
+		if (userUpdated)
+			return {
+				success: true,
+				data: { _id, email, fullName, nick, role },
+				message: "Data user updated!",
+			};
+		return {
+			success: false,
+			message: "Error updating data user!",
 		};
 	} catch (error) {
 		throw new Error(error.message);
@@ -65,40 +85,31 @@ const getUsers = async filter => {
 const loginUser = async (email = "", passwordToCheck = "") => {
 	try {
 		await dbConnected();
-		const { _doc } = await Users.findOne({ email });
-
-		const { password, ...data } = _doc;
-		if (comparePassword(passwordToCheck, password))
+		const resp = await Users.findOne({ email });
+		// Quitamos 'passsword' de la data a devolver
+		const { password, ...data } = resp._doc;
+		if (comparePassword(passwordToCheck, password)) {
+			const { _id, email, fullName, nick, role } = data;
 			return {
 				success: true,
-				data,
-				message: "Users Logged",
+				data: { _id, email, fullName, nick, role },
+				message: "User logged",
 			};
-		return {
-			success: false,
-			message: "Email or Password wrong. Please check!",
-		};
-	} catch (error) {
-		throw new Error(error.message);
-	}
-};
+		} else
+			return {
+				success: false,
+				message: "User or Password not valids, please check!!",
+			};
 
-const getUsersCount = async () => {
-	try {
-		await dbConnected();
-		const resp = await getUsers({});
-		return {
-			success: true,
-			data: resp.data.length,
-		};
+		return null;
 	} catch (error) {
 		throw new Error(error.message);
 	}
 };
 
 export default {
-	newUser,
-	getUsers,
-	getUsersCount,
 	loginUser,
+	newUser,
+	updateUser,
+	getAllUsers,
 };

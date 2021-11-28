@@ -1,11 +1,13 @@
-import { hashPassword } from "@Libs/utils/auth";
-import { ROLES } from "@Services/users.services";
 import { model, models, Schema } from "mongoose";
+
+import { hashPassword } from "@Libs/utils/auth";
+import { ROLES } from "@Services/constants";
 
 const userSchema = new Schema(
 	{
 		email: {
 			type: String,
+			lowercase: true,
 			unique: [true, "The user email already exists"],
 			required: [true, "The user email is required"],
 		},

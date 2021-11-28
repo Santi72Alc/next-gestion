@@ -1,57 +1,61 @@
-import Router from 'next/router'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
+import { useRouter } from 'next/router'
+import { toast } from 'react-hot-toast'
 
-// import Link from '@Components/link'
-import UserContext from '@Context/user'
-import myAlerts from '@Libs/alerts'
-
-// import styles from './login.module.css'
-// import usersServices from '@Services/users.services'
+// import AuthContext from 'src/contexts/auth.context'
+import ActualUserContext from '@Context/actualUser.context'
+import UsersContext from 'src/contexts/users.context'
 
 export default function Login() {
-    const { login, setIsLoggedIn } = useContext(UserContext)
+    const { login, getActualUser } = useContext(ActualUserContext)
+    const { isFirstUser } = useContext(UsersContext)
+    const router = useRouter()
+
+    useEffect(() => {
+        isFirstUser && router.replace("/firtsuser")
+        fillData()
+    }, [])
+
+
+    function fillData() {
+        const { isLogged, keepAlive, user } = getActualUser()
+
+        if (isLogged) {
+            document.getElementById('email').value = user.email
+            document.getElementById('password').value = user.$password
+            document.getElementById('keepAlive').checked = keepAlive
+        }
+    }
 
     async function handleLogin() {
         const $email = document.getElementById('email')
         const $password = document.getElementById('password')
-        // const keepAlive = document.getElementById('keepAlive').checked
+        const keepAlive = document.getElementById('keepAlive').checked
 
-        const isUserLogged = await login($email.value, $password.value)
-        setIsLoggedIn(isUserLogged)
-        if (isUserLogged) {
-            myAlerts.ToastSucces.fire({
-                icon: "success",
-                title: 'User logged'
-            })
-            Router.push("/")
+        const resp = await login($email.value, $password.value, keepAlive)
+
+        if (resp.success) {
+            toast.success(resp.message)
+            router.replace("/")
         }
         else {
-            myAlerts.Alert.fire({
-                title: `Invalid email or password`,
-                text: `Please, check it!!`,
-                icon: "error",
-                timer: 4500,
-                returnFocus: false,
-
-            }).then((resp) => {
-                $email.focus()
-                $password.value = ''
-            })
+            toast.error(resp.message)
+            $email.focus()
+            $password.value = ''
         }
     }
-
 
     return (
         <div className="card">
 
             <div className="card-header">
-                <h3 className="text-center">Sign in</h3>
+                <h3 className="text-center">Login Page</h3>
             </div>
 
             <div className="card-body">
                 <form>
                     <div className="form-group">
-                        <label htmlFor="email">User email</label>
+                        <label htmlFor="email">Email</label>
                         <input type="email" id="email"
                             className="form-control"
                             placeholder="Type your registered email" />
@@ -62,7 +66,7 @@ export default function Login() {
                             className="form-control"
                             placeholder="Password" />
                     </div>
-                   {/*  <div className="form-group">
+                    <div className="form-group">
                         <div className="form-check">
                             <input className="form-check-input"
                                 type="checkbox"
@@ -72,18 +76,13 @@ export default function Login() {
                                 Keep session alive
                             </label>
                         </div>
-                    </div> */}
+                    </div>
                 </form>
             </div>
 
             <div className="card-footer p-4">
                 <div className="vstack gap-2">
-                    <button onClick={handleLogin} className="btn btn-primary w-50 mx-auto">I'm ready</button>
-                    {/*
-                        <Link href="/signup" className={`text-center ${styles.linkToRegister}`}>
-                            I'm new here! Please, send me to register
-                        </Link>
-                    */}
+                    <button onClick={handleLogin} className="btn btn-primary w-50 mx-auto">Login</button>
                 </div>
             </div>
 
