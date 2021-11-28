@@ -30,7 +30,7 @@ export const initialAuthContext = {
 export const initialUserProfile = {
     _id: "",
     email: "",
-    password: "",
+    // password: "",
     fullName: "",
     nick: "",
     role: ROLES.Default,

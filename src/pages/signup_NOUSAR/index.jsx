@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 
 import { toast } from 'react-hot-toast'
 
-import AuthContext from 'src/contexts/auth.context'
+import AuthContext from '@Context/auth.context_NOUSAR'
 import UsersContext from 'src/contexts/users.context'
 
 import { ROLES } from '@Services/constants'

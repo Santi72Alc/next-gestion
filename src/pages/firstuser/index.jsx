@@ -1,28 +1,41 @@
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 import { toast } from 'react-hot-toast'
 
-import AuthContext from 'src/contexts/auth.context'
 import UsersContext from 'src/contexts/users.context'
 
-import { ROLES } from '@Services/constants'
-
 export default function SignUp() {
-    const { user, isLogged } = useContext(AuthContext)
     const { isFirstUser, createUser } = useContext(UsersContext)
     const router = useRouter()
 
-    async function handleNewUser() {
+
+    useEffect(() => {
+        !isFirstUser && router.replace("/")
+    }, [])
+
+    function getDataFromInputs() {
         const email = document.getElementById('email').value
         const password = document.getElementById('password').value
         const fullName = document.getElementById('fullName').value
         const nick = document.getElementById('nick').value
-        const isAdmin = isFirstUser || document.getElementById('roleAdmin').checked
+        const isAdmin = isFirstUser
+
+        return {
+            email,
+            password,
+            fullName,
+            nick,
+            isAdmin
+        }
+    }
+
+    async function handleNewUser() {
+        const { email, password, fullName, nick, isAdmin } = getDataFromInputs()
 
         // Llamamos al servicio para crear el Admin & Company
         const user = { email, password, fullName, nick }
-        const resp = await createUser({ user }, { isAdmin, isFirstUser })
+        const resp = await createUser(user, { isAdmin, isFirstUser })
         // User created
         if (resp.success) {
             toast.success(resp.message)
@@ -42,7 +55,7 @@ export default function SignUp() {
         <div className="card">
             <div className="card-header text-center">
                 <h3>Create a new user</h3>
-                <h5 className="fst-italic">· {isMainAdmin ? 'Main Administrator' : "Admin"} ·</h5>
+                <h5 className="fst-italic">· Main Administrator ·</h5>
             </div>
             <div className="card-body">
                 <form>
@@ -98,10 +111,9 @@ export default function SignUp() {
                     <button
                         onClick={handleNewUser}
                         className="btn btn-primary w-75"
-                        disabled={(!isLogged || user.role !== ROLES.MainAdmin) && !isFirstUser}
                     >Add me!
                     </button>
-                    <button onClick={() => router.back()} className="btn btn-secondary w-25">Go back</button>
+                    <button onClick={() => router.replace("/")} className="btn btn-secondary w-25">Go back</button>
                 </div>
             </div>
         </div >

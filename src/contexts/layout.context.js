@@ -1,14 +1,10 @@
-const { AuthProvider } = require("./auth.context");
-const { UsersProvider } = require("./users.context");
-
+import { ActualUserProvider } from "./actualUser.context";
+import { UsersProvider } from "./users.context";
 
 export function LayoutProviders({ children }) {
-
-    return (
-        <AuthProvider>
-            <UsersProvider>
-                {children}
-            </UsersProvider>
-        </AuthProvider>
-    )
+	return (
+		<ActualUserProvider>
+			<UsersProvider>{children}</UsersProvider>
+		</ActualUserProvider>
+	);
 }
