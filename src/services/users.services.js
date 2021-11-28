@@ -83,8 +83,9 @@ export const getAllUsers = async () => {
 			url: "/",
 		});
 		const users = data.map(user => {
+			// Con esto filtramos los 'campos' que queremos tener compartidos del usuario 
 			const { _id, email, fullName, nick, role } = user;
-			return user;
+			return { _id, email, fullName, nick, role };
 		});
 		return users;
 	} catch (error) {

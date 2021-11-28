@@ -5,22 +5,26 @@ import { toast } from 'react-hot-toast'
 
 import ActualUserContext from '@Context/actualUser.context'
 import UsersContext from 'src/contexts/users.context'
-import { ROLES } from '@Services/constants'
+import { ROLES, initialUserProfile } from '@Services/constants'
 
 export default function Profile() {
-    const { updateUser } = useContext(UsersContext)
+    const { updateUser, getUserById, updateUsersInfo } = useContext(UsersContext)
     const { user, hasUserRole, setActualUser } = useContext(ActualUserContext)
     const router = useRouter()
 
-    useEffect(() => {
-        setUserDataToInputs(user)
+    useEffect(async () => {
+        toast.loading("Loading user...", { position: "top-center" })
+        await updateUsersInfo()
+        const userFound = getUserById(user._id)
+        setUserDataToInputs(userFound)
+        toast.dismiss()
     }, [])
 
 
-    function setUserDataToInputs({ email, fullName, nick }) {
-        document.getElementById('email').value = email
-        document.getElementById('fullName').value = fullName
-        document.getElementById('nick').value = nick
+    function setUserDataToInputs(user = initialUserProfile) {
+        document.getElementById('email').value = user.email
+        document.getElementById('fullName').value = user.fullName
+        document.getElementById('nick').value = user.nick
     }
 
     async function handleUpdateUser() {
@@ -49,12 +53,12 @@ export default function Profile() {
         <div className="card">
             <div className="card-header text-center">
                 <h3>Profile</h3>
-                <h5 className="fst-italic">· {user.role} ·</h5>
+                <h5 className="fst-italic">· {user?.role} ·</h5>
             </div>
             <div className="card-body">
                 <form>
                     <div className="form-group">
-                        <label htmlFor="email">User email</label>
+                        <label htmlFor="email">Email</label>
                         <input type="email" id="email"
                             className="form-control"
                             disabled
@@ -63,7 +67,7 @@ export default function Profile() {
                     <div className="row">
                         <div className="col-12 col-md-6">
                             <div className="form-group">
-                                <label htmlFor="fullName">User full name</label>
+                                <label htmlFor="fullName">Full name</label>
                                 <input type="fullName" id="fullName"
                                     className="form-control"
                                     placeholder="Type your name" />
@@ -85,11 +89,11 @@ export default function Profile() {
                 <div className="hstack gap-3">
                     <button
                         onClick={handleUpdateUser}
-                        className="btn btn-primary w-75"
+                        className="btn btn-primary w-50"
                         disabled={!hasUserRole([ROLES.Admin, ROLES.MainAdmin])}
-                    >Save data
+                    >Save
                     </button>
-                    <button onClick={() => router.back()} className="btn btn-secondary w-25">Go back</button>
+                    <button onClick={() => router.replace("/")} className="btn btn-secondary">Cancel</button>
                 </div>
             </div>
         </div >

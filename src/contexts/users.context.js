@@ -27,6 +27,7 @@ export function UsersProvider({ children }) {
 		setUsers(users);
 		setUsersCount(users.length);
 		setIsFirstUser(users.length === 0);
+		return users
 	};
 
 	/**
@@ -56,6 +57,10 @@ export function UsersProvider({ children }) {
 		} else return ROLES.Default;
 	};
 
+	const getUserById = (id = "") => {
+		return users.filter(user => user._id === id)[0];
+	};
+
 	const dataToExport = {
 		usersCount,
 		isFirstUser,
@@ -63,6 +68,7 @@ export function UsersProvider({ children }) {
 		createUser,
 		updateUser,
 		updateUsersInfo,
+		getUserById
 	};
 
 	return (
