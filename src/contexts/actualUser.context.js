@@ -44,7 +44,7 @@ export function ActualUserProvider({ children }) {
 		// Call loginUser service
 		const resp = await authServices.loginUser(email, password);
 		if (resp.success) {
-			setActualUser(resp.data)
+			setActualUser(resp.data, { keepAlive });
 			// authServices.setActualUser({_id, keepAlive})
 		}
 		return resp;
@@ -91,6 +91,7 @@ export function ActualUserProvider({ children }) {
 		login,
 		logout,
 		getActualUser,
+		setActualUser,
 		hasUserRole,
 	};
 

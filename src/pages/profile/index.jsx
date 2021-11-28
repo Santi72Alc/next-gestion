@@ -3,20 +3,21 @@ import { useRouter } from 'next/router'
 
 import { toast } from 'react-hot-toast'
 
-import AuthContext from '@Context/auth.context_NOUSAR'
+import ActualUserContext from '@Context/actualUser.context'
 import UsersContext from 'src/contexts/users.context'
+import { ROLES } from '@Services/constants'
 
 export default function Profile() {
     const { updateUser } = useContext(UsersContext)
-    const { user, isLogged, isAdmin, setActualUser } = useContext(AuthContext)
+    const { user, hasUserRole, setActualUser } = useContext(ActualUserContext)
     const router = useRouter()
 
     useEffect(() => {
-        setUserData(user)
+        setUserDataToInputs(user)
     }, [])
 
 
-    function setUserData({ email, fullName, nick }) {
+    function setUserDataToInputs({ email, fullName, nick }) {
         document.getElementById('email').value = email
         document.getElementById('fullName').value = fullName
         document.getElementById('nick').value = nick
@@ -26,12 +27,17 @@ export default function Profile() {
         const fullName = document.getElementById('fullName').value
         const nick = document.getElementById('nick').value
 
+        if (!fullName) {
+            toast.error("Full Name is required!!")
+            return false
+        }
         const newUser = {
             _id: user._id,
             fullName,
             nick
         }
         const { data } = await updateUser({ user: { ...newUser } })
+        console.log("object", data);
         if (data.success) {
             setActualUser(data.data)
             toast.success(data.message)
@@ -80,7 +86,7 @@ export default function Profile() {
                     <button
                         onClick={handleUpdateUser}
                         className="btn btn-primary w-75"
-                        disabled={!isLogged || !isAdmin}
+                        disabled={!hasUserRole([ROLES.Admin, ROLES.MainAdmin])}
                     >Save data
                     </button>
                     <button onClick={() => router.back()} className="btn btn-secondary w-25">Go back</button>

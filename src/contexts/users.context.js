@@ -24,11 +24,9 @@ export function UsersProvider({ children }) {
 
 	const updateUsersInfo = async () => {
 		const users = await usersServices.getAllUsers();
-
 		setUsers(users);
 		setUsersCount(users.length);
 		setIsFirstUser(users.length === 0);
-		console.log("users: ", users);
 	};
 
 	/**
@@ -63,6 +61,7 @@ export function UsersProvider({ children }) {
 		isFirstUser,
 		users,
 		createUser,
+		updateUser,
 		updateUsersInfo,
 	};
 

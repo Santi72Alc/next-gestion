@@ -11,7 +11,6 @@ export default function FirstUser() {
 
     useEffect(async () => {
         await updateUsersInfo()
-        console.log("isFirstUser", isFirstUser);
         !isFirstUser && router.replace("/")
     }, [])
 
