@@ -3,9 +3,10 @@ import { useContext } from 'react'
 
 import ActualUserContext from '@Context/actualUser.context'
 import styles from './sidenavbar.module.css'
+import { ROLES } from '@Services/constants'
 
 const SideNavbar = () => {
-    const { user, isAdmin, isMainAdmin } = useContext(ActualUserContext)
+    const { user, hasUserRole } = useContext(ActualUserContext)
 
     return (
         <div className="navbar bg-primary px-4">
@@ -23,7 +24,7 @@ const SideNavbar = () => {
                         </Link>
                     </div>
                 </details>
-                <details hidden={!isMainAdmin && !isAdmin}>
+                <details hidden={!hasUserRole([ROLES.MainAdmin, ROLES.Admin])}>
                     <summary className={`${styles.summary} text-`}><i className="bi bi-server"></i>Main files</summary>
                     <div className="vstack gap-3 px-3 mt-3">
                         <Link href="#" className={styles.link}>

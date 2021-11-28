@@ -36,7 +36,6 @@ export default function FirstUser() {
     async function handleNewUser() {
         const { email, password, password2, fullName, nick, isAdmin } = getDataFromInputs()
 
-
         if (!email || !password || !fullName) {
             toast.error("Email, FullName and Password are required!")
             return false
