@@ -5,7 +5,6 @@ import { toast } from 'react-hot-toast'
 
 import UsersContext from 'src/contexts/users.context'
 
-<<<<<<< HEAD
 export default function FirstUser() {
     const { isFirstUser, createUser, updateUsersInfo } = useContext(UsersContext)
     const router = useRouter()
@@ -13,14 +12,6 @@ export default function FirstUser() {
     useEffect(async () => {
         await updateUsersInfo()
         console.log("isFirstUser", isFirstUser);
-=======
-export default function SignUp() {
-    const { isFirstUser, createUser } = useContext(UsersContext)
-    const router = useRouter()
-
-
-    useEffect(() => {
->>>>>>> b2ccdbd8f511a2d24c91aa7a3a1673c604d746d4
         !isFirstUser && router.replace("/")
     }, [])
 
@@ -35,10 +26,7 @@ export default function SignUp() {
         return {
             email,
             password,
-<<<<<<< HEAD
             password2,
-=======
->>>>>>> b2ccdbd8f511a2d24c91aa7a3a1673c604d746d4
             fullName,
             nick,
             isAdmin
@@ -46,7 +34,6 @@ export default function SignUp() {
     }
 
     async function handleNewUser() {
-<<<<<<< HEAD
         const { email, password, password2, fullName, nick, isAdmin } = getDataFromInputs()
 
         if (!email || !password || !fullName) {
@@ -57,9 +44,6 @@ export default function SignUp() {
             toast.error("Passwords don't match, please check!!")
             return false
         }
-=======
-        const { email, password, fullName, nick, isAdmin } = getDataFromInputs()
->>>>>>> b2ccdbd8f511a2d24c91aa7a3a1673c604d746d4
 
         // Llamamos al servicio para crear el Admin & Company
         const user = { email, password, fullName, nick }
@@ -82,13 +66,8 @@ export default function SignUp() {
     return (
         <div className="card">
             <div className="card-header text-center">
-<<<<<<< HEAD
                 {/* <h3>Create a new user</h3> */}
                 <h3 className="fst-italic">· Main Administrator ·</h3>
-=======
-                <h3>Create a new user</h3>
-                <h5 className="fst-italic">· Main Administrator ·</h5>
->>>>>>> b2ccdbd8f511a2d24c91aa7a3a1673c604d746d4
             </div>
             <div className="card-body">
                 <form>
