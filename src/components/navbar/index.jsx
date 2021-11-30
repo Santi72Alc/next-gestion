@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import Image from "next/image"
 import { toast } from 'react-hot-toast'
 
 import ActualUserContext from "@Context/actualUser.context";
@@ -17,7 +18,7 @@ const Navbar = ({ children }) => {
     const { user, logout, isLogged, setActualUser } = useContext(ActualUserContext)
     const { isFirstUser } = useContext(UsersContext)
     const [isMenuOpened, setIsMenuOpened] = useState(false);
-    const [isLoading, setIsLoading] = useState(false)
+    const [isLoading, setIsLoading] = useState(true)
     const router = useRouter()
 
     useEffect(() => {
@@ -56,56 +57,48 @@ const Navbar = ({ children }) => {
         <>
             {/* Main navbar */}
             <div className="container-fluid">
-                <div className="row ">
-                    {user &&
-                        <div id="sidebarCol" className="d-none col-3 px-0">
-                            <SideNavbar></SideNavbar>
-                        </div>
-                    }
-                    <div className="col mx-0 px-0">
-                        <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3">
-                            <button
-                                type="button"
-                                id="btnCollapse"
-                                className="btn btn-info"
-                                onClick={toogleMenu}
-                                hidden={!isLogged}>
-                                <i className={`bi ${isMenuOpened ? 'bi-arrow-bar-left' : 'bi-list'}`}></i>
-                            </button>
-                            <div className="vstack text-center">
-                                <Link href="/" className="h2 text-decoration-none text-dark">
-                                    Budget Management App
-                                </Link>
-                                <div className="hstack gap-3 justify-content-center">
-
-                                    <small className="text-white fst-italic">
-                                        Fernando Veras · {" "}
-                                        <small className="text-dark">&#169; 2021</small>
-                                        {" "} · Santiago San Román
-                                    </small>
-                                </div>
-
-                            </div>
-
-                            {!isLoading &&
-                                <div className="mx-auto my-2 my-sm-0">
-
-                                    {isFirstUser && router.pathname === '/' &&
-                                        <BtnFirstUser onClick={() => router.replace("/firstuser")} />
-                                    }
-
-                                    {!isFirstUser && isLogged &&
-                                        <BtnLogout name={user.nick} onClick={handleLogout} />
-                                    }
-                                    {!isFirstUser && !isLogged &&
-                                        <BtnLogin onClick={() => router.replace("/login")} />}
-                                </div>
-                            }
-
-                        </nav>
-                        <div className="col m-2">{children}</div>
+                <div hidden={!isLogged}>
+                    <div id="sidebarCol" className="d-none col-3 px-0" >
+                        <SideNavbar></SideNavbar>
                     </div>
                 </div>
+                <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3 justify-content-end">
+                    <button
+                        type="button"
+                        id="btnCollapse"
+                        className="btn btn-info"
+                        onClick={toogleMenu}
+                        hidden={!isLogged}
+                    >
+                        <i className={`bi ${isMenuOpened ? 'bi-arrow-bar-left' : 'bi-list'}`}></i>
+                    </button>
+
+                    <div className="text-center mx-auto">
+                        <Link href="/" className="h2 text-decoration-none text-dark">
+                            {/* <Image src="/Budget_Management.png" width="64" height="64" /> */}
+                            Budget Management App
+                        </Link>
+                        <div className="text-white fst-italic">
+                            Fernando Veras · {" "}
+                            <small className="text-dark">&#169; 2021</small>
+                            {" "} · Santiago San Román
+                        </div>
+                    </div>
+
+                    <div hidden={isLogged || isLoading}>
+                        {isFirstUser && router.pathname === '/' &&
+                            <BtnFirstUser onClick={() => router.replace("/firstuser")} />
+                        }
+
+                        {!isFirstUser && isLogged &&
+                            <BtnLogout name={user.nick} onClick={handleLogout} />
+                        }
+                        {!isFirstUser && !isLogged &&
+                            <BtnLogin onClick={() => router.replace("/login")} />}
+                    </div>
+
+                </nav>
+                <div className="col m-2">{children}</div>
             </div>
         </>
     );
