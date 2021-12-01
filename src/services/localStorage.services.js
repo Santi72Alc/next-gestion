@@ -2,7 +2,7 @@ const COOKIE_KEY = "gp-user";
 
 const defaultOptions = {
 	key: COOKIE_KEY,
-	keepSessionAlive: false,
+	keepAlive: false,
 };
 
 export const defaultStorageData = {
@@ -11,14 +11,14 @@ export const defaultStorageData = {
 	fullName: "",
 	nick: "",
 	role: "",
-	keepAlive: false,
+	keepAlive: defaultOptions.keepAlive,
 };
 
 const setActualUser = (
 	user,
 	{
 		key = defaultOptions.key,
-		keepSessionAlive = defaultOptions.keepSessionAlive,
+		keepAlive = defaultOptions.keepAlive,
 	}
 ) => {
 	// NO se permite guardar en el storage de cliente
@@ -28,9 +28,9 @@ const setActualUser = (
 	}
 
 	// Ok. Guardamos los datos en el storage del cliente
-	user.keepSessionAlive = keepSessionAlive;
+	user.keepAlive = keepAlive;
 	const dataToSave = JSON.stringify(user);
-	if (keepSessionAlive) localStorage.setItem(key, dataToSave);
+	if (keepAlive) localStorage.setItem(key, dataToSave);
 	else sessionStorage.setItem(key, dataToSave);
 	return user;
 };
