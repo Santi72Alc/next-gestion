@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
+import toast from 'react-hot-toast'
 
-import { toast } from 'react-hot-toast'
 
 import UsersContext from 'src/contexts/users.context'
 import FirstuserHTML from './FirstuserHTML'
@@ -15,38 +15,17 @@ export default function FirstUser() {
         !isFirstUser && router.replace("/")
     }, [])
 
-    async function handleCreateAdmin(data) {
-        // const {
-        //     email,
-        //     password,
-        //     password2,
-        //     fullName,
-        //     nick,
-        //     isAdmin
-        // } = getUserDataFromInputs()
-        // const companyData = getCompanyDataFromInputs()
-
-        // if (!email || !password || !fullName) {
-        //     toast.error("Email, FullName and Password are required!")
-        //     return false
-        // }
-        // if (password !== password2) {
-        //     toast.error("Passwords don't match, please check!!")
-        //     return false
-        // }
-
-        console.log("Obj. de campos: ", data);
+    async function handleCreateAdmin({ user, company }) {
 
         // Llamamos al servicio para crear el Admin & Company
-        // const user = { email, password, fullName, nick }
-        // const resp = await createUser(user, { isAdmin, isFirstUser })
-        // // User created
-        // if (resp.success) {
-        //     toast.success(resp.message)
-        //     router.replace("/")
-        // } else {
-        //     toast.error(resp.message)
-        // }
+        const resp = await createUser(user, { isAdmin: true, isFirstUser: true })
+        // User created
+        if (resp.success) {
+            toast.success(resp.message)
+            router.replace("/")
+        } else {
+            toast.error(resp.message)
+        }
     }
 
 
