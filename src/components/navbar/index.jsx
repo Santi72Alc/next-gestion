@@ -47,60 +47,69 @@ const Navbar = ({ children }) => {
     }
 
     function handleLogout() {
-        toast.success(`See you soon, ${user.nick}`)
+        toast.success(`See you soon, ${user.nick}`, {
+            style: {
+                backgroundColor: "lightblue",
+                color: "black"
+            }
+        })
         logout();               // Cerramos el user actual
         showMenu(false);        // Quitamos el menu lateral
         router.replace("/")
     }
 
     return (
-        <>
-            {/* Main navbar */}
-            <div className="container-fluid">
-                <div hidden={!isLogged}>
-                    <div id="sidebarCol" className="d-none col-3 px-0" >
-                        <SideNavbar></SideNavbar>
-                    </div>
+        <div className="container-fluid" >
+
+            <div className="row">
+                <div id="sidebarCol" className="col-auto p-0 d-none">
+                    {isLogged && <SideNavbar></SideNavbar>}
                 </div>
-                <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3 justify-content-end">
-                    <button
-                        type="button"
-                        id="btnCollapse"
-                        className="btn btn-info"
-                        onClick={toogleMenu}
-                        hidden={!isLogged}
-                    >
-                        <i className={`bi ${isMenuOpened ? 'bi-arrow-bar-left' : 'bi-list'}`}></i>
-                    </button>
+                <div className="col p-0">
+                    <nav className="navbar navbar-expand-lg navbar-dark bg-primary px-3 justify-content-end">
 
-                    <div className="text-center mx-auto">
-                        <Link href="/" className="h2 text-decoration-none text-dark">
-                            {/* <Image src="/Budget_Management.png" width="64" height="64" /> */}
-                            Budget Management App
-                        </Link>
-                        <div className="text-white fst-italic">
-                            Fernando Veras · {" "}
-                            <small className="text-dark">&#169; 2021</small>
-                            {" "} · Santiago San Román
+                        <button
+                            type="button"
+                            id="btnCollapse"
+                            className="btn btn-info"
+                            onClick={toogleMenu}
+                            hidden={!isLogged}
+                        >
+                            <i className={`bi ${isMenuOpened ? 'bi-arrow-bar-left' : 'bi-list'}`}></i>
+                        </button>
+
+                        <div className="text-center mx-auto">
+                            <Link href="/" className="h2 text-decoration-none text-dark">
+                                {/* <Image src="/Budget_Management.png" width="64" height="64" /> */}
+                                Budget Management App
+                            </Link>
+                            <div className="text-white fst-italic">
+                                Fernando Veras · {" "}
+                                <small className="text-dark">&#169; 2021</small>
+                                {" "} · Santiago San Román
+                            </div>
                         </div>
-                    </div>
 
-                    <div hidden={isLogged || isLoading}>
-                        {isFirstUser && router.pathname === '/' &&
-                            <BtnFirstUser onClick={() => router.replace("/firstuser")} />
-                        }
+                        <div hidden={isLoading}>
+                            {isFirstUser && router.pathname === '/' &&
+                                <BtnFirstUser onClick={() => router.replace("/firstuser")} />
+                            }
 
-                        {!isFirstUser && isLogged &&
-                            <BtnLogout name={user.nick} onClick={handleLogout} />
-                        }
-                        {!isFirstUser && !isLogged &&
-                            <BtnLogin onClick={() => router.replace("/login")} />}
-                    </div>
+                            {!isFirstUser && isLogged &&
+                                <BtnLogout name={user.nick} onClick={handleLogout} />
+                            }
+                            {!isFirstUser && !isLogged && router.pathname !== '/login' &&
+                                <BtnLogin onClick={() => router.replace("/login")} />}
+                        </div>
 
-                </nav>
-                <div className="col m-2">{children}</div>
+                    </nav>
+                    <div className="col m-2">{children}</div>
+                </div>
+
+
             </div>
-        </>
+        </div>
+
     );
 };
 
