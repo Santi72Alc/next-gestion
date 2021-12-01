@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast'
 
 
 const MESSAGES_MAIN = {
-    required: (field = "") => `Field ${field} is required!`,
+    required: (field = "This field") => `${field} is required!`,
     invalidFormat: (field = "") => `${field} - Invalid format`,
     errors: 'Some errors, please check!!'
 }
@@ -72,7 +72,7 @@ const vatRegex = /^$|^((AT)?U[0-9]{8}|(BE)?0[0-9]{9}|(BG)?[0-9]{9,10}|(CY)?[0-9]
 // Validaciones 
 const validationSchema = Yup.object().shape({
     // User (Admin)
-    user_email: Yup.string().email(MESSAGES.user.email.invalidFormat).required(MESSAGES.user.email.required),
+    user_email: Yup.string().email(MESSAGES.user.email.invalidFormat).required(MESSAGES_MAIN.required("Email")),
     user_fullName: Yup.string().required(MESSAGES.user.fullName.required),
     user_password: Yup.string()
         .required(MESSAGES.user.password.required)
@@ -83,9 +83,9 @@ const validationSchema = Yup.object().shape({
         .required(MESSAGES.user.confirmPassword.required),
 
     // Company
-    company_name: Yup.string().required(MESSAGES.required),
+    company_name: Yup.string().required(MESSAGES_MAIN.required("Company name")),
     company_email: Yup.string().email(MESSAGES_MAIN.invalidFormat('Company email')),
-    company_vatId: Yup.string().matches(vatRegex, MESSAGES_MAIN.invalidFormat("VAT id")).required(MESSAGES.required),
+    company_vatId: Yup.string().matches(vatRegex, MESSAGES_MAIN.invalidFormat("VAT id")).required(MESSAGES_MAIN.required("VAT id")),
     company_phoneNumber1: Yup.string().matches(phoneRegExp, `${MESSAGES_MAIN.invalidFormat("Phone number 1")} (ex. +34 123456456)`),
     company_phoneNumber2: Yup.string().matches(phoneRegExp, `${MESSAGES_MAIN.invalidFormat("Phone number 2")} (ex. +34 123456456)`),
 })
@@ -94,7 +94,7 @@ const validationSchema = Yup.object().shape({
 export default function FirstuserHTML(props) {
     const { register, handleSubmit, formState: { errors } } = useForm({
         defaultValues,
-        mode: "onBlur",
+        mode: "onChange",
         shouldFocusError: false,
         resolver: yupResolver(validationSchema)
     })
@@ -128,18 +128,16 @@ export default function FirstuserHTML(props) {
 
     const handleErrors = () => {
         const arrMessages = Object.values(errors).map(error => error.message)
-        let arrErrors = ""
-
-        console.log(arrErrors);
         toast.error(() => (<div>
             <h5 className="text-center">Errors. Please check!</h5>
-            <div className="text-center fst-italic">
+            <div className="fst-italic">
                 {arrMessages.map((msg, index) =>
-                    <p key={index} className="mb-0">{msg}</p>
+                    <p key={index} className="mb-0">*
+                     {msg}</p>
                 )}
             </div>
         </div>), {
-            duration: 5000,
+            duration: 5000 + (arrMessages.length*1000),
         })
 
     }
