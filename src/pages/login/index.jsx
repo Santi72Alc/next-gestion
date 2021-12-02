@@ -2,11 +2,11 @@ import { useContext, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import { toast } from 'react-hot-toast'
 
-import LoginHTML from './LoginHTML'
+import LoginHTML from '@Components/pages/LoginHTML'
 
 // import AuthContext from 'src/contexts/auth.context'
 import ActualUserContext from '@Context/actualUser.context'
-import UsersContext from 'src/contexts/users.context'
+import UsersContext from '@Contexts/users.context'
 
 export default function Login() {
     const { login, getActualUser } = useContext(ActualUserContext)

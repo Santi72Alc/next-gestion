@@ -4,7 +4,7 @@ import toast from 'react-hot-toast'
 
 
 import UsersContext from 'src/contexts/users.context'
-import FirstuserHTML from './FirstuserHTML'
+import FirstuserHTML from '@Components/pages/FirstuserHTML'
 
 export default function FirstUser() {
     const { isFirstUser, createUser, updateUsersInfo } = useContext(UsersContext)
