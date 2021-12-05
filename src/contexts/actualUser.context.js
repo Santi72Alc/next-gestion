@@ -2,6 +2,7 @@ import { createContext, useState } from "react";
 
 import authServices from "@Services/auth.services";
 import storageServices from "@Services/localStorage.services";
+import { ROLES } from "@Services/constants";
 
 const Roles = {
 	MainAdmin: "Main Admin",
@@ -21,6 +22,9 @@ const initialUser = {
 const initialUserContext = {
 	isLogged: false,
 	keepAlive: false,
+	isMainAdmin: false,
+	isAdmin: false,
+	isUser: false,
 	user: { ...initialUser },
 };
 
@@ -30,6 +34,11 @@ export function ActualUserProvider({ children }) {
 	const [user, setUser] = useState(initialUser);
 	const [keepAlive, setKeepAlive] = useState(initialUserContext.keepAlive);
 	const [isLogged, setIsLogged] = useState(initialUserContext.isLogged);
+	const [isMainAdmin, setIsMainAdmin] = useState(
+		initialUserContext.isMainAdmin
+	);
+	const [isAdmin, setIsAdmin] = useState(initialUserContext.isAdmin);
+	const [isUser, setIsUser] = useState(initialUserContext.isUser);
 
 	/*************************************************
 	 * Login the user
@@ -60,11 +69,13 @@ export function ActualUserProvider({ children }) {
 	 * @returns void
 	 */
 	const logout = () => {
-		// if (!user.keepAlive) storageServices.closeActualUser();
 		setUser(null);
 		setIsLogged(initialUserContext.isLogged);
 		setKeepAlive(initialUserContext.keepAlive);
-		storageServices.closeActualUser();
+		setIsMainAdmin(initialUserContext.isMainAdmin);
+		setIsAdmin(initialUserContext.isAdmin);
+		setIsUser(initialUserContext.isUser);
+		storageServices.closeActualUser({ keepAlive });
 	};
 
 	/*************************************************
@@ -73,7 +84,7 @@ export function ActualUserProvider({ children }) {
 	 * @returns { isLogged, keepAlive, user }
 	 */
 	function getActualUser() {
-		return { isLogged, keepAlive, user };
+		return { isMainAdmin, isAdmin, isUser, isLogged, keepAlive, user };
 	}
 
 	const setActualUser = (
@@ -81,8 +92,14 @@ export function ActualUserProvider({ children }) {
 		options = { keepAlive: false }
 	) => {
 		const { _id, email, fullName, nick, role } = user;
+		const isMainAdmin = hasUserRole([ROLES.MainAdmin]);
+		const isAdmin = isMainAdmin || hasUserRole([ROLES.Admin]);
+		const isUser = true;
 		setUser({ _id, email, fullName, nick, role });
 		setKeepAlive(options.keepAlive);
+		setIsMainAdmin(isMainAdmin);
+		setIsAdmin(isAdmin);
+		setIsUser(isUser);
 		setIsLogged(true);
 	};
 

@@ -45,10 +45,10 @@ const getActualUser = (key = defaultOptions.key) => {
 	return JSON.parse(userSaved);
 };
 
-const closeActualUser = ({ key } = defaultOptions) => {
+const closeActualUser = ({ key, keepAlive } = defaultOptions) => {
 	if (typeof window !== "undefined") {
-		localStorage.removeItem(key);
 		sessionStorage.removeItem(key);
+		keepAlive && localStorage.removeItem(key);
 	}
 };
 
