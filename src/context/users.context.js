@@ -27,7 +27,7 @@ export function UsersProvider({ children }) {
 		setUsers(users);
 		setUsersCount(users.length);
 		setIsFirstUser(users.length === 0);
-		return users
+		return users;
 	};
 
 	/**
@@ -61,14 +61,25 @@ export function UsersProvider({ children }) {
 		return users.filter(user => user._id === id)[0];
 	};
 
+	const setFilterToUsers = ({ arrUsers = users, filter = "" }) => {
+		if (!filter) return users;
+		filter = filter.toLowerCase();
+		return arrUsers.filter(user => {
+			if (user.email.toLowerCase().includes(filter)) return user;
+			if (user.nick.toLowerCase().includes(filter)) return user;
+			if (user.fullName.toLowerCase().includes(filter)) return user;
+		});
+	};
+
 	const dataToExport = {
 		usersCount,
 		isFirstUser,
 		users,
 		createUser,
 		updateUser,
+		getUserById,
 		updateUsersInfo,
-		getUserById
+		setFilterToUsers,
 	};
 
 	return (

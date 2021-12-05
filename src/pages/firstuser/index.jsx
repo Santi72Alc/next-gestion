@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import toast from 'react-hot-toast'
 
 
-import UsersContext from 'src/contexts/users.context'
+import UsersContext from '@Context/users.context'
 import FirstuserHTML from '@Components/pages/FirstuserHTML'
 
 export default function FirstUser() {
@@ -21,6 +21,7 @@ export default function FirstUser() {
         const resp = await createUser(user, { isAdmin: true, isFirstUser: true })
         // User created
         if (resp.success) {
+            resp.message = "Main admin & Company created"
             toast.success(resp.message)
             router.replace("/")
         } else {

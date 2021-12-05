@@ -3,8 +3,8 @@ import { useRouter } from "next/router";
 import Image from "next/image"
 import { toast } from 'react-hot-toast'
 
-import ActualUserContext from "@Context/actualUser.context";
-import UsersContext from "@Context/users.context";
+import ActualUserContext from "src/context/actualUser.context";
+import UsersContext from "src/context/users.context";
 import storageServices from "@Services/localStorage.services";
 
 import SideNavbar from "@Components/sideNavbar";

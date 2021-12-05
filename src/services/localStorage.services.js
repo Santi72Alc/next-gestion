@@ -16,10 +16,7 @@ export const defaultStorageData = {
 
 const setActualUser = (
 	user,
-	{
-		key = defaultOptions.key,
-		keepAlive = defaultOptions.keepAlive,
-	}
+	{ key = defaultOptions.key, keepAlive = defaultOptions.keepAlive }
 ) => {
 	// NO se permite guardar en el storage de cliente
 	if (typeof window === "undefined") {
@@ -45,10 +42,10 @@ const getActualUser = (key = defaultOptions.key) => {
 	return JSON.parse(userSaved);
 };
 
-const closeActualUser = ({ key, keepAlive } = defaultOptions) => {
+const closeActualUser = ({ key = COOKIE_KEY, keepAlive } = defaultOptions) => {
 	if (typeof window !== "undefined") {
 		sessionStorage.removeItem(key);
-		keepAlive && localStorage.removeItem(key);
+		!keepAlive && localStorage.removeItem(key);
 	}
 };
 

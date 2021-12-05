@@ -3,13 +3,13 @@ import { useRouter } from 'next/router'
 
 import { toast } from 'react-hot-toast'
 
-import ActualUserContext from '@Context/actualUser.context'
-import UsersContext from 'src/contexts/users.context'
+import ActualUserContext from 'src/context/actualUser.context'
+import UsersContext from 'src/context/users.context'
 import { ROLES, initialUserProfile } from '@Services/constants'
 
 export default function Profile() {
     const { updateUser, getUserById, updateUsersInfo } = useContext(UsersContext)
-    const { user, hasUserRole, setActualUser } = useContext(ActualUserContext)
+    const { user, setActualUser } = useContext(ActualUserContext)
     const router = useRouter()
 
     useEffect(async () => {
@@ -90,8 +90,8 @@ export default function Profile() {
                     <button
                         onClick={handleUpdateUser}
                         className="btn btn-primary w-50"
-                        disabled={!hasUserRole([ROLES.Admin, ROLES.MainAdmin])}
-                    >Save
+                    >
+                        Save
                     </button>
                     <button onClick={() => router.replace("/")} className="btn btn-secondary">Cancel</button>
                 </div>

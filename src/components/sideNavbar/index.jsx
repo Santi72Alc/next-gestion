@@ -1,12 +1,11 @@
 import Link from '@Components/link'
-import { useContext } from 'react'
+import { useContext, useEffect } from 'react'
 
-import ActualUserContext from '@Context/actualUser.context'
+import ActualUserContext from 'src/context/actualUser.context'
 import styles from './sidenavbar.module.css'
-import { ROLES } from '@Services/constants'
 
 const SideNavbar = () => {
-    const { user, hasUserRole } = useContext(ActualUserContext)
+    const { user, isAdmin,  } = useContext(ActualUserContext)
 
     return (
         <div className="navbar bg-primary px-4">
@@ -24,19 +23,19 @@ const SideNavbar = () => {
                         </Link>
                     </div>
                 </details>
-                <details hidden={!hasUserRole([ROLES.MainAdmin, ROLES.Admin])}>
+                <details hidden={!isAdmin}>
                     <summary className={`${styles.summary} text-`}><i className="bi bi-server"></i>Main files</summary>
                     <div className="vstack gap-3 px-3 mt-3">
-                        <Link href="#" className={styles.link}>
+                        <Link href="/users" className={styles.link}>
                             <i className="bi bi-people-fill"></i>Users
                         </Link>
-                        <Link href="/customers" className={styles.link}>
+                        <Link href="#" className={styles.link}>
                             <i className="bi bi-people-fill"></i>Customers
                         </Link>
                         <Link href="#" className={styles.link}>
                             <i className="bi bi-gpu-card"></i>Products
                         </Link>
-                        <Link href="/families" className={styles.link}>
+                        <Link href="#" className={styles.link}>
                             <i className="bi bi-pencil-square"></i>Prod. Families
                         </Link>
                     </div>

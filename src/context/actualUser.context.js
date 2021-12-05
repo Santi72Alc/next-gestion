@@ -69,13 +69,13 @@ export function ActualUserProvider({ children }) {
 	 * @returns void
 	 */
 	const logout = () => {
+		storageServices.closeActualUser({ keepAlive });
 		setUser(null);
 		setIsLogged(initialUserContext.isLogged);
 		setKeepAlive(initialUserContext.keepAlive);
 		setIsMainAdmin(initialUserContext.isMainAdmin);
 		setIsAdmin(initialUserContext.isAdmin);
 		setIsUser(initialUserContext.isUser);
-		storageServices.closeActualUser({ keepAlive });
 	};
 
 	/*************************************************
@@ -92,8 +92,8 @@ export function ActualUserProvider({ children }) {
 		options = { keepAlive: false }
 	) => {
 		const { _id, email, fullName, nick, role } = user;
-		const isMainAdmin = hasUserRole([ROLES.MainAdmin]);
-		const isAdmin = isMainAdmin || hasUserRole([ROLES.Admin]);
+		const isMainAdmin = hasUserRole(user, [ROLES.MainAdmin]);
+		const isAdmin = isMainAdmin || hasUserRole(user, [ROLES.Admin]);
 		const isUser = true;
 		setUser({ _id, email, fullName, nick, role });
 		setKeepAlive(options.keepAlive);
@@ -103,18 +103,19 @@ export function ActualUserProvider({ children }) {
 		setIsLogged(true);
 	};
 
-	const hasUserRole = (roles = []) => {
+	const hasUserRole = (user, roles = []) => {
 		return user && roles.includes(user.role);
 	};
 
 	const dataToShare = {
 		user,
+		isMainAdmin,
+		isAdmin,
 		isLogged,
 		login,
 		logout,
 		getActualUser,
 		setActualUser,
-		hasUserRole,
 	};
 
 	return (

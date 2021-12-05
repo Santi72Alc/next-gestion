@@ -2,13 +2,15 @@ import Head from 'next/head'
 import Navbar from '@Components/navbar'
 
 import { Toaster } from 'react-hot-toast'
-import { LayoutProviders } from 'src/contexts/layout.context'
+import { LayoutProviders } from 'src/context/layout.context'
 
 /**
  *  CSS imports
  */
 // bootstrap CSS theme
 import '@Libs/themes/spacelab/bootstrap.min.css'
+
+import 'datatables.net-dt/css/jquery.dataTables.min.css'
 
 // global CSS
 import '../styles/globals.css'
