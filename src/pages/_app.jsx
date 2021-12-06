@@ -10,8 +10,6 @@ import { LayoutProviders } from 'src/context/layout.context'
 // bootstrap CSS theme
 import '@Libs/themes/spacelab/bootstrap.min.css'
 
-import 'datatables.net-dt/css/jquery.dataTables.min.css'
-
 // global CSS
 import '../styles/globals.css'
 

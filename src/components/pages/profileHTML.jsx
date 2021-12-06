@@ -77,7 +77,7 @@ export default function FirstuserHTML(props) {
     })
 
 
-    // Llamamos a la prop 'onSubmit' que recibe desde el padre
+    // Llamamos a la prop 'onSubmit'
     const handleSubmitData = (values) => {
         const user = {
             email: values.user_email,

@@ -86,14 +86,14 @@ export default function Profile() {
                 </form>
             </div >
             <div className="card-footer p-4">
-                <div className="hstack gap-3">
+                <div className="hstack gap-3 d-flex justify-content-center">
                     <button
                         onClick={handleUpdateUser}
                         className="btn btn-primary w-50"
                     >
                         Save
                     </button>
-                    <button onClick={() => router.replace("/")} className="btn btn-secondary">Cancel</button>
+                    <button onClick={() => router.replace("/")} className="btn btn-outline-secondary">Cancel</button>
                 </div>
             </div>
         </div >
