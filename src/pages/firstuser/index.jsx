@@ -7,7 +7,7 @@ import UsersContext from '@Context/users.context'
 import FirstuserHTML from '@Components/pages/FirstuserHTML'
 
 export default function FirstUser() {
-    const { isFirstUser, createUser, updateUsersInfo } = useContext(UsersContext)
+    const { isFirstUser, createMainAdmin, updateUsersInfo } = useContext(UsersContext)
     const router = useRouter()
 
     useEffect(async () => {
@@ -18,15 +18,12 @@ export default function FirstUser() {
     async function handleCreateAdmin({ user, company }) {
 
         // Llamamos al servicio para crear el Admin & Company
-        const resp = await createUser(user, { isAdmin: true, isFirstUser: true })
-        // User created
+        const resp = await createMainAdmin(user, company)
+        // MainAdmin creado correctamente
         if (resp.success) {
-            resp.message = "Main admin & Company created"
             toast.success(resp.message)
             router.replace("/")
-        } else {
-            toast.error(resp.message)
-        }
+        } else toast.error(resp.message)
     }
 
 

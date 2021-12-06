@@ -31,7 +31,7 @@ const newUser = async (body = initialUserProfile) => {
 
 		const newUser = new Users(body);
 		await newUser.save();
-		const { password, ...data } = body;
+		const { password, ...data } = newUser._doc;
 		return {
 			success: true,
 			data,

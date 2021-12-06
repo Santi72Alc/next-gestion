@@ -3,6 +3,8 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as Yup from 'yup'
 import { toast } from 'react-hot-toast'
 
+import { regex } from '@Services/constants'
+
 
 const MESSAGES_MAIN = {
     required: (field = "This field") => `${field} is required!`,
@@ -33,7 +35,6 @@ const MESSAGES = {
     },
 }
 
-
 const initialUser = {
     user_email: "santi72alc@gmail.com",
     user_fullName: "Santiago",
@@ -42,32 +43,28 @@ const initialUser = {
     user_confirmPassword: "1234",
 }
 
+
 const initialCompany = {
-    company_name: "BudgetCompany",
-    company_email: "",
-    company_vatId: "ES21500393Q",
-    company_address: "",
-    company_postalCode: "",
-    company_city: "",
-    company_province: "",
-    company_country: "",
-    company_phoneNumber1: "",
-    company_phoneNumber2: "",
-    company_bankIban: "",
-    company_bankName: "",
-    company_logo: "",       // NO utilizado de momento
-}
+	company_name: "BudgetCompany",
+	company_email: "",
+	company_vatId: "ES21500393Q",
+	company_address: "",
+	company_postalCode: "",
+	company_city: "",
+	company_province: "",
+	company_country: "",
+	company_phoneNumber1: "",
+	company_phoneNumber2: "",
+	company_bankIban: "",
+	company_bankName: "",
+	company_logo: "", // NO utilizado de momento
+};
 
 const defaultValues = {
     ...initialCompany,
     ...initialUser
 }
 
-// regex phone numbers
-const phoneRegExp = /^$|\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})? ?(\w{1,10}\s?\d{1,6})?/
-
-// regex VAT numbers from Europe
-const vatRegex = /^$|^((AT)?U[0-9]{8}|(BE)?0[0-9]{9}|(BG)?[0-9]{9,10}|(CY)?[0-9]{8}L|(CZ)?[0-9]{8,10}|(DE)?[0-9]{9}|(DK)?[0-9]{8}|(EE)?[0-9]{9}|(EL|GR)?[0-9]{9}|(ES)?[0-9A-Z][0-9]{7}[0-9A-Z]|(FI)?[0-9]{8}|(FR)?[0-9A-Z]{2}[0-9]{9}|(GB)?([0-9]{9}([0-9]{3})?|[A-Z]{2}[0-9]{3})|(HU)?[0-9]{8}|(IT)?[0-9]{11}|(IT)?[0-9]{11}|(LT)?([0-9]{9}|[0-9]{12})|(LU)?[0-9]{8}|(LV)?[0-9]{11}|(MT)?[0-9]{8}|(NL)?[0-9]{9}B[0-9]{2}|(PL)?[0-9]{10}|(PT)?[0-9]{9}|(RO)?[0-9]{2,10}|(SE)?[0-9]{12}|(SI)?[0-9]{8}|(SK)?[0-9]{10})$/
 
 // Validaciones 
 const validationSchema = Yup.object().shape({
@@ -85,9 +82,9 @@ const validationSchema = Yup.object().shape({
     // Company
     company_name: Yup.string().required(MESSAGES_MAIN.required("Company name")),
     company_email: Yup.string().email(MESSAGES_MAIN.invalidFormat('Company email')),
-    company_vatId: Yup.string().matches(vatRegex, MESSAGES_MAIN.invalidFormat("VAT id")).required(MESSAGES_MAIN.required("VAT id")),
-    company_phoneNumber1: Yup.string().matches(phoneRegExp, `${MESSAGES_MAIN.invalidFormat("Phone number 1")} (ex. +34 123456456)`),
-    company_phoneNumber2: Yup.string().matches(phoneRegExp, `${MESSAGES_MAIN.invalidFormat("Phone number 2")} (ex. +34 123456456)`),
+    company_vatId: Yup.string().matches(regex.vatCode, MESSAGES_MAIN.invalidFormat("VAT id")).required(MESSAGES_MAIN.required("VAT id")),
+    company_phoneNumber1: Yup.string().matches(regex.phone, `${MESSAGES_MAIN.invalidFormat("Phone number 1")} (ex. +34 123456456)`),
+    company_phoneNumber2: Yup.string().matches(regex.phone, `${MESSAGES_MAIN.invalidFormat("Phone number 2")} (ex. +34 123456456)`),
 })
 
 
@@ -133,11 +130,11 @@ export default function FirstuserHTML(props) {
             <div className="fst-italic">
                 {arrMessages.map((msg, index) =>
                     <p key={index} className="mb-0">*
-                     {msg}</p>
+                        {msg}</p>
                 )}
             </div>
         </div>), {
-            duration: 5000 + (arrMessages.length*1000),
+            duration: 5000 + (arrMessages.length * 1000),
         })
 
     }

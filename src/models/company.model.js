@@ -10,10 +10,7 @@ const companySchema = new Schema(
 			type: String,
 			required: [true, 'Company name is required']
 		},
-		logo: {
-			type: String,
-			default: ""
-		},
+		email: String,
 		isActiva: {
 			type: Boolean,
 			default: true
@@ -30,12 +27,30 @@ const companySchema = new Schema(
 			type: String,
 			default: ""
 		},
-		country: {
+		province: {
 			type: String,
-			enum: COUNTRIES,
 			default: ""
 		},
-
+		country: {
+			type: String,
+			default: ""
+		},
+		phoneNumber1: {
+			type: String,
+			default: ""
+		},
+		phoneNumber2: {
+			type: String,
+			default: ""
+		},
+		bankIban: {
+			type: String,
+			default: ""
+		},
+		bankName: {
+			type: String,
+			default: ""
+		},
 	},
 	{
 		timestamps: true,

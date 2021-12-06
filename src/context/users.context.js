@@ -1,6 +1,10 @@
 import { createContext, useState, useEffect } from "react";
 
-import { ROLES, initialUserProfile } from "@Services/constants";
+import {
+	ROLES,
+	initialUserProfile,
+	initialCompanyProfile,
+} from "@Services/constants";
 import usersServices from "@Services/users.services";
 
 const initialUserContext = {
@@ -38,13 +42,42 @@ export function UsersProvider({ children }) {
 	 */
 	const createUser = async (
 		user = { ...initialUserProfile },
-		options = { isAdmin: false, isFirstUser: false }
+		options = { isAdmin: false, isFirstUser }
 	) => {
 		const role = getRoleName(options);
 		const newUser = { role, ...user };
 		const { data } = await usersServices.createUser((user = newUser));
 		if (data.success) updateUsersInfo();
 		return data;
+	};
+
+	const createMainAdmin = async (user, company) => {
+		try {
+			const resp = await createUser(user, {
+				isAdmin: true,
+				isFirstUser: true,
+			});
+			if (resp.success) {
+				company.adminId = resp.data._id;
+				const { data } = await usersServices.createCompany(company);
+				if (data.success)
+					return {
+						success: true,
+						message: "Company & Main admin created!!",
+					};
+					// Borramos el usuario creado
+				// await deleteUser(adminId);
+				return {
+					success: false,
+					message: "Error creating company",
+				};
+			} else return resp;
+		} catch (error) {
+			return {
+				success: false,
+				message: "Error Saving Main admin or company" + error.message,
+			};
+		}
 	};
 
 	const updateUser = async ({ user = { ...initialUserProfile } }) => {
@@ -75,6 +108,7 @@ export function UsersProvider({ children }) {
 		usersCount,
 		isFirstUser,
 		users,
+		createMainAdmin,
 		createUser,
 		updateUser,
 		getUserById,
