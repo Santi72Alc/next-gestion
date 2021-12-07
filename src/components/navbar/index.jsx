@@ -1,11 +1,9 @@
 import { useContext, useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Image from "next/image"
 import { toast } from 'react-hot-toast'
 
 import ActualUserContext from "src/context/actualUser.context";
 import UsersContext from "src/context/users.context";
-import storageServices from "@Services/localStorage.services";
 
 import SideNavbar from "@Components/sideNavbar";
 import Link from "@Components/link";
@@ -18,21 +16,7 @@ const Navbar = ({ children }) => {
     const { user, logout, isLogged, setActualUser } = useContext(ActualUserContext)
     const { isFirstUser } = useContext(UsersContext)
     const [isMenuOpened, setIsMenuOpened] = useState(false);
-    const [isLoading, setIsLoading] = useState(true)
     const router = useRouter()
-
-    useEffect(() => {
-        const toastLoading = toast.loading("Loading...", { position: "top-center" })
-        const newUser = storageServices.getActualUser()
-        if (user && newUser && user._id !== newUser._id) {
-            setActualUser(newUser, { keepAlive: newUser.keepAlive })
-        }
-        setTimeout(() => {
-            setIsLoading(false)
-            toast.remove(toastLoading)
-        }, 450)
-    }, [user])
-
 
     // Show the menu button on the left
     function showMenu(show = true) {
@@ -73,7 +57,7 @@ const Navbar = ({ children }) => {
                             id="btnCollapse"
                             className="btn btn-info"
                             onClick={toogleMenu}
-                            hidden={!isLogged}
+                            hidden={isFirstUser || !isLogged}
                         >
                             <i className={`bi ${isMenuOpened ? 'bi-arrow-bar-left' : 'bi-list'}`}></i>
                         </button>
@@ -90,9 +74,9 @@ const Navbar = ({ children }) => {
                             </div>
                         </div>
 
-                        <div hidden={isLoading}>
+                        <div >
                             {isFirstUser && router.pathname === '/' &&
-                                <BtnFirstUser onClick={() => router.replace("/firstuser")} />
+                                <BtnFirstUser onClick={() => router.replace("/profile")} />
                             }
 
                             {!isFirstUser && isLogged &&
@@ -103,10 +87,8 @@ const Navbar = ({ children }) => {
                         </div>
 
                     </nav>
-                    <div className="col m-2">{children}</div>
+                    <div className="p-2">{children}</div>
                 </div>
-
-
             </div>
         </div>
 

@@ -45,19 +45,19 @@ const initialUser = {
 
 
 const initialCompany = {
-	company_name: "BudgetCompany",
-	company_email: "",
-	company_vatId: "ES21500393Q",
-	company_address: "",
-	company_postalCode: "",
-	company_city: "",
-	company_province: "",
-	company_country: "",
-	company_phoneNumber1: "",
-	company_phoneNumber2: "",
-	company_bankIban: "",
-	company_bankName: "",
-	company_logo: "", // NO utilizado de momento
+    company_name: "BudgetCompany",
+    company_email: "",
+    company_vatId: "ES21500393Q",
+    company_address: "",
+    company_postalCode: "",
+    company_city: "",
+    company_province: "",
+    company_country: "",
+    company_phoneNumber1: "",
+    company_phoneNumber2: "",
+    company_bankIban: "",
+    company_bankName: "",
+    company_logo: "", // NO utilizado de momento
 };
 
 const defaultValues = {
@@ -96,9 +96,9 @@ export default function FirstuserHTML(props) {
         resolver: yupResolver(validationSchema)
     })
 
-
     // Llamamos a la prop 'onSubmit' que recibe desde el padre
-    const handleSubmitData = (values) => {
+    const handleSubmitData = (values, e) => {
+
         const user = {
             email: values.user_email,
             fullName: values.user_fullName,
@@ -407,7 +407,7 @@ export default function FirstuserHTML(props) {
                         <button type="submit" className="btn btn-primary w-50">
                             Create Admin & Company!!
                         </button>
-                        <button onClick={props.onCancel} className="btn btn-outline-secondary">
+                        <button onClick={props.onCancel} className="btn btn-outline-secondary" data-action = "CANCEL">
                             Cancel
                         </button>
                     </div>

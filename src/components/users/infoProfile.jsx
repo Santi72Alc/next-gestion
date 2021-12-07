@@ -1,6 +1,6 @@
 import { initialUserProfile } from '@Services/constants'
 
-export default function InfoProfile({ data = { ...initialUserProfile }, onCancel }) {
+export default function InfoProfileHTML({ data = { ...initialUserProfile }, onCancel }) {
     const user = data
 
     return (
@@ -10,7 +10,6 @@ export default function InfoProfile({ data = { ...initialUserProfile }, onCancel
                 <h5 className="fst-italic">· {user?.role} ·</h5>
             </div>
             <div className="card-body">
-                {/* <form> */}
                 <div className="form-group">
                     <label htmlFor="email">Email</label>
                     <input type="email" id="email"
@@ -44,12 +43,10 @@ export default function InfoProfile({ data = { ...initialUserProfile }, onCancel
                     </div>
                 </div>
 
-                {/* </form> */}
             </div >
             <div className="card-footer p-4">
                 <div className="hstack gap-3 d-flex justify-content-center">
-
-                    <button onClick={onCancel} className="btn btn-outline-secondary">Cancel</button>
+                    <button onClick={onCancel} className="btn btn-secondary">Cancel</button>
                 </div>
             </div>
         </div >

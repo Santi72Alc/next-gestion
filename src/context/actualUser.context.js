@@ -4,19 +4,12 @@ import authServices from "@Services/auth.services";
 import storageServices from "@Services/localStorage.services";
 import { ROLES } from "@Services/constants";
 
-const Roles = {
-	MainAdmin: "Main Admin",
-	Admin: "Admin",
-	User: "User",
-	default: "User",
-};
-
 const initialUser = {
 	_id: "",
 	email: "",
 	fullName: "",
 	nick: "",
-	role: Roles.default,
+	role: ROLES.Default,
 };
 
 const initialUserContext = {
@@ -24,7 +17,7 @@ const initialUserContext = {
 	keepAlive: false,
 	isMainAdmin: false,
 	isAdmin: false,
-	isUser: false,
+	isUser: true,
 	user: { ...initialUser },
 };
 
@@ -84,7 +77,7 @@ export function ActualUserProvider({ children }) {
 	 * @returns { isLogged, keepAlive, user }
 	 */
 	function getActualUser() {
-		return { isMainAdmin, isAdmin, isUser, isLogged, keepAlive, user };
+		return { isMainAdmin, isAdmin, isUser, isLogged, user };
 	}
 
 	const setActualUser = (
@@ -100,7 +93,7 @@ export function ActualUserProvider({ children }) {
 		setIsMainAdmin(isMainAdmin);
 		setIsAdmin(isAdmin);
 		setIsUser(isUser);
-		setIsLogged(true);
+		setIsLogged(user ? true : false);
 	};
 
 	const hasUserRole = (user, roles = []) => {

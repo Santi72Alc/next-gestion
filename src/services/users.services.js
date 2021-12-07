@@ -51,11 +51,10 @@ const createCompany = async (company = { ...initialCompanyProfile }) => {
 		 * Llamada (AXIOS) a la api para añadir el usuario
 		 * url: api/v?/users/new
 		 * Tipo: POST
-		 * data: {email, password, fullName, nick, role }
+		 * data: { adminId, name, email, vatId, ...}
 		 * params: void
 		 * query: void
 		 */
-		// const url = `${usersConstants.URL_USERS}/new`;
 		return await axios({
 			method: "POST",
 			baseURL: BASE_URL.COMPANIES,
@@ -78,13 +77,12 @@ const updateUser = async ({ user = { ...initialUserProfile } }) => {
 		if (!user._id) {
 			throw new Error("Error updating data");
 		}
-		if (!user.fullName)
+		if (!user.email || !user.fullName)
 			throw new Error("Email and Full Name are required, plase check!!");
-
 		/**
 		 * Llamada (AXIOS) a la api para editar el usuario
 		 * url: api/v?/users/:id
-		 * Tipo: POST
+		 * Tipo: PATCH
 		 * data: {email, fullName, nick, role }
 		 * params: id
 		 * query: void
@@ -94,6 +92,35 @@ const updateUser = async ({ user = { ...initialUserProfile } }) => {
 			baseURL: BASE_URL.USERS,
 			url: `/${user._id}`,
 			data: user,
+		});
+	} catch (error) {
+		return {
+			success: false,
+			message: error.message,
+		};
+	}
+};
+
+/*
+	DELETE a user 
+*/
+const deleteUser = async (userId = "") => {
+	try {
+		if (!userId) {
+			throw new Error("Error updating data");
+		}
+
+		/**
+		 * Llamada (AXIOS) a la api para borrar el usuario
+		 * url: api/v?/users/:id
+		 * Tipo: DELETE
+		 * params: id
+		 * query: void
+		 */
+		return await axios({
+			method: "DELETE",
+			baseURL: BASE_URL.USERS,
+			url: `/${userId}`,
 		});
 	} catch (error) {
 		return {
@@ -136,5 +163,6 @@ export default {
 	createUser,
 	getAllUsers,
 	updateUser,
+	deleteUser,
 	createCompany,
 };

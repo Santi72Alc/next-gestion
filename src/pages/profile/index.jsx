@@ -1,101 +1,52 @@
-import { useContext, useEffect } from 'react'
+import { useContext } from 'react'
 import { useRouter } from 'next/router'
+import toast from 'react-hot-toast'
 
-import { toast } from 'react-hot-toast'
+import UsersContext from '@Context/users.context'
+import ActualUserContext from '@Context/actualUser.context'
 
-import ActualUserContext from 'src/context/actualUser.context'
-import UsersContext from 'src/context/users.context'
-import { ROLES, initialUserProfile } from '@Services/constants'
+// Components to show (depending of user)
+import FirstuserHTML from '@Components/pages/FirstuserHTML'
+import ProfileHTML from '@Components/pages/profileHTML'
 
 export default function Profile() {
-    const { updateUser, getUserById, updateUsersInfo } = useContext(UsersContext)
+    const { isFirstUser, updateUser, createMainAdmin } = useContext(UsersContext)
     const { user, setActualUser } = useContext(ActualUserContext)
     const router = useRouter()
 
-    useEffect(async () => {
-        toast.loading("Loading user...", { position: "top-center" })
-        await updateUsersInfo()
-        const userFound = getUserById(user._id)
-        setUserDataToInputs(userFound)
-        toast.dismiss()
-    }, [])
+    async function handleCreateAdmin({ user, company }) {
+        // Llamamos al servicio para crear el Admin & Company
+        const resp = await createMainAdmin(user, company)
 
-
-    function setUserDataToInputs(user = initialUserProfile) {
-        document.getElementById('email').value = user.email
-        document.getElementById('fullName').value = user.fullName
-        document.getElementById('nick').value = user.nick
+        if (resp.success) toast.success(resp.message)
+        else toast.error(resp.message)
+        router.replace("/")
     }
 
-    async function handleUpdateUser() {
-        const fullName = document.getElementById('fullName').value
-        const nick = document.getElementById('nick').value
+    async function handleUpdateUser({ user }) {
+        const { _id, fullName, email, nick } = user
 
         if (!fullName) {
             toast.error("Full Name is required!!")
             return false
         }
         const newUser = {
-            _id: user._id,
+            _id,
             fullName,
+            email,      // NO es modificable pero se envia para NO errores
             nick
         }
         const { data } = await updateUser({ user: { ...newUser } })
         if (data.success) {
             setActualUser(data.data)
-            router.push("/")
             toast.success(data.message)
+            router.push("/")
         } else
             toast.error(data.message)
     }
 
-    return (
-        <div className="card">
-            <div className="card-header text-center">
-                <h3>Profile</h3>
-                <h5 className="fst-italic">· {user?.role} ·</h5>
-            </div>
-            <div className="card-body">
-                <form>
-                    <div className="form-group">
-                        <label htmlFor="email">Email</label>
-                        <input type="email" id="email"
-                            className="form-control"
-                            disabled
-                        />
-                    </div>
-                    <div className="row">
-                        <div className="col-12 col-md-6">
-                            <div className="form-group">
-                                <label htmlFor="fullName">Full name</label>
-                                <input type="text" id="fullName"
-                                    className="form-control"
-                                    placeholder="Type your name" />
-                            </div>
-                        </div>
-                        <div className="col-12 col-md-6">
-                            <div className="form-group">
-                                <label htmlFor="nick">Nick</label>
-                                <input type="text" id="nick"
-                                    className="form-control"
-                                    placeholder="Type your nick" />
-                            </div>
-                        </div>
-                    </div>
-
-                </form>
-            </div >
-            <div className="card-footer p-4">
-                <div className="hstack gap-3 d-flex justify-content-center">
-                    <button
-                        onClick={handleUpdateUser}
-                        className="btn btn-primary w-50"
-                    >
-                        Save
-                    </button>
-                    <button onClick={() => router.replace("/")} className="btn btn-outline-secondary">Cancel</button>
-                </div>
-            </div>
-        </div >
-    )
+    const ComponentFirstuser = <FirstuserHTML onSubmit={handleCreateAdmin} onCancel={() => router.replace("/")} />
+    const ComponentNormalProfile = <ProfileHTML onSubmit={handleUpdateUser} onCancel={() => router.back()} data={user} />
+    const ComponentToShow = isFirstUser ? ComponentFirstuser : ComponentNormalProfile
+    return (ComponentToShow)
 }

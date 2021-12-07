@@ -42,13 +42,32 @@ const newUser = async (body = initialUserProfile) => {
 	}
 };
 
+const deleteUser = async userId => {
+	try {
+		if (!userId) {
+			throw new Error("User id is required!");
+		}
+		const userDeleted = await Users.findByIdAndDelete(userId);
+		if (userDeleted)
+			return {
+				success: true,
+				message: "User deleted!",
+			};
+		return {
+			success: false,
+			message: "User to delete not found!"
+		}
+	} catch (error) {
+		throw new Error(error.message);
+	}
+};
+
 const updateUser = async (user = initialUserProfile) => {
 	try {
 		if (!user._id) {
-			throw new Error("Error updating data");
+			throw new Error("User id is required!");
 		}
-		if (!user.fullName) throw new Error("Full Name are required");
-		user;
+		if (!user.fullName) throw new Error("Full Name are required!");
 		await dbConnected();
 
 		const userExists = await Users.exists({ _id: user._id });
@@ -66,13 +85,14 @@ const updateUser = async (user = initialUserProfile) => {
 		);
 
 		// Cogemos los campos del registro que nos interesa devolver
-		const { _id, email, fullName, nick, role } = userUpdated;
-		if (userUpdated)
+		if (userUpdated) {
+			const { _id, email, fullName, nick, role } = userUpdated;
 			return {
 				success: true,
 				data: { _id, email, fullName, nick, role },
 				message: "Data user updated!",
 			};
+		}
 		return {
 			success: false,
 			message: "Error updating data user!",
@@ -86,22 +106,22 @@ const loginUser = async (email = "", passwordToCheck = "") => {
 	try {
 		await dbConnected();
 		const resp = await Users.findOne({ email });
-		// Quitamos 'passsword' de la data a devolver
-		const { password, ...data } = resp._doc;
-		if (comparePassword(passwordToCheck, password)) {
-			const { _id, email, fullName, nick, role } = data;
-			return {
-				success: true,
-				data: { _id, email, fullName, nick, role },
-				message: `User ${nick ? nick : fullName} logged`,
-			};
-		} else
-			return {
-				success: false,
-				message: "User or Password not found, please check!!",
-			};
-
-		return null;
+		if (resp) {
+			// Quitamos 'passsword' de la data a devolver
+			const { password, ...data } = resp._doc;
+			if (comparePassword(passwordToCheck, password)) {
+				const { _id, email, fullName, nick, role } = data;
+				return {
+					success: true,
+					data: { _id, email, fullName, nick, role },
+					message: `User ${nick ? nick : fullName} logged`,
+				};
+			}
+		}
+		return {
+			success: false,
+			message: "User or Password not found, please check!!",
+		};
 	} catch (error) {
 		throw new Error(error.message);
 	}
@@ -111,5 +131,6 @@ export default {
 	loginUser,
 	newUser,
 	updateUser,
+	deleteUser,
 	getAllUsers,
 };

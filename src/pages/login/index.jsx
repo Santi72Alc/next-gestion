@@ -8,25 +8,14 @@ import ActualUserContext from 'src/context/actualUser.context'
 import UsersContext from 'src/context/users.context'
 
 export default function Login() {
-    const { login, getActualUser } = useContext(ActualUserContext)
+    const { isLogged, login } = useContext(ActualUserContext)
     const { isFirstUser } = useContext(UsersContext)
     const router = useRouter()
 
     useEffect(() => {
-        isFirstUser && router.replace("/firstuser")
-        fillData()
-    }, [])
-
-
-    function fillData() {
-        const { isLogged, keepAlive, user } = getActualUser()
-
-        if (isLogged) {
-            document.getElementById('email').value = user.email
-            document.getElementById('password').value = user.$password
-            document.getElementById('keepAlive').checked = keepAlive
-        }
-    }
+        isFirstUser && router.replace("/profile")
+        isLogged && router.replace("/")
+    }, [isLogged, isFirstUser])
 
     async function handleLogin({ email, password, keepAlive }) {
 

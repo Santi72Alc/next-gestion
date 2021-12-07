@@ -8,7 +8,7 @@ import {
 import usersServices from "@Services/users.services";
 
 const initialUserContext = {
-	isFirstUser: false,
+	isFirstUser: true,
 	usersCount: 0,
 	users: [{ ...initialUserProfile }],
 };
@@ -58,15 +58,17 @@ export function UsersProvider({ children }) {
 				isFirstUser: true,
 			});
 			if (resp.success) {
-				company.adminId = resp.data._id;
+				const adminId = resp.data._id;
+				company.adminId = adminId;
 				const { data } = await usersServices.createCompany(company);
 				if (data.success)
 					return {
 						success: true,
 						message: "Company & Main admin created!!",
 					};
-					// Borramos el usuario creado
-				// await deleteUser(adminId);
+				// Borramos el usuario creado y actualizamos el estado de usuarios
+				await usersServices.deleteUser(adminId);
+				updateUsersInfo();
 				return {
 					success: false,
 					message: "Error creating company",
@@ -75,7 +77,7 @@ export function UsersProvider({ children }) {
 		} catch (error) {
 			return {
 				success: false,
-				message: "Error Saving Main admin or company" + error.message,
+				message: "Error creating Main admin or company" + error.message,
 			};
 		}
 	};

@@ -1,8 +1,12 @@
+import router from 'next/router'
+import { useContext, useEffect } from 'react'
+
 import Head from 'next/head'
 import Navbar from '@Components/navbar'
 
-import { Toaster } from 'react-hot-toast'
-import { LayoutProviders } from 'src/context/layout.context'
+import { LayoutProvidersContext } from 'src/context/layout.context'
+
+import ActualUserContext from '@Context/actualUser.context'
 
 /**
  *  CSS imports
@@ -14,30 +18,11 @@ import '@Libs/themes/spacelab/bootstrap.min.css'
 import '../styles/globals.css'
 
 function MyApp({ Component, pageProps }) {
-  const toastOptions = {
-    success: {
-      duration: 4000,
-      iconTheme: {
-        primary: "green",
-        secondary: "white"
-      },
-      style: {
-        backgroundColor: "limegreen",
-        color: "black"
-      }
-    },
-    error: {
-      duration: 4000,
-      iconTheme: {
-        primary: "red",
-        secondary: "white"
-      },
-      style: {
-        backgroundColor: "darkorange",
-        color: "black"
-      }
-    }
-  }
+  const { isLogged } = useContext(ActualUserContext)
+
+  useEffect(() => {
+    !isLogged && router.replace("/")
+  }, [])
 
   return (
     <>
@@ -54,17 +39,15 @@ function MyApp({ Component, pageProps }) {
           href="/src/libs/themes/spacelab/bootstrap.min.css" /> */}
         <title>Budgets Management</title>
       </Head>
-      <LayoutProviders>
-        {/* Mensajes al usuario */}
-        <Toaster position="bottom-right" toastOptions={toastOptions} reverseOrder />
+      <LayoutProvidersContext>
         <Navbar>
-          <Component {...pageProps} />
+          <Component {...pageProps}/>
         </Navbar>
-      </LayoutProviders>
-      <script
+      </LayoutProvidersContext>
+      {/* <script
         src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
         crossOrigin="anonymous">
-      </script>
+      </script> */}
 
     </>
   )
