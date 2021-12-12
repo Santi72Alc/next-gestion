@@ -3,13 +3,12 @@ import Link from 'next/link'
 
 import Modal from 'react-modal'
 
-import UsersContext from "src/context/users.context"
+import UsersContext from "@Context/users.context"
 import ActualUserContext from "@Context/actualUser.context"
 
 // import styles from './users.module.css'
 import toast from "react-hot-toast"
 import InfoProfile from "@Components/users/infoProfile"
-import { ROLES } from "@Services/constants"
 
 const ACTIONS = {
     Open: "Open",
@@ -19,7 +18,7 @@ const ACTIONS = {
 }
 
 export default function index() {
-    const { isMainAdmin, user: actualUser } = useContext(ActualUserContext)
+    const { isMainAdmin, isAdmin, user: actualUser } = useContext(ActualUserContext)
     const { users, getUserById, setFilterToUsers, updateUsersInfo } = useContext(UsersContext)
     const [localUsers, setLocalUsers] = useState([])
     const [txtFilter, setTxtFilter] = useState("")
@@ -48,8 +47,6 @@ export default function index() {
 
         }
 
-        console.log("Action: ", action)
-        // console.log("User: ", getUserById(id))
     }
 
     function handleSearch(e) {
@@ -107,7 +104,7 @@ export default function index() {
                         {/* Table head */}
                         <thead>
                             <tr className="row">
-                                <th className="col-4 col-md-2 text-center">Actions</th>
+                                <th className="col-4 col-md-2 text-center mx-2">Actions</th>
                                 <th className="col-2">Role</th>
                                 <th className="col">(<small className="fst-italic"> Nick </small>) Full name</th>
                                 <th className="col-3">Email</th>
@@ -118,15 +115,22 @@ export default function index() {
                         <tbody>
                             {localUsers && localUsers.map((user) =>
                                 <tr className="row d-flex align-items-center" key={user._id}>
-                                    <td className="col-3 col-md-2 hstack gap-1 d-flex justify-content-center">
-                                        <button className="btn btn-outline-info" data-action={ACTIONS.Open}
-                                            onClick={(e) => handleAction(e, user._id)}><i className="bi bi-eye"></i></button>
+                                    <td className="col-3 col-md-2 hstack gap-1 d-flex justify-content-around mx-2">
+                                        <button className="btn btn-outline-info" data-action={ACTIONS.Open} onClick={(e) => handleAction(e, user._id)}>
+                                            <i className="bi bi-eye"></i>
+                                        </button>
                                         <button className="btn btn-outline-warning" data-action={ACTIONS.Edit}
-                                            onClick={(e) => handleAction(e, user._id)}><i className="bi bi-pencil-square"></i></button>
+                                            onClick={(e) => handleAction(e, user._id)} disabled={!isAdmin} >
+                                            <i className="bi bi-pencil-square"></i>
+                                        </button>
                                         <button className="btn btn-outline-danger" data-action={ACTIONS.Delete}
-                                            onClick={(e) => handleAction(e, user._id)} disabled={!isMainAdmin || user._id === actualUser._id} ><i className="bi bi-trash"></i></button>
+                                            onClick={(e) => handleAction(e, user._id)} disabled={!isMainAdmin || actualUser._id === user._id} >
+                                            <i className="bi bi-trash"></i>
+                                        </button>
                                         <button className="btn btn-outline-success" data-action={ACTIONS.MakeAdmin}
-                                            onClick={(e) => handleAction(e, user._id)} disabled={!isMainAdmin || user._id === actualUser._id} ><i className="bi bi-key"></i></button>
+                                            onClick={(e) => handleAction(e, user._id)} disabled={!isMainAdmin || actualUser._id === user._id} >
+                                            <i className="bi bi-key"></i>
+                                        </button>
                                     </td>
                                     <td className="col-2">{user.role}</td>
                                     <td className="col">(<small className="fst-italic"> {user.nick} </small>) {user.fullName}</td>

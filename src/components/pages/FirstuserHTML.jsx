@@ -1,9 +1,7 @@
-import { useForm } from "react-hook-form";
-import { yupResolver } from '@hookform/resolvers/yup'
+import { REGEX } from '@Constants/index.js'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
-import { toast } from 'react-hot-toast'
 
-import { regex } from '@Services/constants'
 
 
 const MESSAGES_MAIN = {
@@ -82,84 +80,38 @@ const validationSchema = Yup.object().shape({
     // Company
     company_name: Yup.string().required(MESSAGES_MAIN.required("Company name")),
     company_email: Yup.string().email(MESSAGES_MAIN.invalidFormat('Company email')),
-    company_vatId: Yup.string().matches(regex.vatCode, MESSAGES_MAIN.invalidFormat("VAT id")).required(MESSAGES_MAIN.required("VAT id")),
-    company_phoneNumber1: Yup.string().matches(regex.phone, `${MESSAGES_MAIN.invalidFormat("Phone number 1")} (ex. +34 123456456)`),
-    company_phoneNumber2: Yup.string().matches(regex.phone, `${MESSAGES_MAIN.invalidFormat("Phone number 2")} (ex. +34 123456456)`),
+    company_vatId: Yup.string().matches(REGEX.vatCode, MESSAGES_MAIN.invalidFormat("VAT id")).required(MESSAGES_MAIN.required("VAT id")),
+    company_phoneNumber1: Yup.string().matches(REGEX.phone, `${MESSAGES_MAIN.invalidFormat("Phone number 1")} (ex. +34 123456456)`),
+    company_phoneNumber2: Yup.string().matches(REGEX.phone, `${MESSAGES_MAIN.invalidFormat("Phone number 2")} (ex. +34 123456456)`),
 })
 
 
 export default function FirstuserHTML(props) {
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        defaultValues,
-        mode: "onChange",
-        shouldFocusError: false,
-        resolver: yupResolver(validationSchema)
-    })
 
     // Llamamos a la prop 'onSubmit' que recibe desde el padre
-    const handleSubmitData = (values, e) => {
+    const handleSubmitData = (values) => {
 
-        const user = {
-            email: values.user_email,
-            fullName: values.user_fullName,
-            nick: values.user_nick,
-            password: values.user_password,
-        }
-        const company = {
-            name: values.company_name,
-            email: values.company_email,
-            vatId: values.company_vatId,
-            address: values.company_address,
-            postalCode: values.company_postalCode,
-            city: values.company_city,
-            province: values.company_province,
-            country: values.company_country,
-            phoneNumber1: values.company_phoneNumber1,
-            phoneNumber2: values.company_phoneNumber2,
-            bankIban: values.company_bankIban,
-            bankName: values.company_bankName
-        }
-        props.onSubmit({ user, company })
-    }
-
-
-    const handleErrors = () => {
-        const arrMessages = Object.values(errors).map(error => error.message)
-        toast.error(() => (<div>
-            <h5 className="text-center">Errors. Please check!</h5>
-            <div className="fst-italic">
-                {arrMessages.map((msg, index) =>
-                    <p key={index} className="mb-0">*
-                        {msg}</p>
-                )}
-            </div>
-        </div>), {
-            duration: 5000 + (arrMessages.length * 1000),
-        })
-
-    }
-
-    // Permite COLOREAR el apartado en caso de error en alguno 
-    // de sus campos
-    const classErrorCompanyBasicDetails = () => {
-        const { company_name, company_email, company_vatId } = errors
-        if (company_name || company_email || company_vatId) return "text-danger"
-        return "text-dark"
-    }
-
-    /* NO SE USA POR QUE NO TIENE VALIDACIONES Y NO HACE FALTA */
-    // const classErrorCompanyAddress = () => {
-    //     const { company_address, company_postalCode, company_country, company_province, company_city } = errors
-    //     if (company_address || company_postalCode || company_country || company_province || company_city) return "text-danger"
-    //     return "text-dark"
-    // }
-
-    // Función que permite actializar elnick del usuario
-    function onBlurUserEmail(e) {
-        const email = e.target.value
-        const isValid = !(errors?.user_email?.message)
-        const $nick = document.getElementById("user_nick")
-        if (isValid && !$nick.value) $nick.value = email.split("@")[0]
+            const user = {
+                email: values.user_email,
+                fullName: values.user_fullName,
+                nick: values.user_nick,
+                password: values.user_password,
+            }
+            const company = {
+                name: values.company_name,
+                email: values.company_email,
+                vatId: values.company_vatId,
+                address: values.company_address,
+                postalCode: values.company_postalCode,
+                city: values.company_city,
+                province: values.company_province,
+                country: values.company_country,
+                phoneNumber1: values.company_phoneNumber1,
+                phoneNumber2: values.company_phoneNumber2,
+                bankIban: values.company_bankIban,
+                bankName: values.company_bankName
+            }
+            props.onSubmit({ user, company })
     }
 
     return (
@@ -168,227 +120,253 @@ export default function FirstuserHTML(props) {
                 <h3 className="fst-italic">· Main Administrator ·</h3>
             </div>
 
-            <form onSubmit={handleSubmit(handleSubmitData, handleErrors)} >
-                <div className="card-body">
-                    {/*** Admin Details ******************************************* */}
-                    {/* email, fullName y nick */}
-                    {/* password y confirmPassword */}
-                    <div className="row">
-                        <div className="col-12 col-md-4">
-                            <div className="form-group">
-                                <label htmlFor="user_email">Email<sup>*</sup></label>
-                                <input type="text" className="form-control"
-                                    {...register("user_email")} id="user_email"
-                                    placeholder="Type your email"
-                                    onBlur={onBlurUserEmail} />
-                                {errors["user_email"] && <div className="text-danger">{errors["user_email"].message}</div>}
-                            </div>
-                        </div>
-                        <div className="col-12 col-md-5">
-                            <div className="form-group">
-                                <label htmlFor="user_fullName">Full name<sup>*</sup></label>
-                                <input type="text"
-                                    {...register("user_fullName")} id="user_fullName"
-                                    className="form-control"
-                                    placeholder="Type your name" />
-                                {errors["user_fullName"] && <div className="text-danger">{errors["user_fullName"].message}</div>}
-                            </div>
-                        </div>
-                        <div className="col-12 col-md-3">
-                            <div className="form-group">
-                                <label htmlFor="user_nick">Nick</label>
-                                <input type="text"
-                                    {...register("user_nick")} id="user_nick"
-                                    className="form-control"
-                                    placeholder="Type your nick" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col-12 col-md-6">
-                            <div className="form-group">
-                                <label htmlFor="user_password">Password<sup>*</sup></label>
-                                <input type="password"
-                                    {...register("user_password")} id="user_password"
-                                    className="form-control"
-                                    placeholder="Password" />
-                                {errors["user_password"] && <div className="text-danger">{errors["user_password"].message}</div>}
-                            </div>
-                        </div>
-                        <div className="col-12 col-md-6">
-                            <div className="form-group">
-                                <label htmlFor="user_confirmPassword">Confirm Password</label>
-                                <input type="password"
-                                    {...register("user_confirmPassword")} id="user_confirmPassword"
-                                    className="form-control"
-                                    placeholder="Confirm password" />
-                                {errors["user_confirmPassword"] && <div className="text-danger">{errors["user_confirmPassword"].message}</div>}
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="row text-dark">
-                        <div className="col"><hr /></div>
-                        <div className="col-6 col-md-4"><h5 className="text-center fst-italic">Company details (<span className="h6">required</span>)</h5></div>
-                        <div className="col"><hr /></div>
-                    </div>
-
-                    {/*** Company Basic Details ************************************** */}
-                    {/* name, email y taxId */}
-                    {/* phoneNumber 1 y 2 */}
-                    <details open>
-                        <summary className={`${classErrorCompanyBasicDetails()} fw-bold`}>Basic details</summary>
-
-                        <div className="row">
-                            <div className="col-12 col-md-4">
-                                <div className="form-group">
-                                    <label htmlFor="company_name">Name<sup>*</sup></label>
-                                    <input type="text" id="company_name"
-                                        {...register("company_name")}
-                                        className="form-control form-control-sm"
-                                        placeholder="Type company name"
-                                    />
-                                    {errors["company_name"] && <div className="text-danger">{errors["company_name"].message}</div>}
+            <Formik
+                initialValues={defaultValues}
+                validationSchema={validationSchema}
+                onSubmit={handleSubmitData}
+                on
+            >
+                {({ errors }) => (
+                    <Form >
+                        <div className="card-body">
+                            {/*** Admin Details ******************************************* */}
+                            {/* email, fullName y nick */}
+                            {/* password y confirmPassword */}
+                            <div className="row">
+                                <div className="col-12 col-md-4">
+                                    <div className="form-group">
+                                        <label htmlFor="user_email">Email<sup>*</sup></label>
+                                        <Field type="text" className="form-control"
+                                            id="user_email" name="user_email"
+                                            placeholder="Type your email"
+                                        />
+                                        <ErrorMessage name='user_email' component={({ children }) => (
+                                            <div className='text-danger'>{children}</div>
+                                        )} />
+                                    </div>
+                                </div>
+                                <div className="col-12 col-md-5">
+                                    <div className="form-group">
+                                        <label htmlFor="user_fullName">Full name<sup>*</sup></label>
+                                        <Field type="text" className="form-control"
+                                            id="user_fullName" name="user_fullName"
+                                            placeholder="Type your name"
+                                        />
+                                        <ErrorMessage name='user_fullName' component={({ children }) => (
+                                            <div className='text-danger'>{children}</div>
+                                        )} />
+                                    </div>
+                                </div>
+                                <div className="col-12 col-md-3">
+                                    <div className="form-group">
+                                        <label htmlFor="user_nick">Nick</label>
+                                        <Field type="text"
+                                            id="user_nick" name="user_nick"
+                                            className="form-control"
+                                            placeholder="Type your nick"
+                                        />
+                                        <ErrorMessage name='user_nick' component={({ children }) => (
+                                            <div className='text-danger'>{children}</div>
+                                        )} />
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="form-group col-12 col-md-4">
-                                <label htmlFor="company_email">Email</label>
-                                <input type="email" id="company_email"
-                                    {...register("company_email")}
-                                    className="form-control form-control-sm"
-                                    placeholder="Type company email" />
-                                {errors["company_email"] && <div className="text-danger">{errors["company_email"].message}</div>}
-                            </div>
-                            <div className="col-12 col-md-4">
-                                <div className="form-group">
-                                    <label htmlFor="company_vatId">VAT/NIF/CIF<sup>*</sup></label>
-                                    <input type="text" id="company_vatId"
-                                        {...register("company_vatId")}
-                                        className="form-control form-control-sm"
-                                        placeholder="Tax identification" />
-                                    {errors["company_vatId"] && <div className="text-danger">{errors["company_vatId"].message}</div>}
+                            <div className="row">
+                                <div className="col-12 col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="user_password">Password<sup>*</sup></label>
+                                        <Field type="password" className="form-control"
+                                            id="user_password" name="user_password"
+                                            placeholder="Password"
+                                        />
+                                        <ErrorMessage name='user_password' component={({ children }) => (
+                                            <div className='text-danger'>{children}</div>
+                                        )} />
+                                    </div>
+                                </div>
+                                <div className="col-12 col-md-6">
+                                    <div className="form-group">
+                                        <label htmlFor="user_confirmPassword">Confirm Password</label>
+                                        <Field type="password" className="form-control"
+                                            id="user_confirmPassword" name="user_confirmPassword"
+                                            placeholder="Confirm password"
+                                        />
+                                        <ErrorMessage name='user_confirmPassword' component={({ children }) => (
+                                            <div className='text-danger'>{children}</div>
+                                        )} />
+                                    </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="row">
-                            <div className="co-12 col-md-6">
-                                <div className="form-group">
-                                    <label htmlFor="company_phoneNumber1">Phone number 1</label>
-                                    <input type="text" id="company_phoneNumber1"
-                                        {...register("company_phoneNumber1")}
-                                        className="form-control form-control-sm"
-                                        placeholder="Type phone number" />
-                                    {errors["company_phoneNumber1"] && <div className="text-danger">{errors["company_phoneNumber1"].message}</div>}
-                                </div>
+                            <div className="row text-dark">
+                                <div className="col"><hr /></div>
+                                <div className="col-6 col-md-4"><h5 className="text-center fst-italic">Company details (<span className="h6">required</span>)</h5></div>
+                                <div className="col"><hr /></div>
                             </div>
-                            <div className="co-12 col-md-6">
-                                <div className="form-group">
-                                    <label htmlFor="company_phoneNumber2">Phone number 2</label>
-                                    <input type="text" id="company_phoneNumber2"
-                                        {...register("company_phoneNumber2")}
-                                        className="form-control form-control-sm"
-                                        placeholder="Type phone number" />
-                                    {errors["company_phoneNumber2"] && <div className="text-danger">{errors["company_phoneNumber2"].message}</div>}
-                                </div>
-                            </div>
-                        </div>
-                    </details>
 
-                    {/*** Address ************************************************** */}
-                    {/* address, codPostal */}
-                    {/* countruy, province, city */}
-                    <details>
-                        <summary className="text-dark fw-bold">Address</summary>
-                        <div className="row">
-                            <div className="co-12 col-md-8">
-                                <div className="form-group">
-                                    <label htmlFor="company_address">Address</label>
-                                    <input type="text" id="company_address"
-                                        {...register("company_address")}
-                                        className="form-control form-control-sm"
-                                        placeholder="Type company address" />
-                                </div>
-                            </div>
-                            <div className="co-12 col-md-4">
-                                <div className="form-group">
-                                    <label htmlFor="company_postalCode">Postal Code</label>
-                                    <input type="text" id="company_postalCode"
-                                        {...register("company_postalCode")}
-                                        className="form-control form-control-sm"
-                                        placeholder="Type postal code" />
-                                </div>
-                            </div>
-                        </div>
+                            {/*** Company Basic Details ************************************** */}
+                            {/* name, email y taxId */}
+                            {/* phoneNumber 1 y 2 */}
+                            <details open>
+                                <summary className={`${errors?.company_name || errors?.company_vatId ? 'text-danger' : 'text-dark'} fw-bold`}>Basic details</summary>
 
-                        <div className="row">
-                            <div className="co-12 col-md-4">
-                                <div className="form-group">
-                                    <label htmlFor="company_country">Country</label>
-                                    <input type="text" id="company_country"
-                                        {...register("company_country")}
-                                        className="form-control form-control-sm"
-                                        placeholder="Select country" />
-                                </div>
-                            </div>
-                            <div className="co-12 col-md-4">
-                                <div className="form-group">
-                                    <label htmlFor="company_province">Province</label>
-                                    <input type="text" id="company_province"
-                                        {...register("company_province")}
-                                        className="form-control form-control-sm"
-                                        placeholder="Select province" />
-                                </div>
-                            </div>
-                            <div className="co-12 col-md-4">
-                                <div className="form-group">
-                                    <label htmlFor="company_city">City</label>
-                                    <input type="text" id="company_city"
-                                        {...register("company_city")}
-                                        className="form-control form-control-sm"
-                                        placeholder="Type company city" />
-                                </div>
-                            </div>
-                        </div>
-                    </details>
+                                <div className="row">
+                                    <div className="col-12 col-md-4">
+                                        <div className="form-group">
+                                            <label htmlFor="company_name">Name<sup>*</sup></label>
+                                            <Field type="text" className="form-control form-control-sm"
+                                                id="company_name" name="company_name"
+                                                placeholder="Type company name"
+                                            />
+                                            <ErrorMessage name='company_name' component={({ children }) => (
+                                                <div className='text-danger'>{children}</div>
+                                            )} />
+                                        </div>
+                                    </div>
 
-                    <div className="row text-dark">
-                        <div className="col"><hr /></div>
-                        <div className="col-6 col-md-4"><h5 className="text-center fst-italic">More info</h5></div>
-                        <div className="col"><hr /></div>
-                    </div>
-                    {/*** Bank Acount ************************************************ */}
-                    {/* bankName */}
-                    {/* bankIban */}
-                    <details>
-                        <summary className="text-dark fw-bold">Bank acount</summary>
-                        <div className="row">
-                            <div className="col-6">
-                                <div className="form-group">
-                                    <label htmlFor="company_bankName">BankName</label>
-                                    <input type="text" id="company_bankName"
-                                        {...register("company_bankName")}
-                                        className="form-control form-control-sm"
-                                        placeholder="Type phone number" />
+                                    <div className="form-group col-12 col-md-4">
+                                        <label htmlFor="company_email">Email</label>
+                                        <Field type="email" className="form-control form-control-sm"
+                                            id="company_email" name="company_email"
+                                            placeholder="Type company email"
+                                        />
+                                        <ErrorMessage name='company_email' component={({ children }) => (
+                                            <div className='text-danger'>{children}</div>
+                                        )} />
+                                    </div>
+                                    <div className="col-12 col-md-4">
+                                        <div className="form-group">
+                                            <label htmlFor="company_vatId">VAT/NIF/CIF<sup>*</sup></label>
+                                            <Field type="text" className="form-control form-control-sm"
+                                                id="company_vatId" name="company_vatId"
+                                                placeholder="Tax identification"
+                                            />
+                                            <ErrorMessage name='company_vatId' component={({ children }) => (
+                                                <div className='text-danger'>{children}</div>
+                                            )} />
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="col-6">
-                                <div className="form-group">
-                                    <label htmlFor="company_bankIban">IBAN</label>
-                                    <input type="text" id="company_bankIban"
-                                        {...register("company_bankIban")}
-                                        className="form-control form-control-sm"
-                                        placeholder="IBAN acount number" />
-                                </div>
-                            </div>
-                        </div>
-                    </details>
 
-                    {/* Others ************************************************** */}
-                    {/* Logo */}
-                    {/* <details>
+                                <div className="row">
+                                    <div className="co-12 col-md-6">
+                                        <div className="form-group">
+                                            <label htmlFor="company_phoneNumber1">Phone number 1</label>
+                                            <Field type="text" className="form-control form-control-sm"
+                                                id="company_phoneNumber1" name='company_phoneNumber1'
+                                                placeholder="Type phone number"
+                                            />
+                                            <ErrorMessage name='copmpany_phoneNumber1' component={({ children }) => (
+                                                <div className='text-danger'>{children}</div>
+                                            )} />
+                                        </div>
+                                    </div>
+                                    <div className="co-12 col-md-6">
+                                        <div className="form-group">
+                                            <label htmlFor="company_phoneNumber2">Phone number 2</label>
+                                            <Field type="text" className="form-control form-control-sm"
+                                                id="company_phoneNumber2" name="company_phoneNumber2"
+                                                placeholder="Type phone number"
+                                            />
+                                            <ErrorMessage name='company_numberNumber2' component={({ children }) => (
+                                                <div className='text-danger'>{children}</div>
+                                            )} />
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+
+                            {/*** Address ************************************************** */}
+                            {/* address, codPostal */}
+                            {/* countruy, province, city */}
+                            <details>
+                                <summary className="text-dark fw-bold">Address</summary>
+                                <div className="row">
+                                    <div className="co-12 col-md-8">
+                                        <div className="form-group">
+                                            <label htmlFor="company_address">Address</label>
+                                            <Field type="text" className="form-control form-control-sm"
+                                                id="company_address" name="company_address"
+                                                placeholder="Type company address"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="co-12 col-md-4">
+                                        <div className="form-group">
+                                            <label htmlFor="company_postalCode">Postal Code</label>
+                                            <Field type="text" className="form-control form-control-sm"
+                                                id="company_postalCode" name="company_postalCode"
+                                                placeholder="Type postal code"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="row">
+                                    <div className="co-12 col-md-4">
+                                        <div className="form-group">
+                                            <label htmlFor="company_country">Country</label>
+                                            <Field type="text" className="form-control form-control-sm"
+                                                id="company_country" name="company_country"
+                                                placeholder="Select country"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="co-12 col-md-4">
+                                        <div className="form-group">
+                                            <label htmlFor="company_province">Province</label>
+                                            <Field type="text" className="form-control form-control-sm"
+                                                id="company_province" name="company_province"
+                                                placeholder="Select province"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="co-12 col-md-4">
+                                        <div className="form-group">
+                                            <label htmlFor="company_city">City</label>
+                                            <Field type="text" className="form-control form-control-sm"
+                                                id="company_city" name="company_city"
+                                                placeholder="Type company city"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+
+                            <div className="row text-dark">
+                                <div className="col"><hr /></div>
+                                <div className="col-6 col-md-4"><h5 className="text-center fst-italic">More info</h5></div>
+                                <div className="col"><hr /></div>
+                            </div>
+                            {/*** Bank Acount ************************************************ */}
+                            {/* bankName */}
+                            {/* bankIban */}
+                            <details>
+                                <summary className="text-dark fw-bold">Bank acount</summary>
+                                <div className="row">
+                                    <div className="col-6">
+                                        <div className="form-group">
+                                            <label htmlFor="company_bankName">BankName</label>
+                                            <Field type="text" className="form-control form-control-sm"
+                                                id="company_bankName" name="company_bankName"
+                                                placeholder="Type phone number" />
+                                        </div>
+                                    </div>
+                                    <div className="col-6">
+                                        <div className="form-group">
+                                            <label htmlFor="company_bankIban">IBAN</label>
+                                            <Field type="text" className="form-control form-control-sm"
+                                                id="company_bankIban" name="company_bankIban"
+                                                placeholder="IBAN acount number" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+
+                            {/* Others ************************************************** */}
+                            {/* Logo */}
+                            {/* <details>
                         <summary className="fw-bold">Others (logo, etc.)</summary>
                         <div className="row">
                             <div className="col-12 col-md-6 col-xl-5">
@@ -401,19 +379,20 @@ export default function FirstuserHTML(props) {
                             </div>
                         </div>
                     </details> */}
-                </div >
-                <div className="card-footer ">
-                    <div className="hstack gap-3 justify-content-center">
-                        <button type="submit" className="btn btn-primary w-50">
-                            Create Admin & Company!!
-                        </button>
-                        <button onClick={props.onCancel} className="btn btn-outline-secondary" data-action = "CANCEL">
-                            Cancel
-                        </button>
-                    </div>
-                </div>
-            </form>
-
+                        </div >
+                        <div className="card-footer ">
+                            <div className="hstack gap-3 justify-content-center">
+                                <button type="submit" className="btn btn-primary w-50">
+                                    Create Admin & Company!!
+                                </button>
+                                <button onClick={props.onCancel} className="btn btn-outline-secondary" data-action="CANCEL">
+                                    Cancel
+                                </button>
+                            </div>
+                        </div>
+                    </Form>
+                )}
+            </Formik>
         </div >
     )
 }

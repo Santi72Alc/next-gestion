@@ -5,6 +5,7 @@ const companySchema = new Schema(
 		adminId: {
 			type: Types.ObjectId,
 			ref: "Users",
+			required: [true, 'Admin Id is required']
 		},
 		name: {
 			type: String,

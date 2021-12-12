@@ -1,9 +1,10 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { toast } from 'react-hot-toast'
 
 import ActualUserContext from "src/context/actualUser.context";
 import UsersContext from "src/context/users.context";
+import localStorageServices from "@Services/localStorage.services";
 
 import SideNavbar from "@Components/sideNavbar";
 import Link from "@Components/link";
@@ -17,6 +18,15 @@ const Navbar = ({ children }) => {
     const { isFirstUser } = useContext(UsersContext)
     const [isMenuOpened, setIsMenuOpened] = useState(false);
     const router = useRouter()
+
+
+    useEffect(() => {
+        const lastUser = localStorageServices.getActualUser()
+        if (!isLogged && lastUser?._id) {
+            setActualUser(lastUser)
+            router.replace("/")
+        }
+    }, [])
 
     // Show the menu button on the left
     function showMenu(show = true) {

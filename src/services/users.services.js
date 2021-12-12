@@ -2,9 +2,10 @@ import axios from "axios";
 
 import {
 	initialUserProfile,
-	initialCompanyProfile,
 	BASE_URL,
-} from "./constants";
+	initialCompanyProfile
+} from "@Constants/index.js";
+
 /*
 	POST a new USER
 */

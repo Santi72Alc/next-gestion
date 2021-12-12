@@ -5,6 +5,7 @@ import Head from 'next/head'
 import Navbar from '@Components/navbar'
 
 import { LayoutProvidersContext } from 'src/context/layout.context'
+import storageServices from '@Services/localStorage.services'
 
 import ActualUserContext from '@Context/actualUser.context'
 
@@ -41,7 +42,7 @@ function MyApp({ Component, pageProps }) {
       </Head>
       <LayoutProvidersContext>
         <Navbar>
-          <Component {...pageProps}/>
+          <Component {...pageProps} />
         </Navbar>
       </LayoutProvidersContext>
       {/* <script

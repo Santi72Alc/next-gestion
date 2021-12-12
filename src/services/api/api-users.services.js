@@ -1,7 +1,8 @@
 import dbConnected from "@Libs/utils/database";
 import Users from "@Models/user.model";
 import { comparePassword } from "@Libs/utils/auth";
-import { initialUserProfile } from "@Services/constants";
+import { initialUserProfile } from "@Constants/index.js";
+
 
 export const getUsersCount = async (filter = {}) => {
 	const count = (await getAllUsers()).length;

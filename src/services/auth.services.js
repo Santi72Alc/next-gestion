@@ -1,5 +1,5 @@
+import { BASE_URL } from "@Constants/index.js";
 import axios from "axios";
-import { BASE_URL } from "./constants";
 
 async function loginUser(email = "", password = "") {
 	try {

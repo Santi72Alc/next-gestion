@@ -1,7 +1,5 @@
-import { useForm } from 'react-hook-form'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
-import { yupResolver } from '@hookform/resolvers/yup'
-import { toast } from 'react-hot-toast'
 
 const defaultValues = {
     email: "",
@@ -42,12 +40,6 @@ const validationSchema = Yup.object().shape({
 
 
 export default function LoginHTML(props) {
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        defaultValues,
-        mode: "onBlur",
-        shouldFocusError: false,
-        resolver: yupResolver(validationSchema)
-    })
 
     function onSubmitForm(values) {
         props.onSubmit(values)
@@ -58,46 +50,59 @@ export default function LoginHTML(props) {
             <div className="card-header">
                 <h3 className="text-center">Login</h3>
             </div>
-            <form onSubmit={handleSubmit(onSubmitForm)}>
-
-                <div className="card-body">
-                    <div className="form-group">
-                        <label htmlFor="email">Email</label>
-                        <input type="email" id="email"
-                            {...register("email")}
-                            className="form-control"
-                            placeholder="Type your registered email"
-                        />
-                        {errors["email"] && <div className="text-danger">{errors["email"].message}</div>}
-                    </div>
-                    <div className="form-group">
-                        <label htmlFor="password">Password</label>
-                        <input type="password" id="password"
-                            {...register("password")}
-                            className="form-control"
-                            placeholder="Password" />
-                        {errors["password"] && <div className="text-danger">{errors["password"].message}</div>}
-                    </div>
-                    <div className="form-group">
-                        <div className="form-check">
-                            <input className="form-check-input"
-                                type="checkbox" id="keepAlive"
-                                {...register("keepAlive")}
-                            />
-                            <label className="form-check-label" htmlFor="keepAlive">
-                                Keep session alive
-                            </label>
+            <Formik
+                initialValues={defaultValues}
+                validationSchema={validationSchema}
+                onSubmit={props.onSubmit}
+            >
+                {() => (
+                    <Form>
+                        <div className="card-body">
+                            <div className="form-group">
+                                <label htmlFor="email">Email</label>
+                                <Field type="email"
+                                    id="email" name="email"
+                                    className="form-control"
+                                    placeholder="Type your registered email"
+                                />
+                                <ErrorMessage name='email' component={({ children }) => (
+                                    <div className='text-danger'>{children}</div>
+                                )} />
+                            </div>
+                            <div className="form-group">
+                                <label htmlFor="password">Password</label>
+                                <Field type="password"
+                                    id="password" name="password"
+                                    className="form-control"
+                                    placeholder="Password" /
+                                >
+                                <ErrorMessage name='password' component={({ children }) => (
+                                    <div className='text-danger'>{children}</div>
+                                )} />
+                            </div>
+                            <div className="form-group">
+                                <div className="form-check">
+                                    <label className="form-check-label">
+                                        <Field className="form-check-input"
+                                            type="checkbox"
+                                            id="keepAlive" name="keepAlive"
+                                        />
+                                        Keep session alive
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <div className="card-footer">
-                    <div className="hstack gap-3 justify-content-center">
-                        <button type="submit" className="btn btn-primary w-50">Login</button>
-                        <button onClick={props.onCancel} className="btn btn-outline-secondary">Cancel</button>
-                    </div>
-                </div>
-            </form>
+                        <div className="card-footer">
+                            <div className="hstack gap-3 justify-content-center">
+                                <button type="submit" className="btn btn-primary w-50">Login</button>
+                                <button onClick={props.onCancel} className="btn btn-outline-secondary">Cancel</button>
+                            </div>
+                        </div>
+                    </Form>
+                )}
+
+            </Formik>
 
         </div >
     )

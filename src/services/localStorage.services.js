@@ -1,4 +1,4 @@
-const COOKIE_KEY = "gp-user";
+import { COOKIE_KEY, initialUserProfile } from "@Constants/index.js";
 
 const defaultOptions = {
 	key: COOKIE_KEY,
@@ -6,18 +6,12 @@ const defaultOptions = {
 };
 
 export const defaultStorageData = {
-	_id: "",
-	email: "",
-	fullName: "",
-	nick: "",
-	role: "",
+	...initialUserProfile,
 	keepAlive: defaultOptions.keepAlive,
 };
 
-const setActualUser = (
-	user,
-	{ key = defaultOptions.key, keepAlive = defaultOptions.keepAlive }
-) => {
+const setActualUser = (user) => {
+	const key = COOKIE_KEY
 	// NO se permite guardar en el storage de cliente
 	if (typeof window === "undefined") {
 		console.log("Error deploying cookies not allowed");
@@ -25,14 +19,13 @@ const setActualUser = (
 	}
 
 	// Ok. Guardamos los datos en el storage del cliente
-	user.keepAlive = keepAlive;
 	const dataToSave = JSON.stringify(user);
-	if (keepAlive) localStorage.setItem(key, dataToSave);
+	if (user.keepAlive) localStorage.setItem(key, dataToSave);
 	else sessionStorage.setItem(key, dataToSave);
 	return user;
 };
 
-const getActualUser = (key = defaultOptions.key) => {
+const getActualUser = (key = COOKIE_KEY) => {
 	if (typeof window === "undefined") {
 		console.log("*** Error deploying cookies not allowed");
 		return null;

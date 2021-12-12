@@ -1,10 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 
-import {
-	ROLES,
-	initialUserProfile,
-	initialCompanyProfile,
-} from "@Services/constants";
+import { ROLES, initialUserProfile } from "@Constants/index.js";
 import usersServices from "@Services/users.services";
 
 const initialUserContext = {
@@ -96,10 +92,10 @@ export function UsersProvider({ children }) {
 		return users.filter(user => user._id === id)[0];
 	};
 
-	const setFilterToUsers = ({ arrUsers = users, filter = "" }) => {
+	const setFilterToUsers = ({ users, filter = "" }) => {
 		if (!filter) return users;
 		filter = filter.toLowerCase();
-		return arrUsers.filter(user => {
+		return users.filter(user => {
 			if (user.email.toLowerCase().includes(filter)) return user;
 			if (user.nick.toLowerCase().includes(filter)) return user;
 			if (user.fullName.toLowerCase().includes(filter)) return user;

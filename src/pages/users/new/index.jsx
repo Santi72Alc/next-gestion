@@ -3,7 +3,6 @@ import { useRouter } from 'next/router'
 import { toast } from 'react-hot-toast'
 
 import UsersContext from '@Context/users.context'
-// import FirstuserHTML from '@Components/pages/FirstuserHTML'
 import Profile from '@Components/pages/profileHTML'
 
 export default function NewUser() {
@@ -43,6 +42,7 @@ export default function NewUser() {
         <Profile
             onSubmit={handleCreateUser}
             onCancel={handleCancel}
+            isNewUser={true}
         />
     )
 }

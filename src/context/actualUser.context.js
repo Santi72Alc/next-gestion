@@ -2,36 +2,22 @@ import { createContext, useState } from "react";
 
 import authServices from "@Services/auth.services";
 import storageServices from "@Services/localStorage.services";
-import { ROLES } from "@Services/constants";
+import { initialActualUserContext, ROLES } from "@Constants/index.js";
 
-const initialUser = {
-	_id: "",
-	email: "",
-	fullName: "",
-	nick: "",
-	role: ROLES.Default,
-};
 
-const initialUserContext = {
-	isLogged: false,
-	keepAlive: false,
-	isMainAdmin: false,
-	isAdmin: false,
-	isUser: true,
-	user: { ...initialUser },
-};
-
-const ActualUserContext = createContext(initialUserContext);
+const ActualUserContext = createContext(initialActualUserContext);
 
 export function ActualUserProvider({ children }) {
-	const [user, setUser] = useState(initialUser);
-	const [keepAlive, setKeepAlive] = useState(initialUserContext.keepAlive);
-	const [isLogged, setIsLogged] = useState(initialUserContext.isLogged);
+	const [user, setUser] = useState(initialActualUserContext.user);
+	const [keepAlive, setKeepAlive] = useState(initialActualUserContext.keepAlive);
+	const [isLogged, setIsLogged] = useState(initialActualUserContext.isLogged);
 	const [isMainAdmin, setIsMainAdmin] = useState(
-		initialUserContext.isMainAdmin
+		initialActualUserContext.isMainAdmin
 	);
-	const [isAdmin, setIsAdmin] = useState(initialUserContext.isAdmin);
-	const [isUser, setIsUser] = useState(initialUserContext.isUser);
+	const [isAdmin, setIsAdmin] = useState(initialActualUserContext.isAdmin);
+	const [isUser, setIsUser] = useState(initialActualUserContext.isUser);
+
+
 
 	/*************************************************
 	 * Login the user
@@ -43,18 +29,18 @@ export function ActualUserProvider({ children }) {
 	const login = async (
 		email = "",
 		password = "",
-		keepAlive = initialContext.keepAlive
+		keepAlive = false
 	) => {
 		// Llamamos al servicio para logar el user
 		// devuelve obj {success, data (usuario), message}
 		const resp = await authServices.loginUser(email, password);
 		if (resp.success) {
-			const user = resp.data;
-			setActualUser(user, { keepAlive });
-			storageServices.setActualUser(user, { keepAlive });
+			const user = { ...resp.data, keepAlive };
+			setActualUser(user);
 		}
 		return resp;
 	};
+
 
 	/*************************************************
 	 * Logout the actual user logged
@@ -64,37 +50,36 @@ export function ActualUserProvider({ children }) {
 	const logout = () => {
 		storageServices.closeActualUser({ keepAlive });
 		setUser(null);
-		setIsLogged(initialUserContext.isLogged);
-		setKeepAlive(initialUserContext.keepAlive);
-		setIsMainAdmin(initialUserContext.isMainAdmin);
-		setIsAdmin(initialUserContext.isAdmin);
-		setIsUser(initialUserContext.isUser);
+		setIsLogged(initialActualUserContext.isLogged);
+		setKeepAlive(initialActualUserContext.keepAlive);
+		setIsMainAdmin(initialActualUserContext.isMainAdmin);
+		setIsAdmin(initialActualUserContext.isAdmin);
+		setIsUser(initialActualUserContext.isUser);
 	};
+
+
 
 	/*************************************************
 	 * Get actual data from
 	 * @param void
-	 * @returns { isLogged, keepAlive, user }
+	 * @returns { isMainAdmin, isAdmin, isUser, isLogged, user }
 	 */
-	function getActualUser() {
+	const getActualUser = () => {
 		return { isMainAdmin, isAdmin, isUser, isLogged, user };
 	}
-
-	const setActualUser = (
-		user = initialUser,
-		options = { keepAlive: false }
-	) => {
-		const { _id, email, fullName, nick, role } = user;
+	const setActualUser = (user) => {
+		const { _id, keepAlive } = user;
 		const isMainAdmin = hasUserRole(user, [ROLES.MainAdmin]);
 		const isAdmin = isMainAdmin || hasUserRole(user, [ROLES.Admin]);
 		const isUser = true;
-		setUser({ _id, email, fullName, nick, role });
-		setKeepAlive(options.keepAlive);
+		setUser(user);
+		setKeepAlive(keepAlive);
 		setIsMainAdmin(isMainAdmin);
 		setIsAdmin(isAdmin);
 		setIsUser(isUser);
-		setIsLogged(user ? true : false);
-	};
+		setIsLogged(_id ? true : false);
+		storageServices.setActualUser(user);
+	}
 
 	const hasUserRole = (user, roles = []) => {
 		return user && roles.includes(user.role);
@@ -108,7 +93,7 @@ export function ActualUserProvider({ children }) {
 		login,
 		logout,
 		getActualUser,
-		setActualUser,
+		setActualUser
 	};
 
 	return (

@@ -11,7 +11,7 @@ import ProfileHTML from '@Components/pages/profileHTML'
 
 export default function Profile() {
     const { isFirstUser, updateUser, createMainAdmin } = useContext(UsersContext)
-    const { user, setActualUser } = useContext(ActualUserContext)
+    const { user, keepAlive, setActualUser } = useContext(ActualUserContext)
     const router = useRouter()
 
     async function handleCreateAdmin({ user, company }) {
@@ -36,9 +36,10 @@ export default function Profile() {
             email,      // NO es modificable pero se envia para NO errores
             nick
         }
-        const { data } = await updateUser({ user: { ...newUser } })
+        const { data } = await updateUser({ user: { ...newUser, keepAlive } })
         if (data.success) {
-            setActualUser(data.data)
+            console.log("Actualizo ", data.data, keepAlive);
+            setActualUser({keepAlive, ...data.data})
             toast.success(data.message)
             router.push("/")
         } else

@@ -1,8 +1,6 @@
-import { useForm } from "react-hook-form";
-import { yupResolver } from '@hookform/resolvers/yup'
+import { Formik, Form, Field, ErrorMessage } from 'formik'
 import * as Yup from 'yup'
-import { toast } from 'react-hot-toast'
-import {  useState } from "react";
+import { useState } from "react";
 
 const MESSAGES_MAIN = {
     required: (field = "This field") => `${field} is required!`,
@@ -44,10 +42,6 @@ const initialUser = {
 }
 
 
-const defaultValues = {
-    ...initialUser
-}
-
 // regex phone numbers
 const phoneRegExp = /^$|\(?\+[0-9]{1,3}\)? ?-?[0-9]{1,3} ?-?[0-9]{3,5} ?-?[0-9]{4}( ?-?[0-9]{3})? ?(\w{1,10}\s?\d{1,6})?/
 
@@ -56,7 +50,7 @@ const vatRegex = /^$|^((AT)?U[0-9]{8}|(BE)?0[0-9]{9}|(BG)?[0-9]{9,10}|(CY)?[0-9]
 
 // Validaciones 
 const validationSchemaNewUser = Yup.object().shape({
-    // User (Admin)
+    // User (Admin) ... new user!!
     email: Yup.string().email(MESSAGES.user.email.invalidFormat).required(MESSAGES_MAIN.required("Email")),
     fullName: Yup.string().required(MESSAGES.user.fullName.required),
     password: Yup.string()
@@ -78,12 +72,6 @@ const validationSchema = Yup.object().shape({
 export default function ProfileHTML(props) {
     const [isNewUser, setIsNewUser] = useState(props.isNewUser || false)
     const [dataUser, setDataUser] = useState(props.data || { ...initialUser })
-    const { register, handleSubmit, formState: { errors } } = useForm({
-        defaultValues: { ...dataUser },
-        mode: "onChange",
-        shouldFocusError: false,
-        resolver: isNewUser ? yupResolver(validationSchemaNewUser) : yupResolver(validationSchema)
-    })
 
     // Llamamos a la prop 'onSubmit'
     const handleSubmitData = (values) => {
@@ -92,114 +80,109 @@ export default function ProfileHTML(props) {
         props.onSubmit({ user })
     }
 
-
-    const handleErrors = () => {
-        const arrMessages = Object.values(errors).map(error => error.message)
-        arrMessages.length && toast.error(() => (<div>
-            <h5 className="text-center">Errors. Please check!</h5>
-            <div className="fst-italic">
-                {arrMessages.map((msg, index) =>
-                    <p key={index} className="mb-0">*
-                        {msg}</p>
-                )}
-            </div>
-        </div>), {
-            duration: 5000 + (arrMessages.length * 1000),
-        })
-    }
-
-    // Función que permite actializar elnick del usuario
-    function onBlurUserEmail(e) {
-        const email = e.target.value
-        const isValid = !(errors?.email?.message)
-        const $nick = document.getElementById("nick")
-        if (isValid && !$nick.value) $nick.value = (email.split("@")[0])
-    }
-
     return (
         <div className="card">
             <div className="card-header text-center">
-                <h3 className="fst-italic">· {dataUser.nick} ·</h3>
+                <h3 className="fst-italic">· {isNewUser ? 'New user' : dataUser.nick} ·</h3>
             </div>
 
-            <form onSubmit={handleSubmit(handleSubmitData, handleErrors)} id="formulary">
-                <div className="card-body">
-                    {/*** Admin Details ******************************************* */}
-                    {/* email, fullName y nick */}
-                    {/* password y confirmPassword */}
-                    <div className="row">
-                        <div className="col-12 col-md-4">
-                            <div className="form-group">
-                                <label htmlFor="email">Email<sup>*</sup></label>
-                                <input type="text" className="form-control"
-                                    {...register("email")} id="email"
-                                    // defaultValue={dataUser?.email}
-                                    placeholder="Type your email"
-                                    disabled={!isNewUser}
-                                    onBlur={onBlurUserEmail}
-                                />
-                                {errors["email"] && <div className="text-danger">{errors["email"].message}</div>}
-                            </div>
-                        </div>
-                        <div className="col-12 col-md-5">
-                            <div className="form-group">
-                                <label htmlFor="fullName">Full name<sup>*</sup></label>
-                                <input type="text" className="form-control"
-                                    {...register("fullName")} id="fullName"
-                                    // defaultValue={dataUser?.fullName}
-                                    placeholder="Type your name" />
-                                {errors["fullName"] && <div className="text-danger">{errors["fullName"].message}</div>}
-                            </div>
-                        </div>
-                        <div className="col-12 col-md-3">
-                            <div className="form-group">
-                                <label htmlFor="nick">Nick</label>
-                                <input type="text" className="form-control"
-                                    {...register("nick")} id="nick"
-                                    // defaultValue={dataUser?.nick}
-                                    placeholder="Type your nick" />
-                            </div>
-                        </div>
-                    </div>
-
-                    {isNewUser &&
-                        <div className="row">
-                            <div className="col-12 col-md-6">
-                                <div className="form-group">
-                                    <label htmlFor="password">Password<sup>*</sup></label>
-                                    <input type="password"
-                                        {...register("password")} id="password"
-                                        className="form-control"
-                                        placeholder="Password" />
-                                    {errors["password"] && <div className="text-danger">{errors["password"].message}</div>}
+            <Formik
+                initialValues={dataUser}
+                onSubmit={handleSubmitData}
+                validationSchema={isNewUser ? validationSchemaNewUser : validationSchema}
+            >
+                {() => (
+                    <Form >
+                        <div className="card-body">
+                            {/*** Admin Details ******************************************* */}
+                            {/* email, fullName y nick */}
+                            {/* password y confirmPassword */}
+                            <div className="row">
+                                <div className={`col-12 ${isNewUser ? 'col-md-4' : 'col-md-12'}`} >
+                                    <div className="form-group">
+                                        <label htmlFor="email">Email<sup>*</sup></label>
+                                        <Field type="text" className="form-control"
+                                            id="email" name='email'
+                                            placeholder="Type your email"
+                                            disabled={!isNewUser}
+                                        />
+                                        <ErrorMessage name='email' component={({ children }) => (
+                                            <div className='text-danger'>{children}</div>
+                                        )} />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="col-12 col-md-6">
-                                <div className="form-group">
-                                    <label htmlFor="confirmPassword">Confirm Password</label>
-                                    <input type="password"
-                                        {...register("confirmPassword")} id="confirmPassword"
-                                        className="form-control"
-                                        placeholder="Confirm password" />
-                                    {errors["confirmPassword"] && <div className="text-danger">{errors["confirmPassword"].message}</div>}
+                                <div className="row">
+                                    <div className={`col-12 ${isNewUser ? 'col-md-4' : 'col-md-6'}`}>
+                                        <div className="form-group">
+                                            <label htmlFor="fullName">Full name<sup>*</sup></label>
+                                            <Field type="text" className="form-control"
+                                                id="fullName" name='fullName'
+                                                placeholder="Type your name"
+                                            />
+                                            <ErrorMessage name='fullName' component={({ children }) => (
+                                                <div className='text-danger'>{children}</div>
+                                            )} />
+                                        </div>
+                                    </div>
+                                    <div className={`col-12 ${isNewUser ? 'col-md-4' : 'col-md-6'}`}>
+                                        <div className="form-group">
+                                            <label htmlFor="nick">Nick</label>
+                                            <Field type="text" className="form-control"
+                                                id="nick" name='nick'
+                                                placeholder="Type your nick"
+                                            />
+                                            <ErrorMessage name='nick' component={({ children }) => (
+                                                <div className='text-danger'>{children}</div>
+                                            )} />
+                                        </div>
+                                    </div>
                                 </div>
+
+                            </div>
+
+                            {isNewUser &&
+                                <div className="row">
+                                    <div className="col-12 col-md-6">
+                                        <div className="form-group">
+                                            <label htmlFor="password">Password<sup>*</sup></label>
+                                            <Field type="password" className="form-control"
+                                                id="password" name="password"
+                                                placeholder="Password"
+                                            />
+                                            <ErrorMessage name='password' component={({ children }) => (
+                                                <div className='text-danger'>{children}</div>
+                                            )} />
+                                        </div>
+                                    </div>
+                                    <div className="col-12 col-md-6">
+                                        <div className="form-group">
+                                            <label htmlFor="confirmPassword">Confirm Password</label>
+                                            <Field type="password" className="form-control"
+                                                id="confirmPassword" name="confirmPassword"
+                                                placeholder="Confirm password"
+                                            />
+                                            <ErrorMessage name='confirmPassword' component={({ children }) => (
+                                                <div className='text-danger'>{children}</div>
+                                            )} />
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+
+                        </div >
+                        <div className="card-footer ">
+                            <div className="hstack gap-3 justify-content-center">
+                                <button type="submit" className="btn btn-primary w-50" >
+                                    {isNewUser ? 'Create User!' : 'Update user!'}
+                                </button>
+                                <button onClick={props.onCancel} className="btn btn-outline-secondary">
+                                    Cancel
+                                </button>
                             </div>
                         </div>
-                    }
-
-                </div >
-            </form>
-            <div className="card-footer ">
-                <div className="hstack gap-3 justify-content-center">
-                    <button type="submit" className="btn btn-primary w-50" form="formulary">
-                        {isNewUser ? 'Create User!' : 'Update user!'}
-                    </button>
-                    <button onClick={props.onCancel} className="btn btn-outline-secondary">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-
+                    </Form>
+                )}
+            </Formik>
         </div >
     )
 }
