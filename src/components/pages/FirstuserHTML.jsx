@@ -385,7 +385,7 @@ export default function FirstuserHTML(props) {
                                 <button type="submit" className="btn btn-primary w-50">
                                     Create Admin & Company!!
                                 </button>
-                                <button onClick={props.onCancel} className="btn btn-outline-secondary" data-action="CANCEL">
+                                <button type="button" onClick={props.onCancel} className="btn btn-outline-secondary" data-action="CANCEL">
                                     Cancel
                                 </button>
                             </div>

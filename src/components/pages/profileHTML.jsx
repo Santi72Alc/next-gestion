@@ -175,7 +175,7 @@ export default function ProfileHTML(props) {
                                 <button type="submit" className="btn btn-primary w-50" >
                                     {isNewUser ? 'Create User!' : 'Update user!'}
                                 </button>
-                                <button onClick={props.onCancel} className="btn btn-outline-secondary">
+                                <button type="button" onClick={props.onCancel} className="btn btn-outline-secondary">
                                     Cancel
                                 </button>
                             </div>

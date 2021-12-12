@@ -96,7 +96,7 @@ export default function LoginHTML(props) {
                         <div className="card-footer">
                             <div className="hstack gap-3 justify-content-center">
                                 <button type="submit" className="btn btn-primary w-50">Login</button>
-                                <button onClick={props.onCancel} className="btn btn-outline-secondary">Cancel</button>
+                                <button type="button" onClick={props.onCancel} className="btn btn-outline-secondary">Cancel</button>
                             </div>
                         </div>
                     </Form>
